@@ -8,6 +8,7 @@ using Domain.Entities;
 
 namespace Infrastructure.Configuration
 {
+
 public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
 {
     public void Configure(EntityTypeBuilder<Vehicle> builder)
@@ -18,7 +19,7 @@ public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
 
         builder.Property(v => v.SerialNumber)
             .HasColumnName("serial_number")
-            .IsRequired();
+            .ValueGeneratedOnAdd(); // Equivalente a SERIAL
 
         builder.Property(v => v.VehicleModelId)
             .HasColumnName("id_model")
@@ -28,26 +29,37 @@ public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
             .HasColumnName("id_client")
             .IsRequired();
 
-        builder.Property(v => v.ReleaseYear)
-            .HasColumnName("release_year")
+                builder.Property(v => v.ReleaseYear)
+                    .HasColumnName("release_year")
+                    .IsRequired();
+
+                builder.Property(v => v.Km)
+                    .HasColumnName("km")
+                    .IsRequired();
+
+        builder.Property(v => v.FuelTypeId)
+            .HasColumnName("id_fuel_type")
             .IsRequired();
 
-        builder.Property(v => v.Km)
-            .HasColumnName("km")
+        builder.Property(v => v.VehicleTypeId)
+            .HasColumnName("id_vehicle_type")
             .IsRequired();
 
         builder.HasOne(v => v.Model)
-            .WithMany(vm => vm.Vehicles)
+            .WithMany(m => m.Vehicles)
             .HasForeignKey(v => v.VehicleModelId);
 
         builder.HasOne(v => v.Client)
             .WithMany(c => c.Vehicles)
             .HasForeignKey(v => v.ClientId);
 
-        builder.HasMany(v => v.ServiceOrders)
-            .WithOne(so => so.Vehicle)
-            .HasForeignKey(so => so.VehicleSerialNumber)
-            .HasPrincipalKey(v => v.SerialNumber);
+        builder.HasOne(v => v.FuelType)
+            .WithMany(f => f.Vehicles)
+            .HasForeignKey(v => v.FuelTypeId);
+
+        builder.HasOne(v => v.vehicleType)
+            .WithMany(vt => vt.Vehicles)
+            .HasForeignKey(v => v.VehicleTypeId);
     }
 }
 }

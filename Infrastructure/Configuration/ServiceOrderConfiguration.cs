@@ -31,6 +31,11 @@ public class ServiceOrderConfiguration : IEntityTypeConfiguration<ServiceOrder>
             .HasColumnName("id_user_member")
             .IsRequired();
 
+        builder.Property(s => s.ApprovedByClient)
+            .HasColumnName("client_approved")
+            .IsRequired()
+            .HasDefaultValue(false);
+
         builder.Property(so => so.ServiceStatusId)
             .HasColumnName("id_status")
             .IsRequired();
