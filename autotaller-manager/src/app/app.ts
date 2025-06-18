@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.html',
-  standalone: false,
-  styleUrl: './app.scss'
+  standalone: true,
+  imports: [RouterModule],
+  template: `
+    <router-outlet></router-outlet>
+  `
 })
-export class App {
-  protected title = 'autotaller-manager';
-}
+export class AppComponent {}
