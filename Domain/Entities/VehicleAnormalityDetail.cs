@@ -12,7 +12,7 @@ public class VehicleAnormalityDetail
     public int IdAnormality { get; set; }
     public VehicleAnormality? VehicleAnormality { get; set; }
 
-    public int SerialNumber { get; set; }
+    public String? SerialNumber { get; set; }
     public Vehicle? Vehicle { get; set; }
 }
 
