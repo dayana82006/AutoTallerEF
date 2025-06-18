@@ -8,8 +8,6 @@ namespace Domain.Entities
     public class OrderDetail
     {
     public int Id { get; set; }
-    public int IdServiceOrder { get; set; }
-    public string? CodeSpare { get; set; }
     public int SpareQuantity { get; set; }
     public int ServiceOrderId { get; set; }
     public ServiceOrder? ServiceOrder { get; set; }

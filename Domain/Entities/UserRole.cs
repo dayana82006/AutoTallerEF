@@ -8,8 +8,6 @@ namespace Domain.Entities
     public class UserRole
     {
     public int Id { get; set; }
-    public int IdUserMember { get; set; }
-    public int IdRole { get; set; }
     public int UserMemberId { get; set; }
     public UserMember? UserMember { get; set; }
     public int RoleId { get; set; }

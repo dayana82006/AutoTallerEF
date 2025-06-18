@@ -8,7 +8,6 @@ namespace Domain.Entities
     public class VehicleModel
     {
         public int Id { get; set; }
-        public int IdBrand { get; set; }
         public string? Name { get; set; }
         public int BrandId { get; set; }
         public Brand? Brand { get; set; }

@@ -8,13 +8,9 @@ namespace Domain.Entities
     public class ServiceOrder
     {
         public int Id { get; set; }
-        public int SerialNumber { get; set; }
-        public int IdServiceType { get; set; }
-        public int IdUserMember { get; set; }
         public string? Description { get; set; }
         public DateTime DateEntry { get; set; }
         public DateTime? DeliveryDate { get; set; }
-        public int IdStatus { get; set; }
         public string? VehicleSerialNumber { get; set; }
         public Vehicle? Vehicle { get; set; }
         public int ServiceTypeId { get; set; }
