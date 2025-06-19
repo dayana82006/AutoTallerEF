@@ -14,6 +14,11 @@ namespace Domain.Entities
         public VehicleModel? Model { get; set; }
         public int ClientId { get; set; }
         public Client? Client { get; set; }
-        public List<ServiceOrder>? ServiceOrders { get; set; } = new List<ServiceOrder>(); 
+        public int FuelTypeId { get; set; }
+        public FuelType? FuelType { get; set; }
+        public int VehicleTypeId { get; set; }
+        public VehicleType? vehicleType { get; set; }
+        public List<ServiceOrder>? ServiceOrders { get; set; } = new List<ServiceOrder>();
+        public List<VehicleAnormalityDetail>? VehicleAnormalityDetails { get; set; } = new List<VehicleAnormalityDetail>();
     }
 }
