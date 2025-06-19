@@ -21,18 +21,23 @@ public class PublicDbContext : DbContext
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<Vehicle> Vehicles { get; set; }
     public DbSet<VehicleModel> VehicleModels { get; set; }
-
+    public DbSet<VehicleAnormality> VehicleAnormalities { get; set; }
+    public DbSet<VehicleAnormalityDetail> VehicleAnormalityDetails { get; set; }
+    public DbSet<FuelType> FuelTypes { get; set; }
+    public DbSet<VehicleType> VehicleTypes { get; set; }
+    public DbSet<Specialty> Specialties { get; set; }
+    public DbSet<UserSpecialty> UserSpecialties { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-          foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            foreach (var property in entityType.GetProperties().Where(p => p.ClrType == typeof(DateTime)))
             {
-                foreach (var property in entityType.GetProperties().Where(p => p.ClrType == typeof(DateTime)))
-                {
-                    property.SetColumnType("timestamp with time zone");
-                }
+                property.SetColumnType("timestamp with time zone");
             }
+        }
 
     }
 }
