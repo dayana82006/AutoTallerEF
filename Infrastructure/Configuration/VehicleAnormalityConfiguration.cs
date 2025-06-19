@@ -23,7 +23,9 @@ public class VehicleAnormalityConfiguration : IEntityTypeConfiguration<VehicleAn
             .HasColumnName("name")
             .HasMaxLength(100)
             .IsRequired();
-
+        builder.Property(e => e.EntryDate)
+            .HasColumnName("entry_date")
+            .HasDefaultValueSql("NOW()");
         builder.HasIndex(va => va.Name)
             .IsUnique();
     }

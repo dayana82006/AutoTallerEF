@@ -9,6 +9,7 @@ public class VehicleAnormality
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
+    public DateTime EntryDate { get; set; }
     public ICollection<VehicleAnormalityDetail>? VehicleAnormalityDetails { get; set; }
 }
 }
