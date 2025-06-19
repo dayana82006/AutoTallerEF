@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { AdminRoutingModule } from './admin-routing-module';
+import { MecanicoRoutingModule } from './mecanico-routing-module';
 import { NavbarComponent } from './components/navbar/navbar';
 
 
@@ -11,7 +11,7 @@ import { NavbarComponent } from './components/navbar/navbar';
   ],
   imports: [
     CommonModule,
-    AdminRoutingModule
+    MecanicoRoutingModule
   ]
 })
-export class AdminModule { }
+export class MecanicoModule { }
