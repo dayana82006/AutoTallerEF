@@ -6,7 +6,7 @@ using Domain.Entities;
 
 namespace Application.Interfaces
 {
-    public interface IVehicleAnormalityDetail:IGenericRepository<VehicleAnormalityDetail>
+    public interface IUserSpecialtyRepository:IGenericRepository<UserSpecialty>
     {
         
     }
