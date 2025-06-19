@@ -48,6 +48,11 @@ public class ServiceOrderConfiguration : IEntityTypeConfiguration<ServiceOrder>
             .HasColumnName("date_entry")
             .HasColumnType("timestamp")
             .IsRequired();
+        
+        builder.Property(st => st.UnitPrice)
+            .HasColumnName("unit_price")
+            .HasColumnType("decimal(10,2)")
+            .IsRequired();
 
         builder.Property(so => so.DeliveryDate)
             .HasColumnName("delivery_date")

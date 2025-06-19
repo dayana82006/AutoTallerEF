@@ -27,10 +27,7 @@ public class ServiceTypeConfiguration : IEntityTypeConfiguration<ServiceType>
         builder.HasIndex(st => st.Description)
             .IsUnique();
 
-        builder.Property(st => st.UnitPrice)
-            .HasColumnName("unit_price")
-            .HasColumnType("decimal(10,2)")
-            .IsRequired();
+
 
         builder.HasMany(st => st.ServiceOrders)
             .WithOne(so => so.ServiceType)

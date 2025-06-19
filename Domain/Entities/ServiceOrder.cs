@@ -13,6 +13,7 @@ namespace Domain.Entities
         public DateTime? DeliveryDate { get; set; }
         public bool ApprovedByClient { get; set; }
         public string? VehicleSerialNumber { get; set; }
+        public int UnitPrice { get; set; }
         public Vehicle? Vehicle { get; set; }
         public int ServiceTypeId { get; set; }
         public ServiceType? ServiceType { get; set; }
