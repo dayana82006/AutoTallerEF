@@ -11,7 +11,7 @@ namespace Infrastructure.Configuration
 
 public class UserMemberConfiguration : BaseEntityConfiguration<UserMember>
 {
-    public void Configure(EntityTypeBuilder<UserMember> builder)
+    public override void Configure(EntityTypeBuilder<UserMember> builder)
     {
         builder.ToTable("user_member");
 
@@ -33,6 +33,11 @@ public class UserMemberConfiguration : BaseEntityConfiguration<UserMember>
         builder.Property(um => um.Email)
             .HasColumnName("email")
             .HasMaxLength(100)
+            .IsRequired();
+
+        builder.Property(um => um.Username)
+            .HasColumnName("username")
+            .HasMaxLength(150)
             .IsRequired();
 
         builder.HasIndex(um => um.Email)
