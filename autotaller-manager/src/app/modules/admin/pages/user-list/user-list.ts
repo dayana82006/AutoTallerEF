@@ -40,9 +40,12 @@ export class UserListComponent implements OnInit {
     this.page = newPage;
     this.loadUsers();
   }
-  deleteUser(id: number): void {
-  this.users = this.users.filter(user => user.id !== id);
-  this.total = this.users.length;
-}
 
+  deleteUser(id: number): void {
+    if (confirm('¿Estás segura de eliminar este usuario?')) {
+      this.userService.deleteUser(id).subscribe(() => {
+        this.loadUsers();
+      });
+    }
+  }
 }
