@@ -9,9 +9,9 @@ using Domain.Entities;
 namespace Infrastructure.Configuration
 {
 
-public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
+public class VehicleConfiguration : BaseEntityConfiguration<Vehicle>
 {
-    public void Configure(EntityTypeBuilder<Vehicle> builder)
+    public override void Configure(EntityTypeBuilder<Vehicle> builder)
     {
         builder.ToTable("vehicles");
 

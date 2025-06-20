@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Vehicle
+    public class Vehicle: BaseEntity
     {
         public string? SerialNumber { get; set; }
         public int ReleaseYear { get; set; }

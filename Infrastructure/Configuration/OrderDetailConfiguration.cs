@@ -8,9 +8,10 @@ using Domain.Entities;
 
 namespace Infrastructure.Configuration
 {
-public class OrderDetailConfiguration : IEntityTypeConfiguration<OrderDetail>
+public class OrderDetailConfiguration : BaseEntityConfiguration<OrderDetail>
 {
-    public void Configure(EntityTypeBuilder<OrderDetail> builder)
+    public override void  Configure(EntityTypeBuilder<OrderDetail> builder)
+
     {
         builder.ToTable("order_details");
 

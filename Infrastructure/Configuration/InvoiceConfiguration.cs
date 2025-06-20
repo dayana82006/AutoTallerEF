@@ -8,9 +8,9 @@ using Domain.Entities;
 
 namespace Infrastructure.Configuration
 {
-public class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
+public class InvoiceConfiguration : BaseEntityConfiguration<Invoice>
 {
-    public void Configure(EntityTypeBuilder<Invoice> builder)
+    public override void Configure(EntityTypeBuilder<Invoice> builder)
     {
         builder.ToTable("invoices");
 

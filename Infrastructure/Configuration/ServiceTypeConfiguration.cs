@@ -8,9 +8,9 @@ using Domain.Entities;
 
 namespace Infrastructure.Configuration
 {
-public class ServiceTypeConfiguration : IEntityTypeConfiguration<ServiceType>
+public class ServiceTypeConfiguration : BaseEntityConfiguration<ServiceType>
 {
-    public void Configure(EntityTypeBuilder<ServiceType> builder)
+    public override void Configure(EntityTypeBuilder<ServiceType> builder)
     {
         builder.ToTable("service_type");
 

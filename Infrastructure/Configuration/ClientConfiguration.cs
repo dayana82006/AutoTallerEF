@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Configuration
 {
-public class ClientConfiguration : IEntityTypeConfiguration<Client>
+public class ClientConfiguration : BaseEntityConfiguration<Client>
 {
-    public void Configure(EntityTypeBuilder<Client> builder)
+    public override void Configure(EntityTypeBuilder<Client> builder)
     {
         builder.ToTable("clients");
 

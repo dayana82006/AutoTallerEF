@@ -8,9 +8,9 @@ using Domain.Entities;
 
 namespace Infrastructure.Configuration
 {
-public class ServiceOrderConfiguration : IEntityTypeConfiguration<ServiceOrder>
+public class ServiceOrderConfiguration : BaseEntityConfiguration<ServiceOrder>
 {
-    public void Configure(EntityTypeBuilder<ServiceOrder> builder)
+    public override void Configure(EntityTypeBuilder<ServiceOrder> builder)
     {
         builder.ToTable("service_order");
 
