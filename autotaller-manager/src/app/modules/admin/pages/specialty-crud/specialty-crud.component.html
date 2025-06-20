@@ -1,9 +1,9 @@
-<div class="container py-5" style="max-width: 600px; margin-top: 80px;">
+<div class="container py-5" #formSection style="max-width: 600px; margin-top: 80px;">
   <h2 class="mb-4 text-white">
     {{ editMode ? 'Editar Especialidad' : 'Nueva Especialidad' }}
   </h2>
 
-  <form (ngSubmit)="save()">
+  <form #form="ngForm" (ngSubmit)="save()">
     <div class="mb-3">
       <label class="form-label text-white">Nombre de la especialidad</label>
       <input
@@ -13,11 +13,16 @@
         [(ngModel)]="newSpecialty.name"
         name="name"
         required
+        minlength="3"
+        #nameInput="ngModel"
       />
+      <div *ngIf="nameInput.invalid && nameInput.touched" class="text-danger mt-1">
+        El nombre es obligatorio y debe tener al menos 3 caracteres.
+      </div>
     </div>
 
     <div class="d-flex justify-content-between mt-4">
-      <button type="submit" class="btn btn-primary">
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
         {{ editMode ? 'Actualizar' : 'Crear' }}
       </button>
       <button type="button" class="btn btn-secondary" (click)="cancel()" *ngIf="editMode">Cancelar</button>
