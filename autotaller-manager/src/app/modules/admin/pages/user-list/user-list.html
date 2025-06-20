@@ -1,7 +1,7 @@
 <div class="container py-4" style="margin-top: 70px">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="text-white title">Gestión de Usuarios</h2>
-    <!-- USAR <a> en vez de <button> para navegación -->
+    
     <a class="btn btn-primary subtitle" href="/admin/usuarios/new">Añadir usuario</a>
   </div>
 
@@ -51,7 +51,6 @@
           </td>
 
           <td>
-            <!-- ENLACES PARA EDITAR Y ELIMINAR -->
             <a class="btn btn-sm btn-outline-light me-2" [attr.href]="'/admin/usuarios/edit/' + user.id">Edit</a>
             <button class="btn btn-sm btn-outline-danger" (click)="deleteUser(user.id)">Delete</button>
           </td>
