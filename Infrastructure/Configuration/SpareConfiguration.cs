@@ -8,9 +8,9 @@ using Domain.Entities;
 
 namespace Infrastructure.Configuration
 {
-public class SpareConfiguration : IEntityTypeConfiguration<Spare>
+public class SpareConfiguration : BaseEntityConfiguration<Spare>
 {
-    public void Configure(EntityTypeBuilder<Spare> builder)
+    public override void Configure(EntityTypeBuilder<Spare> builder)
     {
         builder.ToTable("spares");
 

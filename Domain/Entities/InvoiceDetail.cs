@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class InvoiceDetail
+    public class InvoiceDetail: BaseEntity
     {
         public int Id { get; set; }
         public int InvoiceId { get; set; }

@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Configuration
 {
-public class SpecialtyConfiguration : IEntityTypeConfiguration<Specialty>
+public class SpecialtyConfiguration : BaseEntityConfiguration<Specialty>
 {
-    public void Configure(EntityTypeBuilder<Specialty> builder)
+    public override void Configure(EntityTypeBuilder<Specialty> builder)
     {
         builder.ToTable("specialties");
 

@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Configuration
 {
-    public class BrandConfiguration: IEntityTypeConfiguration<Brand>
+    public class BrandConfiguration: BaseEntityConfiguration<Brand>
     {
-            public void Configure(EntityTypeBuilder<Brand> builder)
+            public override void Configure(EntityTypeBuilder<Brand> builder)
     {
         builder.ToTable("brands");
 

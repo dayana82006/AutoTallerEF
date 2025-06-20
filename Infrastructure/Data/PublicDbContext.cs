@@ -39,5 +39,48 @@ public class PublicDbContext : DbContext
             }
         }
 
+
+
     }
+    public override int SaveChanges()
+{
+    var entries = ChangeTracker.Entries<BaseEntity>();
+    var utcNow = DateTime.UtcNow;
+
+    foreach (var entry in entries)
+    {
+        if (entry.State == EntityState.Added)
+        {
+            entry.Entity.CreatedAt = utcNow;
+        }
+
+        if (entry.State == EntityState.Modified)
+        {
+            entry.Entity.UpdatedAt = utcNow;
+        }
+    }
+
+    return base.SaveChanges();
+}
+public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+{
+    var entries = ChangeTracker.Entries<BaseEntity>();
+    var utcNow = DateTime.UtcNow;
+
+    foreach (var entry in entries)
+    {
+        if (entry.State == EntityState.Added)
+        {
+            entry.Entity.CreatedAt = utcNow;
+        }
+
+        if (entry.State == EntityState.Modified)
+        {
+            entry.Entity.UpdatedAt = utcNow;
+        }
+    }
+
+    return await base.SaveChangesAsync(cancellationToken);
+}
+
 }
