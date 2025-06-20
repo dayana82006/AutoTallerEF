@@ -15,14 +15,14 @@ export class SpecialtyCrudComponent implements OnInit {
 
   constructor(private specialtyService: MockSpecialtyService) {}
 search: string = '';
-allSpecialties: Specialty[] = []; // copia completa sin filtrar
+allSpecialties: Specialty[] = [];
 
 
 
 loadSpecialties() {
   this.specialtyService.getAll().subscribe(data => {
     this.specialties = data;
-    this.allSpecialties = [...data]; // guardamos todo para filtrar
+    this.allSpecialties = [...data]; 
   });
 }
 
