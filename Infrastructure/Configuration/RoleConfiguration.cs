@@ -8,9 +8,9 @@ using Domain.Entities;
 
 namespace Infrastructure.Configuration
 {
-public class RoleConfiguration : IEntityTypeConfiguration<Role>
+public class RoleConfiguration : BaseEntityConfiguration<Role>
 {
-    public void Configure(EntityTypeBuilder<Role> builder)
+    public override void Configure(EntityTypeBuilder<Role> builder)
     {
         builder.ToTable("roles");
 

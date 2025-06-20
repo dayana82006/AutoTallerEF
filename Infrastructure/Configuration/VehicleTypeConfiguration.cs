@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Configuration
 {
-public class VehicleTypeConfiguration : IEntityTypeConfiguration<VehicleType>
+public class VehicleTypeConfiguration : BaseEntityConfiguration<VehicleType>
 {
-    public void Configure(EntityTypeBuilder<VehicleType> builder)
+    public override void Configure(EntityTypeBuilder<VehicleType> builder)
     {
         builder.ToTable("vehicle_type");
 

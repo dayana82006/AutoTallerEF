@@ -8,9 +8,9 @@ using Domain.Entities;
 
 namespace Infrastructure.Configuration
 {
-public class ServiceStatusConfiguration : IEntityTypeConfiguration<ServiceStatus>
+public class ServiceStatusConfiguration : BaseEntityConfiguration<ServiceStatus>
 {
-    public void Configure(EntityTypeBuilder<ServiceStatus> builder)
+    public override void Configure(EntityTypeBuilder<ServiceStatus> builder)
     {
         builder.ToTable("service_status");
 

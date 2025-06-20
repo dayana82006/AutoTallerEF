@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Configuration
 {
-    public class FuelTypeConfiguration : IEntityTypeConfiguration<FuelType>
+    public class FuelTypeConfiguration : BaseEntityConfiguration<FuelType>
     {
-        public void Configure(EntityTypeBuilder<FuelType> builder)
+        public override void Configure(EntityTypeBuilder<FuelType> builder)
         {
             builder.ToTable("fuel_type");
 

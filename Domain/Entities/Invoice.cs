@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Invoice
+    public class Invoice: BaseEntity
     {
         public int Id { get; set; }
         public decimal TotalSpares { get; set; }

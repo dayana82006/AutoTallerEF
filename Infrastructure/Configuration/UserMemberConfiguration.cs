@@ -9,7 +9,7 @@ using Domain.Entities;
 namespace Infrastructure.Configuration
 {
 
-public class UserMemberConfiguration : IEntityTypeConfiguration<UserMember>
+public class UserMemberConfiguration : BaseEntityConfiguration<UserMember>
 {
     public void Configure(EntityTypeBuilder<UserMember> builder)
     {
