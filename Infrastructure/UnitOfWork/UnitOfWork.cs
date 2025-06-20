@@ -7,49 +7,256 @@ using Infrastructure.Data;
 
 namespace Infrastructure.UnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork, IDisposable
+    public class UnitOfWork// : IUnitOfWork, IDisposable
     {
         private readonly PublicDbContext _context;
+        private IBrandRepository _brand;
+        private IClientRepository _client;
+        private IFuelTypeRepository _fuelType;
+        private IInvoiceDetailRepository _invoiceDetail;
+        private IInvoiceRepository _invoice;
+        private IOrderDetailRepository _orderDetail;
+        private IRoleRepository _roleRepository;
+        private IServiceOrderRepository _serviceOrder;
+        private IServiceStatusRepository _serviceStatus;
+        private ISpareRepostiroy _spare;
+        private ISpecialtyRepository _specialty;
+        private IUserMemberRepository _userMember;
+        private IUserRoleRepository _userRole;
+        private IUserSpecialtyRepository _userSpecialty;
+        private IVehicleAnormalityDetailRepository _vehicleAnormalityDetail;
+        private IVehicleAnormalityRepository _vehicleAnormality;
+        private IVehicleModelRepository _vehicleModel;
+        private IVehicleRepository _vehicle;
+        private IVehicleTypeRepository  _vehicleType;
 
-        public IBrandRepository Brand => throw new NotImplementedException();
+// public IBrandRepository Brand
+// {
+//     get
+//     {
+//         if (_brand == null)
+//         {
+//             _brand = new BrandRepository(_context);
+//         }
+//         return _brand;
+//     }
+// }
 
-        public IClientRepository Client => throw new NotImplementedException();
+// public IClientRepository Client
+// {
+//     get
+//     {
+//         if (_client == null)
+//         {
+//             _client = new ClientRepository(_context);
+//         }
+//         return _client;
+//     }
+// }
 
-        public IFuelTypeRepository FuelType => throw new NotImplementedException();
+// public IFuelTypeRepository FuelType
+// {
+//     get
+//     {
+//         if (_fuelType == null)
+//         {
+//             _fuelType = new FuelTypeRepository(_context);
+//         }
+//         return _fuelType;
+//     }
+// }
 
-        public IInvoiceDetailRepository InvoiceDetail => throw new NotImplementedException();
+// public IInvoiceDetailRepository InvoiceDetail
+// {
+//     get
+//     {
+//         if (_invoiceDetail == null)
+//         {
+//             _invoiceDetail = new InvoiceDetailRepository(_context);
+//         }
+//         return _invoiceDetail;
+//     }
+// }
 
-        public IInvoiceRepository Invoice => throw new NotImplementedException();
+// public IInvoiceRepository Invoice
+// {
+//     get
+//     {
+//         if (_invoice == null)
+//         {
+//             _invoice = new InvoiceRepository(_context);
+//         }
+//         return _invoice;
+//     }
+// }
 
-        public IOrderDetailRepository OrderDetail => throw new NotImplementedException();
+// public IOrderDetailRepository OrderDetail
+// {
+//     get
+//     {
+//         if (_orderDetail == null)
+//         {
+//             _orderDetail = new OrderDetailRepository(_context);
+//         }
+//         return _orderDetail;
+//     }
+// }
 
-        public IRoleRepository Role => throw new NotImplementedException();
+// public IRoleRepository RoleRepository
+// {
+//     get
+//     {
+//         if (_roleRepository == null)
+//         {
+//             _roleRepository = new RoleRepository(_context);
+//         }
+//         return _roleRepository;
+//     }
+// }
 
-        public IServiceOrderRepository ServiceOrder => throw new NotImplementedException();
+// public IServiceOrderRepository ServiceOrder
+// {
+//     get
+//     {
+//         if (_serviceOrder == null)
+//         {
+//             _serviceOrder = new ServiceOrderRepository(_context);
+//         }
+//         return _serviceOrder;
+//     }
+// }
 
-        public IServiceStatusRepository ServiceStatus => throw new NotImplementedException();
+// public IServiceStatusRepository ServiceStatus
+// {
+//     get
+//     {
+//         if (_serviceStatus == null)
+//         {
+//             _serviceStatus = new ServiceStatusRepository(_context);
+//         }
+//         return _serviceStatus;
+//     }
+// }
 
-        public IServiceTypeRepository ServiceType => throw new NotImplementedException();
+// public ISpareRepostiroy Spare
+// {
+//     get
+//     {
+//         if (_spare == null)
+//         {
+//             _spare = new SpareRepostiroy(_context);
+//         }
+//         return _spare;
+//     }
+// }
 
-        public ISpareRepostiroy Spare => throw new NotImplementedException();
+// public ISpecialtyRepository Specialty
+// {
+//     get
+//     {
+//         if (_specialty == null)
+//         {
+//             _specialty = new SpecialtyRepository(_context);
+//         }
+//         return _specialty;
+//     }
+// }
 
-        public ISpecialtyRepository Specialty => throw new NotImplementedException();
+// public IUserMemberRepository UserMember
+// {
+//     get
+//     {
+//         if (_userMember == null)
+//         {
+//             _userMember = new UserMemberRepository(_context);
+//         }
+//         return _userMember;
+//     }
+// }
 
-        public IUserMemberRepository UserMeber => throw new NotImplementedException();
+// public IUserRoleRepository UserRole
+// {
+//     get
+//     {
+//         if (_userRole == null)
+//         {
+//             _userRole = new UserRoleRepository(_context);
+//         }
+//         return _userRole;
+//     }
+// }
 
-        public IUserRoleRepository UserRole => throw new NotImplementedException();
+// public IUserSpecialtyRepository UserSpecialty
+// {
+//     get
+//     {
+//         if (_userSpecialty == null)
+//         {
+//             _userSpecialty = new UserSpecialtyRepository(_context);
+//         }
+//         return _userSpecialty;
+//     }
+// }
 
-        public IUserSpecialtyRepository UserSpecialty => throw new NotImplementedException();
+// public IVehicleAnormalityDetailRepository VehicleAnormalityDetail
+// {
+//     get
+//     {
+//         if (_vehicleAnormalityDetail == null)
+//         {
+//             _vehicleAnormalityDetail = new VehicleAnormalityDetailRepository(_context);
+//         }
+//         return _vehicleAnormalityDetail;
+//     }
+// }
 
-        public IVehicleAnormalityDetailRepository VehicleAnormalityDetail => throw new NotImplementedException();
+// public IVehicleAnormalityRepository VehicleAnormality
+// {
+//     get
+//     {
+//         if (_vehicleAnormality == null)
+//         {
+//             _vehicleAnormality = new VehicleAnormalityRepository(_context);
+//         }
+//         return _vehicleAnormality;
+//     }
+// }
 
-        public IVehicleAnormalityRepository VehicleAnormality => throw new NotImplementedException();
+// public IVehicleModelRepository VehicleModel
+// {
+//     get
+//     {
+//         if (_vehicleModel == null)
+//         {
+//             _vehicleModel = new VehicleModelRepository(_context);
+//         }
+//         return _vehicleModel;
+//     }
+// }
 
-        public IVehicleModelRepository VehicleModel => throw new NotImplementedException();
+// public IVehicleRepository Vehicle
+// {
+//     get
+//     {
+//         if (_vehicle == null)
+//         {
+//             _vehicle = new VehicleRepository(_context);
+//         }
+//         return _vehicle;
+//     }
+// }
 
-        public IVehicleRepository Vehicle => throw new NotImplementedException();
-
-        public IVehicleTypeRepository VehicleType => throw new NotImplementedException();
+// public IVehicleTypeRepository VehicleType
+// {
+//     get
+//     {
+//         if (_vehicleType == null)
+//         {
+//             _vehicleType = new VehicleTypeRepository(_context);
+//         }
+//         return _vehicleType;
+//     }
+// }
 
         public void Dispose()
         {
