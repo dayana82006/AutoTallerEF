@@ -1,0 +1,48 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MockUserService } from '../../services/mock-user.service';
+import { UserMember } from '../../../../models/user-member.model';
+
+@Component({
+  selector: 'app-user-list',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './user-list.html',
+  styleUrls: ['./user-list.scss']
+})
+export class UserListComponent implements OnInit {
+  users: UserMember[] = [];
+  total = 0;
+  page = 1;
+  pageSize = 5;
+  search = '';
+
+  constructor(private userService: MockUserService) {}
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    this.userService.getUsers(this.search, this.page, this.pageSize).subscribe(res => {
+      this.users = res.users;
+      this.total = res.total;
+    });
+  }
+
+  onSearchChange(): void {
+    this.page = 1;
+    this.loadUsers();
+  }
+
+  onPageChange(newPage: number): void {
+    this.page = newPage;
+    this.loadUsers();
+  }
+  deleteUser(id: number): void {
+  this.users = this.users.filter(user => user.id !== id);
+  this.total = this.users.length;
+}
+
+}
