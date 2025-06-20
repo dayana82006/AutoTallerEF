@@ -19,7 +19,7 @@ namespace Application.Interfaces
         IServiceTypeRepository ServiceType { get; }
         ISpareRepostiroy Spare { get; }
         ISpecialtyRepository Specialty { get; }
-        IUserMemberRepository UserMeber { get; }
+        IUserMemberRepository UserMember { get; }
         IUserRoleRepository UserRole { get; }
         IUserSpecialtyRepository UserSpecialty { get; }
         IVehicleAnormalityDetailRepository VehicleAnormalityDetail { get; }
