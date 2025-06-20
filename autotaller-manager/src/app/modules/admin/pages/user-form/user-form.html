@@ -1,0 +1,52 @@
+<div class="container py-5" style="max-width: 600px; margin-top: 80px;">
+  <h2 class="mb-4 text-white">
+    {{ isEditMode ? 'Editar Usuario' : 'Nuevo Usuario' }}
+  </h2>
+
+  <form (ngSubmit)="saveUser()">
+    <div class="mb-3">
+      <label class="form-label text-white">Nombre</label>
+      <input class="form-control" [(ngModel)]="user.name" name="name" required />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label text-white">Apellido</label>
+      <input class="form-control" [(ngModel)]="user.lastname" name="lastname" required />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label text-white">Correo</label>
+      <input type="email" class="form-control" [(ngModel)]="user.email" name="email" required />
+    </div>
+
+   <div class="mb-3">
+  <label for="role" class="form-label">Rol</label>
+  <select [(ngModel)]="user.role" class="form-select" name="role" id="role">
+    <option value="Admin">Administrador</option>
+    <option value="Recepcionista">Recepcionista</option>
+    <option value="Mecánico">Mecánico</option>
+  </select>
+</div>
+
+<div class="mb-3" *ngIf="user.role === 'Mecánico'">
+  <label class="form-label text-white">Especialidades</label>
+  <div class="form-check" *ngFor="let spec of availableSpecialties">
+    <input
+      type="checkbox"
+      class="form-check-input"
+      [id]="spec"
+      [checked]="user.specialties.includes(spec)"
+      (change)="toggleSpecialty(spec)"
+    />
+    <label class="form-check-label text-white" [for]="spec">{{ spec }}</label>
+  </div>
+</div>
+
+
+
+    <div class="d-flex justify-content-between mt-4">
+      <button class="btn btn-primary" type="submit">Guardar</button>
+      <button class="btn btn-secondary" type="button" (click)="cancel()">Cancelar</button>
+    </div>
+  </form>
+</div>

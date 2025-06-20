@@ -7,8 +7,8 @@ import { AuthRequest } from '../../../../models/auth-request.model';
 
 @Component({
   selector: 'app-login',
-  standalone: true, // ✅ Ya que Angular lo detecta como standalone, hagámoslo oficial
-  imports: [CommonModule, FormsModule], // ✅ Imports necesarios para standalone
+  standalone: true, 
+  imports: [CommonModule, FormsModule], 
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })

@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar';
 
 const routes: Routes = [
-  { path: '', component: NavbarComponent } // al ir a /admin
+  { path: '', component: NavbarComponent } 
 ];
 
 @NgModule({

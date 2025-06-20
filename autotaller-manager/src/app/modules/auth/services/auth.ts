@@ -50,7 +50,7 @@ export class AuthService {
         role: user.role
       };
 
-      return of(response).pipe(delay(1000)); // simula retardo de 1s
+      return of(response).pipe(delay(1000)); 
     } else {
       return throwError(() => new Error('Credenciales inválidas'));
     }
