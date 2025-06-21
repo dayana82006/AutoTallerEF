@@ -1,4 +1,3 @@
-<!-- FORMULARIO (solo visible cuando showForm = true) -->
 <app-client-form
   *ngIf="showForm"
   [clientToEdit]="selectedClient || undefined"
@@ -6,7 +5,6 @@
   (cancelForm)="cancelForm()"
 ></app-client-form>
 
-<!-- LISTADO (solo visible cuando showForm = false) -->
 <div *ngIf="!showForm" class="container py-4" style="margin-top: 70px">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="text-white title">Gestión de Clientes</h2>
