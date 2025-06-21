@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-navbar',
-  standalone: false,
-  templateUrl: './navbar.html',
-  styleUrl: './navbar.scss'
+  selector: 'app-admin-navbar',
+  standalone: true,
+  templateUrl: './navbar.component.html',
 })
-export class NavbarComponent {
-
-}
+export class AdminNavbarComponent {}

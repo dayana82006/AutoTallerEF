@@ -2,17 +2,17 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminRoutingModule } from './admin-routing-module';
-import { NavbarComponent } from './components/navbar/navbar';
+import { AdminNavbarComponent } from '../admin/components/navbar/navbar';
 import { UserListComponent } from './pages/user-list/user-list';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout';
 
 @NgModule({
   declarations: [
-    NavbarComponent,
-    AdminLayoutComponent,
-
+    
   ],
   imports: [
+    AdminLayoutComponent,
+    AdminNavbarComponent,
     CommonModule,
     AdminRoutingModule,
     UserListComponent,
