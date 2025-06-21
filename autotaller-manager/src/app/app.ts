@@ -1,14 +1,23 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AdminNavbarComponent } from './modules/admin/components/navbar/navbar';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
-
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule, NavbarComponent],
+  imports: [RouterModule, AdminNavbarComponent, NavbarComponent, CommonModule],
   template: `
-    <app-navbar></app-navbar>
+    <app-admin-navbar *ngIf="isAdminRoute()"></app-admin-navbar>
+    <app-navbar *ngIf="!isAdminRoute()"></app-navbar>
+
     <router-outlet></router-outlet>
   `
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor(private router: Router) {}
+
+  isAdminRoute(): boolean {
+    return this.router.url.startsWith('/admin');
+  }
+}

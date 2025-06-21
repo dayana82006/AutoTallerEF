@@ -12,23 +12,17 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./modules/admin/admin-module').then(m => m.AdminModule)
   },
-
   {
     path: 'mecanico',
     loadChildren: () =>
       import('./modules/mecanico/mecanico-module').then(m => m.MecanicoModule)
   },
-
   {
     path: 'recepcionista',
     loadChildren: () =>
       import('./modules/recepcionista/recepcionista-module').then(m => m.RecepcionistaModule)
   },
-  {
-    path: 'clientes',
-    loadComponent: () =>
-      import('../app/modules/admin/client/pages/client-list/client-list.component').then(m => m.ClientListComponent)
-  },
+
 
   { path: '**', redirectTo: '' }
 ];
