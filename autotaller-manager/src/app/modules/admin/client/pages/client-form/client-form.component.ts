@@ -13,6 +13,7 @@ import { MockClientService } from '../../../../../core/services/mock-client';
 export class ClientFormComponent implements OnInit {
   @Input() clientToEdit?: Client;
   @Output() formSubmitted = new EventEmitter<void>();
+  @Output() cancelForm = new EventEmitter<void>();
 
   client: Client = { id: 0, name: '', lastname: '', telephone: '', email: '' };
   editMode = false;
