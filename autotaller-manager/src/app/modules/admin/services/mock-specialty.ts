@@ -14,7 +14,7 @@ export class MockSpecialtyService {
   ];
 
   getAll(): Observable<Specialty[]> {
-    return of([...this.specialties]).pipe(delay(300)); // ⏱️ simula API y evita mutación externa
+    return of([...this.specialties]).pipe(delay(300)); 
   }
 
   getById(id: number): Observable<Specialty | undefined> {
@@ -36,10 +36,10 @@ create(specialty: Specialty): Observable<Specialty> {
   update(id: number, specialty: Specialty): Observable<Specialty> {
     const index = this.specialties.findIndex(s => s.id === id);
     if (index > -1) {
-      this.specialties[index] = { ...specialty, id }; // asegura mantener el ID
+      this.specialties[index] = { ...specialty, id }; 
       return of(this.specialties[index]).pipe(delay(300));
     }
-    return of(specialty).pipe(delay(300)); // fallback si no se encuentra
+    return of(specialty).pipe(delay(300)); 
   }
 
   delete(id: number): Observable<void> {

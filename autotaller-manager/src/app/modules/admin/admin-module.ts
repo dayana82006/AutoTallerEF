@@ -6,15 +6,11 @@ import { AdminNavbarComponent } from '../admin/components/navbar/navbar';
 
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout';
 import { UserListComponent } from './user/user-list/user-list';
-import { VehicleList } from './vehicles/vehicle-list/vehicle-list';
-import { VehicleForm } from './vehicles/vehicle-form/vehicle-form';
+import { VehicleListComponent } from './vehicles/vehicle-list/vehicle-list.component';
+import { VehicleFormComponent } from './vehicles/vehicle-form/vehicle-form.component';
 
 @NgModule({
   declarations: [
-    
-  
-    VehicleList,
-             VehicleForm
   ],
   imports: [
     AdminLayoutComponent,
@@ -22,7 +18,9 @@ import { VehicleForm } from './vehicles/vehicle-form/vehicle-form';
     CommonModule,
     AdminRoutingModule,
     UserListComponent,
-    FormsModule
+    FormsModule,
+    VehicleListComponent,
+    VehicleFormComponent
   ]
 })
 export class AdminModule { }
