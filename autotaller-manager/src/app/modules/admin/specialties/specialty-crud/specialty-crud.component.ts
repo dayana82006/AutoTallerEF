@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Specialty } from '../../../../models/specialty.model';
-import { MockSpecialtyService } from '../../../../core/services/mock-specialty';
+import { Specialty } from '../specialty.model';
+import { MockSpecialtyService } from '../mock-specialty';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 

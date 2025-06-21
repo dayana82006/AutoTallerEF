@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MockUserService } from '../../services/mock-user.service';
-import { UserMember } from '../../../../models/user-member.model';
+import { MockUserService } from '../mock-user.service';
+import { UserMember } from '../user-member.model';
 
 @Component({
   selector: 'app-user-form',

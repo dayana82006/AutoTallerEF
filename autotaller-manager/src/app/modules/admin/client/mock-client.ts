@@ -1,8 +1,7 @@
-// src/app/core/services/mock-client.service.ts
 import { Injectable } from '@angular/core';
-import { Client } from '../../../app/models/client-model';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
+import { Client } from './client-model';
 
 @Injectable({ providedIn: 'root' })
 export class MockClientService {
