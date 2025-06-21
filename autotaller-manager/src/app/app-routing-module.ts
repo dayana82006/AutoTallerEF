@@ -24,6 +24,11 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./modules/recepcionista/recepcionista-module').then(m => m.RecepcionistaModule)
   },
+  {
+    path: 'clientes',
+    loadComponent: () =>
+      import('../app/modules/admin/client/pages/client-list/client-list.component').then(m => m.ClientListComponent)
+  },
 
   { path: '**', redirectTo: '' }
 ];

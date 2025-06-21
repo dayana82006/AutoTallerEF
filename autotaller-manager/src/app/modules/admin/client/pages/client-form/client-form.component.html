@@ -1,0 +1,32 @@
+<div class="card mb-4">
+  <div class="card-header">
+    {{ editMode ? 'Editar Cliente' : 'Nuevo Cliente' }}
+  </div>
+  <div class="card-body">
+    <form #form="ngForm" (ngSubmit)="save()">
+      <div class="mb-3">
+        <label class="form-label">Nombre</label>
+        <input type="text" class="form-control" [(ngModel)]="client.name" name="name" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Apellido</label>
+        <input type="text" class="form-control" [(ngModel)]="client.lastname" name="lastname" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Teléfono</label>
+        <input type="tel" class="form-control" [(ngModel)]="client.telephone" name="telephone" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Correo</label>
+        <input type="email" class="form-control" [(ngModel)]="client.email" name="email" required />
+      </div>
+
+      <div class="d-flex justify-content-between">
+        <button type="submit" class="btn btn-success">
+          {{ editMode ? 'Actualizar' : 'Crear' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="cancel()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>

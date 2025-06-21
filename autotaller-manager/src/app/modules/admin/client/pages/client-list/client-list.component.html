@@ -1,0 +1,34 @@
+<div class="container mt-4">
+  <h2>Gestión de Clientes</h2>
+  <button class="btn btn-primary mb-3" (click)="newClient()">Nuevo Cliente</button>
+
+  <app-client-form
+    *ngIf="selectedClient !== undefined"
+    [clientToEdit]="selectedClient || undefined"
+    (formSubmitted)="onFormSubmit()">
+  </app-client-form>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nombre</th>
+        <th>Teléfono</th>
+        <th>Email</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let client of clients">
+        <td>{{ client.id }}</td>
+        <td>{{ client.name }} {{ client.lastname }}</td>
+        <td>{{ client.telephone }}</td>
+        <td>{{ client.email }}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-primary me-2" (click)="edit(client)">Editar</button>
+          <button class="btn btn-sm btn-outline-danger" (click)="delete(client.id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
