@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Client } from '../../client-model';
-import { MockClientService } from '../../mock-client';
+import { Client } from '../../models/client';
+import { MockClientService } from '../../services/mock-client';
 
 @Component({
   selector: 'app-client-form',

@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { Client } from "../../client-model";
-import { MockClientService } from "../../mock-client";
+import { Client } from "../../models/client";
+import { MockClientService } from "../../services/mock-client";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ClientFormComponent } from "../client-form/client-form.component";

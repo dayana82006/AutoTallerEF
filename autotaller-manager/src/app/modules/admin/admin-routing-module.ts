@@ -11,9 +11,9 @@ const routes: Routes = [
       { path: 'usuarios/edit/:id', loadComponent: () => import('../../modules/admin/user/user-form/user-form').then(m => m.UserFormComponent) },
       { path: 'usuarios/new', loadComponent: () => import('../../modules/admin/user/user-form/user-form').then(m => m.UserFormComponent) },
       { path: 'usuarios/especialidades', loadComponent: () => import('../../modules/admin/specialties/specialty-crud/specialty-crud.component').then(m => m.SpecialtyCrudComponent) },
-      { path: 'clientes', loadComponent: () => import('./client/pages/client-list/client-list.component').then(m => m.ClientListComponent) },
-      { path: 'clientes/edit/:id', loadComponent: () => import('./client/pages/client-form/client-form.component').then(m => m.ClientFormComponent) },
-      { path: 'clientes/new', loadComponent: () => import('./client/pages/client-form/client-form.component').then(m => m.ClientFormComponent) },
+      { path: 'clientes', loadComponent: () => import('../admin/client/client-list/client-list.component').then(m => m.ClientListComponent) },
+      { path: 'clientes/edit/:id', loadComponent: () => import('../admin/client/client-form/client-form.component').then(m => m.ClientFormComponent) },
+      { path: 'clientes/new', loadComponent: () => import('../admin/client/client-form/client-form.component').then(m => m.ClientFormComponent) },
 
       { path: '', redirectTo: 'usuarios', pathMatch: 'full' }
     ]

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { Specialty } from './specialty.model';
+import { Specialty } from '../models/specialty';
 
 @Injectable({
   providedIn: 'root'
