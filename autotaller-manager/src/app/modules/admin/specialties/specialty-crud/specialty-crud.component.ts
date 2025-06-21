@@ -77,7 +77,6 @@ export class SpecialtyCrudComponent implements OnInit {
     this.newSpecialty = { ...s };
     this.editMode = true;
 
-    // Hacer scroll al formulario
     setTimeout(() => {
       this.formSection?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 0);

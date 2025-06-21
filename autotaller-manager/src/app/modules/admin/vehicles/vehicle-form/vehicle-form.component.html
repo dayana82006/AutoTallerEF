@@ -1,0 +1,149 @@
+<div class="container py-5" style="max-width: 600px; margin-top: 80px">
+  <h2 class="mb-4 text-white">
+    {{ editMode ? "Editar Vehículo" : "Nuevo Vehículo" }}
+  </h2>
+
+  <form #vehicleForm="ngForm" (ngSubmit)="save()">
+    <div class="mb-3">
+      <label class="form-label text-white">Número de Serie *</label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="vehicle.serialNumber"
+        name="serialNumber"
+        #serialNumber="ngModel"
+        required
+        [class.is-invalid]="serialNumber.invalid && serialNumber.touched"
+      />
+      <div
+        class="invalid-feedback"
+        *ngIf="serialNumber.invalid && serialNumber.touched"
+      >
+        <div *ngIf="serialNumber.errors?.['required']">
+          Este campo es obligatorio
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label text-white">Año de Fabricación *</label>
+      <input
+        type="number"
+        class="form-control"
+        [(ngModel)]="vehicle.releaseYear"
+        name="releaseYear"
+        #releaseYear="ngModel"
+        required
+        min="1900"
+        max="2100"
+        [class.is-invalid]="releaseYear.invalid && releaseYear.touched"
+      />
+      <div
+        class="invalid-feedback"
+        *ngIf="releaseYear.invalid && releaseYear.touched"
+      >
+        <div *ngIf="releaseYear.errors?.['required']">
+          Este campo es obligatorio
+        </div>
+        <div *ngIf="releaseYear.errors?.['min'] || releaseYear.errors?.['max']">
+          Año inválido
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label text-white">Kilometraje *</label>
+      <input
+        type="number"
+        class="form-control"
+        [(ngModel)]="vehicle.km"
+        name="km"
+        #km="ngModel"
+        required
+        min="0"
+        [class.is-invalid]="km.invalid && km.touched"
+      />
+      <div class="invalid-feedback" *ngIf="km.invalid && km.touched">
+        <div *ngIf="km.errors?.['required']">Este campo es obligatorio</div>
+        <div *ngIf="km.errors?.['min']">Debe ser mayor o igual a 0</div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label text-white">Modelo *</label>
+      <select
+        class="form-select"
+        [(ngModel)]="vehicle.vehicleModelId"
+        name="vehicleModelId"
+        #vehicleModelId="ngModel"
+        required
+        [class.is-invalid]="vehicleModelId.invalid && vehicleModelId.touched"
+      >
+        <option [ngValue]="null" disabled>Seleccione un modelo</option>
+<option *ngFor="let model of vehicleModels; trackBy: trackById" [value]="model.id">
+  {{ model.name }}
+</option>      </select>
+      <div
+        class="invalid-feedback"
+        *ngIf="vehicleModelId.invalid && vehicleModelId.touched"
+      >
+        El modelo es requerido
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label text-white">Cliente *</label>
+      <select
+        class="form-select"
+        [(ngModel)]="vehicle.clientId"
+        name="clientId"
+        #clientId="ngModel"
+        required
+        [class.is-invalid]="clientId.invalid && clientId.touched"
+      >
+        <option [ngValue]="null" disabled>Seleccione un cliente</option>
+<option *ngFor="let client of clients" [value]="client.id">{{ client.name }} {{ client.lastname }}</option>
+      </select>
+      <div
+        class="invalid-feedback"
+        *ngIf="clientId.invalid && clientId.touched"
+      >
+        El cliente es requerido
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label text-white">Tipo de Combustible *</label>
+      <select
+        class="form-select"
+        [(ngModel)]="vehicle.fuelTypeId"
+        name="fuelTypeId"
+        #fuelTypeId="ngModel"
+        required
+        [class.is-invalid]="fuelTypeId.invalid && fuelTypeId.touched"
+      >
+<option [ngValue]="null" disabled>Seleccione un tipo</option>
+<option *ngFor="let fuel of fuelTypes" [value]="fuel.id">{{ fuel.name }}</option>
+      </select>
+      <div
+        class="invalid-feedback"
+        *ngIf="fuelTypeId.invalid && fuelTypeId.touched"
+      >
+        El tipo de combustible es requerido
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="vehicleForm.invalid"
+      >
+        {{ editMode ? "Actualizar" : "Crear" }} Vehículo
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="cancel()">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>

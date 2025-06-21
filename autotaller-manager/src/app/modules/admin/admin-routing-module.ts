@@ -14,7 +14,9 @@ const routes: Routes = [
       { path: 'clientes', loadComponent: () => import('../admin/client/client-list/client-list.component').then(m => m.ClientListComponent) },
       { path: 'clientes/edit/:id', loadComponent: () => import('../admin/client/client-form/client-form.component').then(m => m.ClientFormComponent) },
       { path: 'clientes/new', loadComponent: () => import('../admin/client/client-form/client-form.component').then(m => m.ClientFormComponent) },
-
+      { path: 'vehiculos', loadComponent: () => import('./vehicles/vehicle-list/vehicle-list.component').then(m => m.VehicleListComponent) },
+      { path: 'vehiculos/new', loadComponent: () => import('./vehicles/vehicle-form/vehicle-form.component').then(m => m.VehicleFormComponent) },
+      { path: 'vehiculos/edit/:id', loadComponent: () => import('./vehicles/vehicle-form/vehicle-form.component').then(m => m.VehicleFormComponent) },
       { path: '', redirectTo: 'usuarios', pathMatch: 'full' }
     ]
   }

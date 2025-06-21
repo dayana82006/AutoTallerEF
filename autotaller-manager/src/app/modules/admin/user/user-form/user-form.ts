@@ -25,7 +25,7 @@ export class UserFormComponent implements OnInit {
   editingId: number | null = null;
   isEditMode = false;
   availableRoles = ['Admin', 'Mecánico', 'Recepcionista'];
-  availableSpecialties: string[] = ['Motor', 'Electricidad', 'Suspensión', 'Frenos']; // Agregué 'Frenos' que tienes en mock data
+  availableSpecialties: string[] = ['Motor', 'Electricidad', 'Suspensión', 'Frenos'];  
 
   constructor(
     private route: ActivatedRoute,

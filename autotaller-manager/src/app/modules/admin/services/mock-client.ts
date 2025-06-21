@@ -30,4 +30,9 @@ export class MockClientService {
     this.clients = this.clients.filter(c => c.id !== id);
     return of(void 0).pipe(delay(300));
   }
+  
+    getClients(): Observable<Client[]> {
+    return of(this.clients).pipe(delay(300));
+  }
+
 }
