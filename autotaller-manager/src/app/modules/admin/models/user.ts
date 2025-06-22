@@ -8,4 +8,6 @@ export interface User {
     roleId: number;
     role: Role;
   }[];
-}
+    
+  createdAt?: Date;
+  updatedAt?: Date;}

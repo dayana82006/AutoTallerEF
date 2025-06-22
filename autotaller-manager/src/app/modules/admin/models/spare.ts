@@ -4,4 +4,6 @@ export interface Spare {
   description?: string;
   stockQuantity: number;
   unitPrice: number;
-}
+    
+  createdAt?: Date;
+  updatedAt?: Date;}

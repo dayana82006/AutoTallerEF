@@ -5,4 +5,6 @@ export interface UserMember {
   email: string;
   role: string;
   specialties: string[];
-}
+    
+  createdAt?: Date;
+  updatedAt?: Date;}

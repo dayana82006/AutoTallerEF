@@ -19,7 +19,8 @@ const routes: Routes = [
       { path: 'vehiculos/edit/:id', loadComponent: () => import('./vehicles/vehicle-form/vehicle-form.component').then(m => m.VehicleFormComponent) },
       { path: 'vehiculos/anormalidades', loadComponent: () => import('../admin/abnormalities/abnormalities-crud.component/abnormalities-crud.component').then(m => m.VehicleAnormalityCrudComponent) },
       { path: 'vehiculos/repuestos', loadComponent: () => import('../admin/spares/spares-crud.component/spares-crud.component').then(m => m.SparesCrudComponent) },
-      { path: 'servicios/tipos', loadComponent: () => import('../admin/servicesTaller/services-type-crud.component/services-type-crud.component').then(m=>m.ServiceTypesCrudComponent)}
+      { path: 'servicios/tipos', loadComponent: () => import('../admin/servicesTaller/services-type-crud.component/services-type-crud.component').then(m=>m.ServiceTypesCrudComponent)},
+      { path: '', loadComponent: () => import('../admin/admin-dashboard/admin-dashboard').then(m=>m.AdminDashboardComponent)}
     ]
   }
 ];

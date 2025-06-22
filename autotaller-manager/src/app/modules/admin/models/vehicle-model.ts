@@ -5,4 +5,6 @@ export interface VehicleModel {
   name: string;
   brandId: number;
   brand?: Brand;
-}
+    
+  createdAt?: Date;
+  updatedAt?: Date;}

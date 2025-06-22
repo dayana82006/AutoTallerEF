@@ -49,11 +49,17 @@ export class VehicleAnormalityCrudComponent implements OnInit {
     });
   }
 
-  loadDetails() {
-    this.detailService.getAll().subscribe(data => {
-      this.details = [...data];
-    });
-  }
+loadDetails() {
+  this.detailService.getAll().subscribe(data => {
+    this.details = data.map(d => ({
+      ...d,
+      createdAt: d.createdAt ? new Date(d.createdAt) : undefined,
+      updatedAt: d.updatedAt ? new Date(d.updatedAt) : undefined
+    }));
+  });
+}
+
+
 
   loadVehicles() {
     this.vehicleService.getVehicles().subscribe(data => {
@@ -67,7 +73,6 @@ export class VehicleAnormalityCrudComponent implements OnInit {
       a.name.toLowerCase().includes(term)
     );
   }
-
 save() {
   const trimmedName = this.newAnormality.name?.trim();
 
@@ -98,30 +103,55 @@ save() {
     const anormalityId = this.editMode ? this.newAnormality.id : createdOrUpdated.id;
 
     this.detailService.getAll().subscribe(existingDetails => {
-      const toDelete = existingDetails.filter(d => d.idAnormality === anormalityId);
-      const deleteRequests = toDelete.map(d => this.detailService.delete(d.id));
+      const currentDetails = existingDetails.filter(d => d.idAnormality === anormalityId);
 
-      forkJoin(deleteRequests.length ? deleteRequests : [of(true)]).subscribe(() => {
-        const createRequests = this.selectedSerials.map(serial => this.detailService.create({
+      const serialsToDelete = currentDetails
+        .filter(d => !this.selectedSerials.includes(d.serialNumber))
+        .map(d => d.id);
+
+      const serialsToAdd = this.selectedSerials.filter(serial =>
+        !currentDetails.some(d => d.serialNumber === serial)
+      );
+
+      const serialsToUpdate = currentDetails.filter(d =>
+        this.selectedSerials.includes(d.serialNumber)
+      );
+
+      const deleteRequests = serialsToDelete.map(id => this.detailService.delete(id));
+      const addRequests = serialsToAdd.map(serial =>
+        this.detailService.create({
           idAnormality: anormalityId,
           serialNumber: serial
-        }));
+        })
+      );
+      const updateRequests = serialsToUpdate.map(d =>
+        this.detailService.update(d.id, {
+          ...d,
+          updatedAt: new Date()
+        })
+      );
 
-        forkJoin(createRequests.length ? createRequests : [of(true)]).subscribe(() => {
-          this.anormalityService.getAll().subscribe(anorms => {
-            this.detailService.getAll().subscribe(dets => {
-              this.anormalities = [...anorms];
-              this.allAnormalities = [...anorms];
-              this.details = [...dets];
-              this.resetForm();
-            });
+      forkJoin([
+        ...deleteRequests,
+        ...addRequests,
+        ...updateRequests
+      ]).subscribe(() => {
+        this.anormalityService.getAll().subscribe(anorms => {
+          this.detailService.getAll().subscribe(dets => {
+            this.anormalities = [...anorms];
+            this.allAnormalities = [...anorms];
+            this.details = dets.map(d => ({
+              ...d,
+              createdAt: d.createdAt ? new Date(d.createdAt) : undefined,
+              updatedAt: d.updatedAt ? new Date(d.updatedAt) : undefined
+            }));
+            this.resetForm();
           });
         });
       });
     });
   });
 }
-
 
 
   getDetailsByAnormalityId(anormalityId: number): VehicleAnormalityDetail[] {

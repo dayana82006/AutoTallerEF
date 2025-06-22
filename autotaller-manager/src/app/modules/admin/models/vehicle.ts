@@ -16,4 +16,6 @@ export interface Vehicle {
   fuelType?: FuelType;
   vehicleTypeId: number;
   vehicleType?: VehicleType;
-}
+    
+  createdAt?: Date;
+  updatedAt?: Date;}
