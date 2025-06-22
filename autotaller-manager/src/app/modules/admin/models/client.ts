@@ -4,4 +4,6 @@ export interface Client {
   lastname: string;
   telephone: string;
   email: string;
-}
+
+  createdAt?: Date;
+  updatedAt?: Date;}

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AdminRoutingModule } from './admin-routing-module';
 import { AdminNavbarComponent } from '../admin/components/navbar/navbar';
 
+
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout';
 import { UserListComponent } from './user/user-list/user-list';
 import { VehicleListComponent } from './vehicles/vehicle-list/vehicle-list.component';
@@ -16,6 +17,7 @@ import { ServiceOrderListComponent } from './servicesTaller/services-order-crud.
 
 @NgModule({
   declarations: [
+  
   ],
   imports: [
     AdminLayoutComponent,
@@ -31,6 +33,7 @@ import { ServiceOrderListComponent } from './servicesTaller/services-order-crud.
     ServiceTypesCrudComponent,
     ServiceOrderFormComponent,
     ServiceOrderListComponent
+    
   ]
 })
 export class AdminModule { }

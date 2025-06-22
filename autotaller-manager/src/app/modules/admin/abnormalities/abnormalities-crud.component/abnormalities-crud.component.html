@@ -24,6 +24,8 @@
           <th>Nombre</th>
           <th>Fecha de Ingreso</th>
           <th>Vehículos</th>
+          <th>Creado</th>
+          <th>Actualizado</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -32,6 +34,8 @@
           <td>{{ a.id }}</td>
           <td>{{ a.name }}</td>
           <td>{{ a.entryDate | date : "yyyy-MM-dd" }}</td>
+          
+          
           <td>
             <ul class="mb-0 ps-3">
               <li *ngFor="let d of getDetailsByAnormalityId(a.id)">
@@ -39,7 +43,9 @@
               </li>
             </ul>
           </td>
-
+          <td>{{ getDetailsByAnormalityId(a.id)[0].createdAt ? (getDetailsByAnormalityId(a.id)[0].createdAt | date: 'yyyy-MM-dd HH:mm') : '---' }}</td>
+          <td>{{ getDetailsByAnormalityId(a.id)[0].updatedAt ? (getDetailsByAnormalityId(a.id)[0].updatedAt | date: 'yyyy-MM-dd HH:mm') : '---' }}</td>
+          
           <td>
             <button class="btn btn-sm btn-outline-light me-2" (click)="edit(a)">
               Editar
