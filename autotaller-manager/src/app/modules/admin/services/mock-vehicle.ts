@@ -15,7 +15,8 @@ export class MockVehicleService {
       km: 35000,
       vehicleModelId: 1,
       clientId: 1,
-      fuelTypeId: 2
+      fuelTypeId: 2,
+      vehicleTypeId: 1
     },
     {
       id: 2,
@@ -24,7 +25,8 @@ export class MockVehicleService {
       km: 54000,
       vehicleModelId: 2,
       clientId: 2,
-      fuelTypeId: 1
+      fuelTypeId: 1,
+      vehicleTypeId: 1
     }
   ];
 

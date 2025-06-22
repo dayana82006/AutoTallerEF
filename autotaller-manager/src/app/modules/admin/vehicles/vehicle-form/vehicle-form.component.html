@@ -133,6 +133,29 @@
       </div>
     </div>
 
+
+    <div class="mb-3">
+  <label class="form-label text-white">Tipo de Vehículo *</label>
+  <select
+    class="form-select"
+    [(ngModel)]="vehicle.vehicleTypeId"
+    name="vehicleTypeId"
+    #vehicleTypeId="ngModel"
+    required
+    [class.is-invalid]="vehicleTypeId.invalid && vehicleTypeId.touched"
+  >
+    <option [ngValue]="null" disabled>Seleccione un tipo</option>
+    <option *ngFor="let type of vehicleTypes" [value]="type.id">{{ type.name }}</option>
+  </select>
+  <div
+    class="invalid-feedback"
+    *ngIf="vehicleTypeId.invalid && vehicleTypeId.touched"
+  >
+    El tipo de vehículo es requerido
+  </div>
+</div>
+
+
     <div class="d-flex justify-content-between mt-4">
       <button
         type="submit"

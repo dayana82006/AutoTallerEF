@@ -7,6 +7,7 @@ import { Vehicle } from '../../models/vehicle';
 import { Client } from '../../models/client';
 import { FuelType } from '../../models/fuel-type';
 import { VehicleModel } from '../../models/vehicle-model';
+import { VehicleType } from '../../models/vehicle-type';
 
 import { MockVehicleService } from '../../services/mock-vehicle';
 import { MockClientService } from '../../services/mock-client';
@@ -14,6 +15,7 @@ import { MockClientService } from '../../services/mock-client';
 import { VehicleFormComponent } from '../vehicle-form/vehicle-form.component';
 import { MockFuelTypes } from '../../services/mock-fuel-types';
 import { MockVehicleModel } from '../../services/mock-vehicle-models';
+import { MockVehicleTypes } from '../../services/mock-vehicle-types';
 import { SwalService } from '../../../../shared/swal.service';
 
 @Component({
@@ -26,6 +28,7 @@ export class VehicleListComponent implements OnInit {
   allVehicles: Vehicle[] = [];
   vehicles: Vehicle[] = [];
   clients: Client[] = [];
+  vehicleTypes: VehicleType[] = MockVehicleTypes;
   fuelTypes: FuelType[] = MockFuelTypes;
   models: VehicleModel[] = MockVehicleModel;
 
@@ -80,8 +83,12 @@ getFuelTypeName(id: number): string {
   const fuel = this.fuelTypes.find(f => f.id === id);
   if (!fuel) console.warn('Tipo de combustible no encontrado con ID:', id);
   return fuel ? fuel.name : 'Desconocido';
-}
 
+}getVehicleTypeName(id: number): string {
+  const type = this.vehicleTypes.find(t => t.id === id);
+  if (!type) console.warn('Tipo de vehículo no encontrado con ID:', id);
+  return type ? type.name : 'Desconocido';
+}
 
   newVehicle(): void {
     this.selectedVehicle = null;

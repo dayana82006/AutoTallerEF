@@ -7,12 +7,15 @@ import { Vehicle } from '../../models/vehicle';
 import { VehicleModel } from '../../models/vehicle-model';
 import { FuelType } from '../../models/fuel-type';
 import { Client } from '../../models/client';
+import { VehicleType } from '../../models/vehicle-type';
+
 
 import { MockFuelTypes } from '../../services/mock-fuel-types';
 import { MockVehicleModel } from '../../services/mock-vehicle-models';
 import { MockClientService } from '../../services/mock-client';
 import { MockVehicleService } from '../../services/mock-vehicle';
 import { SwalService } from '../../../../shared/swal.service';
+import { MockVehicleTypes } from '../../services/mock-vehicle-types';
 
 @Component({
   selector: 'app-vehicle-form',
@@ -33,13 +36,14 @@ export class VehicleFormComponent implements OnInit {
     km: 0,
     vehicleModelId: null!,
     clientId: null!,
-    fuelTypeId: null!
+    fuelTypeId: null!,
+    vehicleTypeId: null!
   };
 
   vehicleModels: VehicleModel[] = [];
   fuelTypes: FuelType[] = [];
   clients: Client[] = [];
-
+  vehicleTypes: VehicleType[] = [];
   editingId: number | null = null;
   editMode = false;
 
@@ -55,7 +59,7 @@ export class VehicleFormComponent implements OnInit {
 
     this.vehicleModels = MockVehicleModel;
     this.fuelTypes = MockFuelTypes;
-
+    this.vehicleTypes = MockVehicleTypes;
     this.clientService.getClients().subscribe((data) => {
       this.clients = data;
     });
@@ -90,7 +94,7 @@ export class VehicleFormComponent implements OnInit {
   this.vehicle.vehicleModelId = Number(this.vehicle.vehicleModelId);
   this.vehicle.clientId = Number(this.vehicle.clientId);
   this.vehicle.fuelTypeId = Number(this.vehicle.fuelTypeId);
-
+  this.vehicle.vehicleTypeId = Number(this.vehicle.vehicleTypeId); 
   if (
     !this.vehicle.serialNumber.trim() ||
     !this.vehicle.releaseYear ||
@@ -120,7 +124,8 @@ export class VehicleFormComponent implements OnInit {
       km: this.vehicle.km,
       vehicleModelId: this.vehicle.vehicleModelId,
       clientId: this.vehicle.clientId,
-      fuelTypeId: this.vehicle.fuelTypeId
+      fuelTypeId: this.vehicle.fuelTypeId,
+      vehicleTypeId: this.vehicle.vehicleTypeId
     };
 
     this.vehicleService.createVehicle(newVehicle).subscribe({
