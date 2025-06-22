@@ -14,7 +14,7 @@ import { SwalService } from '../../../../shared/swal.service';
 export class SparesCrudComponent implements OnInit {
   @ViewChild('formSection') formSection!: ElementRef;
   @ViewChild('spareForm') spareForm!: NgForm;
-
+  minStockLevel: number | null = null;
   spares: Spare[] = [];
   allSpares: Spare[] = [];
   search = '';
@@ -138,4 +138,34 @@ resetForm() {
   }
 }
 
+  onMinStockFilter() {
+    if (typeof this.minStockLevel !== 'number' || isNaN(this.minStockLevel) || this.minStockLevel <= 0) {
+      this.spares = [...this.allSpares];
+      return;
+    }
+
+    this.spares = this.allSpares.filter(s => s.stockQuantity <= this.minStockLevel!);
+  }
+
+  applySearch() {
+    const term = this.search.trim().toLowerCase();
+
+    if (!term) {
+      this.spares = [...this.allSpares];
+      return;
+    }
+
+    const filtered = this.allSpares.filter(s =>
+      s.code.toLowerCase().includes(term) ||
+      (s.description ?? '').toLowerCase().includes(term)
+    );
+
+    this.spares = filtered;
+
+    if (filtered.length > 0) {
+      this.search = '';
+    } else {
+      this.swal.info('No se encontraron repuestos con ese término');
+    }
+  }
 }

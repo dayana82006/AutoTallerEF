@@ -1,18 +1,41 @@
 <div class="container py-4">
   <h2 class="mb-3 text-center title">Gestión de Repuestos</h2>
 
-  <div class="container mt-5">
-    <div class="input-group mb-3">
-      <span class="input-group-text bg-dark border-secondary text-white">
-        <i class="bi bi-search"></i>
-      </span>
-      <input
-        type="text"
-        class="form-control bg-dark text-white border-secondary"
-        [(ngModel)]="search"
-        (input)="onSearchChange()"
-        placeholder="Buscar repuesto"
-      />
+  <div class="container mt-4">
+    <div class="row g-2 align-items-center">
+      <div class="col-md-8">
+        <div class="input-group">
+          <span class="input-group-text bg-dark border-secondary text-white">
+            <i class="bi bi-search"></i>
+          </span>
+          <input
+            type="text"
+            class="form-control bg-dark text-white border-secondary"
+            [(ngModel)]="search"
+            (keyup.enter)="applySearch()"
+            placeholder="Buscar por código o descripción"
+          />
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="input-group">
+          <span
+            class="input-group-text bg-dark border-secondary text-white"
+            title="Filtrar por stock"
+          >
+            <i class="bi bi-filter"></i>
+          </span>
+          <input
+            type="number"
+            class="form-control bg-dark text-white border-secondary"
+            [(ngModel)]="minStockLevel"
+            (input)="onMinStockFilter()"
+            placeholder="Stock máx."
+            min="0"
+          />
+        </div>
+      </div>
     </div>
   </div>
 
