@@ -2,14 +2,14 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { MecanicoRoutingModule } from './mecanico-routing-module';
-import { NavbarComponent } from './components/navbar/navbar';
+import { MecanicoNavbarComponent } from './components/navbar/navbar';
 
 
 @NgModule({
   declarations: [
-    NavbarComponent
   ],
   imports: [
+    MecanicoNavbarComponent,
     CommonModule,
     MecanicoRoutingModule
   ]
