@@ -11,6 +11,8 @@ import { VehicleFormComponent } from './vehicles/vehicle-form/vehicle-form.compo
 import { VehicleAnormalityCrudComponent } from './abnormalities/abnormalities-crud.component/abnormalities-crud.component';
 import { SparesCrudComponent } from './spares/spares-crud.component/spares-crud.component';
 import { ServiceTypesCrudComponent } from './servicesTaller/services-type-crud.component/services-type-crud.component';
+import { ServiceOrderFormComponent } from './servicesTaller/services-order-crud.component/services-order-form/services-order-form';
+import { ServiceOrderListComponent } from './servicesTaller/services-order-crud.component/services-order-list/services-order-list';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,9 @@ import { ServiceTypesCrudComponent } from './servicesTaller/services-type-crud.c
     VehicleFormComponent,
     VehicleAnormalityCrudComponent,
     SparesCrudComponent,
-    ServiceTypesCrudComponent
+    ServiceTypesCrudComponent,
+    ServiceOrderFormComponent,
+    ServiceOrderListComponent
   ]
 })
 export class AdminModule { }
