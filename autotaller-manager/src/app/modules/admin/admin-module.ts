@@ -10,10 +10,10 @@ import { VehicleListComponent } from './vehicles/vehicle-list/vehicle-list.compo
 import { VehicleFormComponent } from './vehicles/vehicle-form/vehicle-form.component';
 import { VehicleAnormalityCrudComponent } from './abnormalities/abnormalities-crud.component/abnormalities-crud.component';
 import { SparesCrudComponent } from './spares/spares-crud.component/spares-crud.component';
+import { ServiceTypesCrudComponent } from './servicesTaller/services-type-crud.component/services-type-crud.component';
 
 @NgModule({
   declarations: [
-  
   ],
   imports: [
     AdminLayoutComponent,
@@ -25,7 +25,8 @@ import { SparesCrudComponent } from './spares/spares-crud.component/spares-crud.
     VehicleListComponent,
     VehicleFormComponent,
     VehicleAnormalityCrudComponent,
-    SparesCrudComponent
+    SparesCrudComponent,
+    ServiceTypesCrudComponent
   ]
 })
 export class AdminModule { }
