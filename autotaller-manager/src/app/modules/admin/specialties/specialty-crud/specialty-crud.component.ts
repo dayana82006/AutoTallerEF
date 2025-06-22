@@ -3,10 +3,12 @@ import { Specialty } from '../../models/specialty';
 import { MockSpecialtyService } from '../../services/mock-specialty';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-specialty-crud',
   templateUrl: './specialty-crud.component.html',
+  standalone: true,
   imports: [CommonModule, FormsModule],
 })
 export class SpecialtyCrudComponent implements OnInit {
@@ -15,6 +17,7 @@ export class SpecialtyCrudComponent implements OnInit {
   newSpecialty: Specialty = { id: 0, name: '' };
   editMode = false;
   search: string = '';
+  formSubmitted = false;
 
   @ViewChild('formSection') formSection!: ElementRef;
 
@@ -39,43 +42,53 @@ export class SpecialtyCrudComponent implements OnInit {
   }
 
   save() {
-  const trimmedName = this.newSpecialty.name?.trim().toLowerCase();
+    this.formSubmitted = true;
 
-  if (!trimmedName || trimmedName.length < 3) {
-    alert('El nombre de la especialidad es obligatorio y debe tener al menos 3 caracteres.');
-    return;
+    const trimmedName = this.newSpecialty.name?.trim();
+
+    if (!trimmedName || trimmedName.length < 3) {
+      return;
+    }
+
+    const nameExists = this.allSpecialties.some(s =>
+      s.name.toLowerCase() === trimmedName.toLowerCase() && s.id !== this.newSpecialty.id
+    );
+
+    if (nameExists) {
+      alert('Ya existe una especialidad con ese nombre.');
+      return;
+    }
+
+    if (this.editMode && this.newSpecialty.id > 0) {
+      this.specialtyService
+        .update(this.newSpecialty.id, { ...this.newSpecialty, name: trimmedName })
+        .subscribe(() => this.resetForm());
+    } else {
+      this.specialtyService
+        .create({ ...this.newSpecialty, name: trimmedName })
+        .subscribe(() => this.resetForm());
+    }
   }
 
-  const nameExists = this.allSpecialties.some(s =>
-    s.name.toLowerCase() === trimmedName && s.id !== this.newSpecialty.id
-  );
+@ViewChild('form') specialtyForm!: NgForm;
 
-  if (nameExists) {
-    alert('Ya existe una especialidad con ese nombre.');
-    return;
+resetForm() {
+  this.newSpecialty = { id: 0, name: '' };
+  this.editMode = false;
+  this.formSubmitted = false;
+
+  if (this.specialtyForm) {
+    this.specialtyForm.resetForm(); // 🔄 esto limpia el estado del formulario
   }
 
-  if (this.editMode && this.newSpecialty.id > 0) {
-    this.specialtyService
-      .update(this.newSpecialty.id, { ...this.newSpecialty, name: trimmedName })
-      .subscribe(() => this.resetForm());
-  } else {
-    this.specialtyService
-      .create({ ...this.newSpecialty, name: trimmedName })
-      .subscribe(() => this.resetForm());
-  }
+  this.loadSpecialties();
 }
 
-
-  resetForm() {
-    this.newSpecialty = { id: 0, name: '' };
-    this.editMode = false;
-    this.loadSpecialties();
-  }
 
   edit(s: Specialty) {
     this.newSpecialty = { ...s };
     this.editMode = true;
+    this.formSubmitted = false;
 
     setTimeout(() => {
       this.formSection?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });

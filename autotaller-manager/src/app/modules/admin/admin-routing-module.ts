@@ -17,6 +17,8 @@ const routes: Routes = [
       { path: 'vehiculos', loadComponent: () => import('./vehicles/vehicle-list/vehicle-list.component').then(m => m.VehicleListComponent) },
       { path: 'vehiculos/new', loadComponent: () => import('./vehicles/vehicle-form/vehicle-form.component').then(m => m.VehicleFormComponent) },
       { path: 'vehiculos/edit/:id', loadComponent: () => import('./vehicles/vehicle-form/vehicle-form.component').then(m => m.VehicleFormComponent) },
+      { path: 'vehiculos/anormalidades', loadComponent: () => import('../admin/abnormalities/abnormalities-crud.component/abnormalities-crud.component').then(m => m.VehicleAnormalityCrudComponent) },
+
       { path: '', redirectTo: 'usuarios', pathMatch: 'full' }
     ]
   }
