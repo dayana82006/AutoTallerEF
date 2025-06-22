@@ -15,14 +15,13 @@ export class MockAnormalityDetailService {
   }
 
 create(detail: Omit<VehicleAnormalityDetail, 'id'>): Observable<VehicleAnormalityDetail> {
-  // Evita crear duplicados exactos
   const exists = this.details.some(d =>
     d.idAnormality === detail.idAnormality &&
     d.serialNumber === detail.serialNumber
   );
 
   if (exists) {
-    return of(null as any); // o simplemente ignóralo
+    return of(null as any); 
   }
 
   const newId = this.details.length > 0 ? Math.max(...this.details.map(d => d.id)) + 1 : 1;

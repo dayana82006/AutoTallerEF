@@ -106,7 +106,6 @@ save() {
         }));
 
         forkJoin(createRequests.length ? createRequests : [of(true)]).subscribe(() => {
-          // ✅ Finalmente, recargamos todo y recién ahí reseteamos
           this.anormalityService.getAll().subscribe(anorms => {
             this.detailService.getAll().subscribe(dets => {
               this.anormalities = [...anorms];

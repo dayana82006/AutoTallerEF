@@ -78,7 +78,7 @@ resetForm() {
   this.formSubmitted = false;
 
   if (this.specialtyForm) {
-    this.specialtyForm.resetForm(); // 🔄 esto limpia el estado del formulario
+    this.specialtyForm.resetForm(); 
   }
 
   this.loadSpecialties();
