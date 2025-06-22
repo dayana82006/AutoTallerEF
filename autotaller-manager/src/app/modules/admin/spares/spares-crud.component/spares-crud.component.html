@@ -1,0 +1,144 @@
+<div class="container py-4">
+  <h2 class="mb-3 text-center title">Gestión de Repuestos</h2>
+
+  <div class="container mt-5">
+    <div class="input-group mb-3">
+      <span class="input-group-text bg-dark border-secondary text-white">
+        <i class="bi bi-search"></i>
+      </span>
+      <input
+        type="text"
+        class="form-control bg-dark text-white border-secondary"
+        [(ngModel)]="search"
+        (input)="onSearchChange()"
+        placeholder="Buscar repuesto"
+      />
+    </div>
+  </div>
+
+  <div class="table-responsive mb-5">
+    <table class="table table-dark table-striped table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Código</th>
+          <th>Descripción</th>
+          <th>Stock</th>
+          <th>Precio Unitario</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of spares">
+          <td>{{ s.id }}</td>
+          <td>{{ s.code }}</td>
+          <td>{{ s.description || "-" }}</td>
+          <td>{{ s.stockQuantity }}</td>
+          <td>${{ s.unitPrice | number : "1.0-0" }}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-light me-2" (click)="edit(s)">
+              Editar
+            </button>
+            <button
+              class="btn btn-sm btn-outline-danger"
+              (click)="delete(s.id)"
+            >
+              Eliminar
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="spares.length === 0">
+          <td colspan="6" class="text-center text-secondary">
+            No hay repuestos
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div #formSection class="d-flex justify-content-center">
+    <div
+      class="card bg-dark text-white p-4"
+      style="width: 100%; max-width: 500px"
+    >
+      <h4 class="title mb-4">{{ editMode ? "Editar" : "Nuevo" }} Repuesto</h4>
+
+      <form #spareForm="ngForm" (ngSubmit)="save()" novalidate>
+        <div class="mb-3">
+          <label class="form-label">Código *</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="newSpare.code"
+            name="code"
+            required
+            #code="ngModel"
+            [ngClass]="{ 'is-invalid': code.invalid && code.touched }"
+          />
+          <div *ngIf="code.invalid && code.touched" class="invalid-feedback">
+            El código es obligatorio
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Descripción</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="newSpare.description"
+            name="description"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Stock</label>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="newSpare.stockQuantity"
+            name="stockQuantity"
+            step="1"
+            min="0"
+            #stock="ngModel"
+            required
+            [ngClass]="{ 'is-invalid': stock.invalid && stock.touched }"
+          />
+          <div *ngIf="stock.invalid && stock.touched" class="invalid-feedback">
+            El stock debe ser mayor o igual a 0
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Precio Unitario</label>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="newSpare.unitPrice"
+            name="unitPrice"
+            step="0.01"
+            min="0"
+            #price="ngModel"
+            required
+            [ngClass]="{ 'is-invalid': price.invalid && price.touched }"
+          />
+          <div *ngIf="price.invalid && price.touched" class="invalid-feedback">
+            El precio debe ser mayor o igual a 0
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="spareForm.invalid"
+          >
+            {{ editMode ? "Actualizar" : "Crear" }}
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancel()">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
