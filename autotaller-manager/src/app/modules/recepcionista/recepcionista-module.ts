@@ -2,14 +2,17 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { RecepcionistaRoutingModule } from './recepcionista-routing-module';
-import { NavbarComponent } from './components/navbar/navbar';
+import { RecepcionistaNavbarComponent } from './components/navbar/navbar';
+import { RecepcionistaLayout } from './layouts/recepcionista-layout/recepcionista-layout';
 
 
 @NgModule({
   declarations: [
-    NavbarComponent
+  
   ],
   imports: [
+    RecepcionistaLayout,
+    RecepcionistaNavbarComponent,
     CommonModule,
     RecepcionistaRoutingModule
   ]
