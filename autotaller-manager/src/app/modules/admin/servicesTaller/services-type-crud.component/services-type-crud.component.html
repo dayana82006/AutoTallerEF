@@ -8,13 +8,14 @@
           <span class="input-group-text bg-dark border-secondary text-white">
             <i class="bi bi-search"></i>
           </span>
-          <input
-            type="text"
-            class="form-control bg-dark text-white border-secondary"
-            [(ngModel)]="search"
-            (keyup.enter)="applySearch()"
-            placeholder="Buscar descripción"
-          />
+<input
+  type="text"
+  class="form-control bg-dark text-white border-secondary"
+  [(ngModel)]="search"
+  (input)="applySearch()"
+  placeholder="Buscar descripción"
+/>
+
         </div>
       </div>
     </div>
