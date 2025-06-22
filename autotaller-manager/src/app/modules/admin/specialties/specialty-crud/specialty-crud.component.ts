@@ -4,6 +4,7 @@ import { MockSpecialtyService } from '../../services/mock-specialty';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NgForm } from '@angular/forms';
+import { SwalService } from '../../../../shared/swal.service';
 
 @Component({
   selector: 'app-specialty-crud',
@@ -21,7 +22,10 @@ export class SpecialtyCrudComponent implements OnInit {
 
   @ViewChild('formSection') formSection!: ElementRef;
 
-  constructor(private specialtyService: MockSpecialtyService) {}
+  constructor(
+    private specialtyService: MockSpecialtyService,
+    private swalService: SwalService
+  ) {}
 
   ngOnInit(): void {
     this.loadSpecialties();
@@ -55,7 +59,7 @@ export class SpecialtyCrudComponent implements OnInit {
     );
 
     if (nameExists) {
-      alert('Ya existe una especialidad con ese nombre.');
+      this.swalService.error('Ya existe una especialidad con ese nombre.');
       return;
     }
 
@@ -95,11 +99,17 @@ resetForm() {
     }, 0);
   }
 
-  delete(id: number) {
-    if (confirm('¿Estás segura de eliminar esta especialidad?')) {
-      this.specialtyService.delete(id).subscribe(() => this.loadSpecialties());
+delete(id: number): void {
+  this.swalService.confirm('¿Eliminar especialidad?', 'Esta acción no se puede deshacer.').then(confirmed => {
+    if (confirmed) {
+      this.specialtyService.delete(id).subscribe(() => {
+        this.loadSpecialties();
+        this.swalService.success('Eliminada', 'La especialidad fue eliminada correctamente.');
+      });
     }
-  }
+  });
+}
+
 
   cancel() {
     this.resetForm();

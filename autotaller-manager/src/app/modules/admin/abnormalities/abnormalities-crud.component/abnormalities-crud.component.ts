@@ -8,6 +8,7 @@ import { MockVehicleService } from '../../services/mock-vehicle';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { of, forkJoin } from 'rxjs';
+import { SwalService } from '../../../../shared/swal.service';
 
 @Component({
   selector: 'app-vehicle-anormality-crud',
@@ -31,7 +32,8 @@ export class VehicleAnormalityCrudComponent implements OnInit {
   constructor(
     private anormalityService: MockAnormalityService,
     private detailService: MockAnormalityDetailService,
-    private vehicleService: MockVehicleService
+    private vehicleService: MockVehicleService,
+    private swalService: SwalService
   ) {}
 
   ngOnInit(): void {
@@ -70,7 +72,7 @@ save() {
   const trimmedName = this.newAnormality.name?.trim();
 
   if (!trimmedName || trimmedName.length < 3) {
-    alert('El nombre de la anormalidad es obligatorio y debe tener al menos 3 caracteres.');
+    this.swalService.error('El nombre de la anormalidad es obligatorio y debe tener al menos 3 caracteres.');
     return;
   }
 
@@ -79,7 +81,7 @@ save() {
   );
 
   if (nameExists) {
-    alert('Ya existe una anormalidad con ese nombre.');
+    this.swalService.error('Ya existe una anormalidad con ese nombre.');
     return;
   }
 
@@ -143,20 +145,25 @@ save() {
     }, 0);
   }
 
-  delete(id: number) {
-    if (confirm('¿Estás segura de eliminar esta anormalidad?')) {
-      this.anormalityService.delete(id).subscribe(() => {
-        this.detailService.getAll().subscribe(data => {
-          const related = data.filter(d => d.idAnormality === id);
-          const deleteRequests = related.map(d => this.detailService.delete(d.id));
-          forkJoin(deleteRequests).subscribe(() => {
-            this.loadAnormalities();
-            this.loadDetails();
+delete(id: number): void {
+  this.swalService.confirm('¿Eliminar anormalidad?', 'Se eliminarán también sus detalles relacionados. Esta acción no se puede deshacer.')
+    .then(confirmed => {
+      if (confirmed) {
+        this.anormalityService.delete(id).subscribe(() => {
+          this.detailService.getAll().subscribe(data => {
+            const related = data.filter(d => d.idAnormality === id);
+            const deleteRequests = related.map(d => this.detailService.delete(d.id));
+            forkJoin(deleteRequests).subscribe(() => {
+              this.loadAnormalities();
+              this.loadDetails();
+              this.swalService.success('Anormalidad eliminada', 'La anormalidad y sus detalles fueron eliminados correctamente.');
+            });
           });
         });
-      });
-    }
-  }
+      }
+    });
+}
+
 
   cancel() {
     this.resetForm();

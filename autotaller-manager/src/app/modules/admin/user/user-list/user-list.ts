@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MockUserService } from '../../services/mock-user';
 import { UserMember } from '../../models/user-member';
+import { SwalService } from '../../../../shared/swal.service';
 
 @Component({
   selector: 'app-user-list',
@@ -18,7 +19,10 @@ export class UserListComponent implements OnInit {
   pageSize = 5;
   search = '';
 
-  constructor(private userService: MockUserService) {}
+  constructor(
+    private userService: MockUserService,
+    private swalService: SwalService
+  ) {}
 
   ngOnInit(): void {
     this.loadUsers();
@@ -41,11 +45,14 @@ export class UserListComponent implements OnInit {
     this.loadUsers();
   }
 
-  deleteUser(id: number): void {
-    if (confirm('¿Estás segura de eliminar este usuario?')) {
+deleteUser(id: number): void {
+  this.swalService.confirm('¿Eliminar usuario?', 'Esta acción no se puede deshacer.').then(confirmed => {
+    if (confirmed) {
       this.userService.deleteUser(id).subscribe(() => {
         this.loadUsers();
       });
     }
-  }
+  });
+}
+
 }

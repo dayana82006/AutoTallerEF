@@ -12,6 +12,7 @@ import { MockFuelTypes } from '../../services/mock-fuel-types';
 import { MockVehicleModel } from '../../services/mock-vehicle-models';
 import { MockClientService } from '../../services/mock-client';
 import { MockVehicleService } from '../../services/mock-vehicle';
+import { SwalService } from '../../../../shared/swal.service';
 
 @Component({
   selector: 'app-vehicle-form',
@@ -46,7 +47,8 @@ export class VehicleFormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private clientService: MockClientService,
-    private vehicleService: MockVehicleService
+    private vehicleService: MockVehicleService,
+    private swalService: SwalService
   ) {}
 
   ngOnInit(): void {
@@ -78,7 +80,7 @@ export class VehicleFormComponent implements OnInit {
       if (vehicle) {
         this.vehicle = { ...vehicle };
       } else {
-        alert('Vehículo no encontrado');
+        this.swalService.error('Vehículo no encontrado');
         this.router.navigate(['/admin/vehiculos']);
       }
     });
@@ -97,7 +99,7 @@ export class VehicleFormComponent implements OnInit {
     !this.vehicle.clientId ||
     !this.vehicle.fuelTypeId
   ) {
-    alert('Por favor completa todos los campos obligatorios');
+    this.swalService.error('Por favor completa todos los campos obligatorios');
     return;
   }
 
@@ -109,7 +111,7 @@ export class VehicleFormComponent implements OnInit {
 
     this.vehicleService.updateVehicle(this.editingId, updatedVehicle).subscribe({
       next: () => this.formSubmitted.emit(),
-      error: () => alert('Error al actualizar el vehículo')
+      error: () => this.swalService.error('Error al actualizar el vehículo')
     });
   } else {
     const newVehicle: Omit<Vehicle, 'id'> = {
@@ -123,7 +125,7 @@ export class VehicleFormComponent implements OnInit {
 
     this.vehicleService.createVehicle(newVehicle).subscribe({
       next: () => this.formSubmitted.emit(),
-      error: () => alert('Error al crear el vehículo')
+      error: () => this.swalService.error('Error al crear el vehículo')
     });
   }
 }

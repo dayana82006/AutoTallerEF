@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
 import { AuthRequest } from '../../models/auth-request.model';
+import { SwalService } from '../../../../shared/swal.service';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,7 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router, private swalService: SwalService) {}
 
   onSubmit(): void {
     const credentials: AuthRequest = {
@@ -39,7 +40,7 @@ export class LoginComponent {
         }
       },
       error: () => {
-        alert('Credenciales inválidas');
+        this.swalService.error('Error', 'Credenciales inválidas');
       }
     });
   }

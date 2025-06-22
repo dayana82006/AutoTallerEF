@@ -4,6 +4,7 @@ import { MockClientService } from "../../services/mock-client";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ClientFormComponent } from "../client-form/client-form.component";
+import { SwalService } from "../../../../shared/swal.service";
 @Component({
   selector: 'app-client-list',
   standalone: true,
@@ -21,7 +22,10 @@ export class ClientListComponent implements OnInit {
   pageSize = 5;
   search = '';
 
-  constructor(private clientService: MockClientService) {}
+  constructor(
+    private clientService: MockClientService,
+     private swalService: SwalService
+  ) {}
 
   ngOnInit(): void {
     this.clientService.getAll().subscribe((data) => {
@@ -48,11 +52,17 @@ export class ClientListComponent implements OnInit {
     this.showForm = true;
   }
 
-  delete(id: number): void {
-    if (confirm('¿Estás segura de eliminar este cliente?')) {
-      this.clientService.delete(id).subscribe(() => this.loadClients());
+delete(id: number): void {
+  this.swalService.confirm('¿Eliminar cliente?', 'Esta acción no se puede deshacer.').then(confirmed => {
+    if (confirmed) {
+      this.clientService.delete(id).subscribe(() => {
+        this.loadClients();
+        this.swalService.success('Cliente eliminado', 'El cliente fue eliminado correctamente.');
+      });
     }
-  }
+  });
+}
+
 
   onFormSubmit(): void {
     this.selectedClient = null;
