@@ -14,6 +14,7 @@ import { MockClientService } from '../../services/mock-client';
 import { VehicleFormComponent } from '../vehicle-form/vehicle-form.component';
 import { MockFuelTypes } from '../../services/mock-fuel-types';
 import { MockVehicleModel } from '../../services/mock-vehicle-models';
+import { SwalService } from '../../../../shared/swal.service';
 
 @Component({
   selector: 'app-vehicle-list',
@@ -37,7 +38,8 @@ export class VehicleListComponent implements OnInit {
 
   constructor(
     private vehicleService: MockVehicleService,
-    private clientService: MockClientService
+    private clientService: MockClientService,
+    private swalService: SwalService
   ) {}
 
   ngOnInit(): void {
@@ -91,11 +93,14 @@ getFuelTypeName(id: number): string {
     this.showForm = true;
   }
 
-  delete(id: number): void {
-    if (confirm('¿Estás segura de eliminar este vehículo?')) {
+delete(id: number): void {
+  this.swalService.confirm('¿Eliminar vehículo?', 'Esta acción no se puede deshacer.').then(confirmed => {
+    if (confirmed) {
       this.vehicleService.deleteVehicle(id).subscribe(() => this.ngOnInit());
     }
-  }
+  });
+}
+
 onFormSubmit(): void {
   this.selectedVehicle = null;
   this.showForm = false;

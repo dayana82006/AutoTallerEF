@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MockUserService } from '../../services/mock-user';
 import { UserMember } from '../../models/user-member';
+import { SwalService } from '../../../../shared/swal.service';
 
 @Component({
   selector: 'app-user-form',
@@ -30,7 +31,8 @@ export class UserFormComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private userService: MockUserService
+    private userService: MockUserService,
+    private swalService: SwalService
   ) {}
 
   ngOnInit(): void {
@@ -94,7 +96,7 @@ export class UserFormComponent implements OnInit {
 
   saveUser(): void {
     if (!this.isFormValid()) {
-      alert('Por favor completa todos los campos requeridos');
+      this.swalService.error('Por favor completa todos los campos requeridos');
       return;
     }
 
@@ -111,7 +113,7 @@ export class UserFormComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error al actualizar usuario:', error);
-          alert('Error al actualizar el usuario');
+          this.swalService.error('Error al actualizar el usuario');
         }
       });
     } else {
@@ -130,7 +132,7 @@ export class UserFormComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error al crear usuario:', error);
-          alert('Error al crear el usuario');
+          this.swalService.error('Error al crear el usuario');
         }
       });
     }
