@@ -38,6 +38,8 @@
           <th>Cliente</th>
           <th>Combustible</th>
           <th>Tipo</th>
+          <th>Creado</th>
+          <th>Actualizado</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -51,6 +53,8 @@
           <td>{{ getClientName(vehicle.clientId) }}</td>
           <td>{{ getFuelTypeName(vehicle.fuelTypeId) }}</td>
           <td>{{ getVehicleTypeName(vehicle.vehicleTypeId) }}</td>
+          <td>{{ vehicle.createdAt | date: 'short' }}</td>
+          <td>{{ vehicle.updatedAt ? (vehicle.updatedAt | date: 'short') : '—' }}</td>
           <td>
             <button
               class="btn btn-sm btn-outline-light me-2"
@@ -67,7 +71,7 @@
           </td>
         </tr>
         <tr *ngIf="vehicles.length === 0">
-          <td colspan="8" class="text-center text-secondary">
+          <td colspan="11" class="text-center text-secondary">
             No se encontraron vehículos.
           </td>
         </tr>
