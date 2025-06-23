@@ -12,7 +12,7 @@
             type="text"
             class="form-control bg-dark text-white border-secondary"
             [(ngModel)]="search"
-            (keyup.enter)="applySearch()"
+            (ngModelChange)="onSearchChange()"
             placeholder="Buscar por código o descripción"
           />
         </div>
@@ -48,6 +48,8 @@
           <th>Descripción</th>
           <th>Stock</th>
           <th>Precio Unitario</th>
+          <th *ngIf="authService.currentUser?.role === 'Admin'">Creado</th>
+          <th *ngIf="authService.currentUser?.role === 'Admin'">Actualizado</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -58,6 +60,12 @@
           <td>{{ s.description || "-" }}</td>
           <td>{{ s.stockQuantity }}</td>
           <td>${{ s.unitPrice | number : "1.0-0" }}</td>
+                  <td *ngIf="authService.currentUser?.role === 'Admin'">
+          {{ s.createdAt | date: 'short' }}
+        </td>
+        <td *ngIf="authService.currentUser?.role === 'Admin'">
+          {{ s.updatedAt | date: 'short' }}
+        </td>
           <td>
             <button class="btn btn-sm btn-outline-light me-2" (click)="edit(s)">
               Editar
@@ -71,7 +79,10 @@
           </td>
         </tr>
         <tr *ngIf="spares.length === 0">
-          <td colspan="6" class="text-center text-secondary">
+                    <td
+            [attr.colspan]="authService.currentUser?.role === 'Admin' ? 8 : 5"
+            class="text-center text-secondary"
+          >
             No hay repuestos
           </td>
         </tr>

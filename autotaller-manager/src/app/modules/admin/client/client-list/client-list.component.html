@@ -55,7 +55,7 @@
         </td>
           <td>
             <button class="btn btn-sm btn-outline-light me-2" (click)="edit(client)">Editar</button>
-            <button class="btn btn-sm btn-outline-danger" (click)="delete(client.id)">Eliminar</button>
+            <button *ngIf="authService.currentUser?.role === 'Admin'" class="btn btn-sm btn-outline-danger" (click)="delete(client.id)">Eliminar</button>
           </td>
         </tr>
       </tbody>
