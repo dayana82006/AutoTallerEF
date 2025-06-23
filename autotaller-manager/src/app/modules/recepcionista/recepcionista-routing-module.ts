@@ -13,6 +13,7 @@ const routes: Routes = [
       { path: 'vehiculos', loadComponent: () => import('../admin/vehicles/vehicle-list/vehicle-list.component').then(m => m.VehicleListComponent) },
       { path: 'vehiculos/new', loadComponent: () => import('../admin/vehicles/vehicle-form/vehicle-form.component').then(m => m.VehicleFormComponent) },
       { path: 'vehiculos/edit/:id', loadComponent: () => import('../admin/vehicles/vehicle-form/vehicle-form.component').then(m => m.VehicleFormComponent) },      
+      {path: 'o+rdenes', loadComponent: () => import ('../admin/servicesTaller/services-order-crud.component/services-order-list/services-order-list').then(m=>m.ServiceOrderListComponent)},
 
       { path: '', redirectTo: 'usuarios', pathMatch: 'full' }
     ]
