@@ -4,7 +4,6 @@ import { MockServiceTypeService } from '../../services/mock-service-type';
 import { NgForm, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SwalService } from '../../../../shared/swal.service';
-import { AuthService } from '../../../auth/services/auth';
 
 @Component({
   selector: 'app-service-types-crud',
@@ -24,8 +23,7 @@ export class ServiceTypesCrudComponent implements OnInit {
 
   constructor(
     private typeService: MockServiceTypeService,
-    private swal: SwalService,
-    public authService: AuthService
+    private swal: SwalService
   ) {}
 
   ngOnInit(): void {

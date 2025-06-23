@@ -17,7 +17,7 @@ import { SwalService } from '../../../../../shared/swal.service';
 })
 export class ServiceOrderFormComponent implements OnInit {
   @Input() serviceOrderToEdit?: ServiceOrder | null;
-  @Output() formSubmitted = new EventEmitter<void>();
+  @Output() formSubmitted = new EventEmitter<ServiceOrder>();
   @Output() cancelForm = new EventEmitter<void>();
 
   serviceOrder: ServiceOrder = {
@@ -48,7 +48,6 @@ export class ServiceOrderFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
     this.vehicles = [
       { id: 1, serialNumber: 'ABC123', releaseYear: 2020, km: 10000, vehicleModelId: 1, clientId: 1, fuelTypeId: 1, vehicleTypeId: 1 },
       { id: 2, serialNumber: 'XYZ789', releaseYear: 2019, km: 20000, vehicleModelId: 2, clientId: 2, fuelTypeId: 2, vehicleTypeId: 2 }
@@ -84,7 +83,7 @@ export class ServiceOrderFormComponent implements OnInit {
     }
 
     this.swalService.success(this.editMode ? 'Orden actualizada' : 'Orden creada');
-    this.formSubmitted.emit();
+    this.formSubmitted.emit(this.serviceOrder);
   }
 
   cancel(): void {

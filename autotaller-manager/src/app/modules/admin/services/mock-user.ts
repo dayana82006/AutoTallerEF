@@ -23,33 +23,34 @@ export class MockUserService {
 
 private loadUsersFromStorage(): void {
   try {
-    const stored = localStorage.getItem(this.STORAGE_KEY);
+    const stored = sessionStorage.getItem(this.STORAGE_KEY); 
     if (stored) {
       this.users = JSON.parse(stored).map((u: any) => ({
         ...u,
         createdAt: u.createdAt ? new Date(u.createdAt) : undefined,
         updatedAt: u.updatedAt ? new Date(u.updatedAt) : undefined
       }));
-      console.log('Usuarios cargados desde localStorage:', this.users.length);
+      console.log('Usuarios cargados desde sessionStorage:', this.users.length); 
     } else {
       this.users = [...this.defaultUsers];
       this.saveUsersToStorage();
       console.log('Inicializando con datos por defecto');
     }
   } catch (error) {
-    console.error('Error cargando usuarios desde localStorage:', error);
+    console.error('Error cargando usuarios desde sessionStorage:', error); 
     this.users = [...this.defaultUsers];
   }
 }
 
-  private saveUsersToStorage(): void {
-    try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.users));
-      console.log('Usuarios guardados en localStorage');
-    } catch (error) {
-      console.error('Error guardando usuarios en localStorage:', error);
-    }
+private saveUsersToStorage(): void {
+  try {
+    sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.users)); 
+    console.log('Usuarios guardados en sessionStorage');
+  } catch (error) {
+    console.error('Error guardando usuarios en sessionStorage:', error); 
   }
+}
+
 
   getAll(): Observable<UserMember[]> {
     return of([...this.users]).pipe(delay(300));

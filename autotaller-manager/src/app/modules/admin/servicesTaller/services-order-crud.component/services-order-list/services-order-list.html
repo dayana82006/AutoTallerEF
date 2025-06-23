@@ -1,13 +1,14 @@
 <app-service-order-form
   *ngIf="showForm"
   [serviceOrderToEdit]="selectedServiceOrder"
-  (formSubmitted)="onFormSubmit()"
+  (formSubmitted)="onFormSubmit($event)"
   (cancelForm)="cancelForm()"
 ></app-service-order-form>
 
 <div *ngIf="!showForm" class="container py-4" style="margin-top: 70px">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="text-white title">Gestión de Órdenes de Servicio</h2>
+
     <button class="btn btn-primary subtitle" (click)="newServiceOrder()">
       Añadir Orden
     </button>
@@ -38,6 +39,8 @@
           <th>Aprobado</th>
           <th>Estado</th>
           <th>Precio</th>
+          <th *ngIf="authService.currentUser?.role === 'Admin'">Creado</th>
+          <th *ngIf="authService.currentUser?.role === 'Admin'">Actualizado</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -49,19 +52,40 @@
           <td>{{ order.serviceType.description }}</td>
           <td>{{ order.UserMember.name }} {{ order.UserMember.lastname }}</td>
           <td>
-            <span [ngClass]="{ 'text-success': order.clientApproved, 'text-danger': !order.clientApproved }">
+            <span
+              [ngClass]="{ 'text-success': order.clientApproved, 'text-danger': !order.clientApproved }"
+            >
               {{ order.clientApproved ? 'Sí' : 'No' }}
             </span>
           </td>
           <td>{{ order.status.description }}</td>
           <td>{{ order.unitPrice | currency:'COP':'symbol':'1.0-0' }}</td>
+          <td *ngIf="authService.currentUser?.role === 'Admin'">
+            {{ order.createdAt | date: 'short' }}
+          </td>
+          <td *ngIf="authService.currentUser?.role === 'Admin'">
+            {{ order.updatedAt ? (order.updatedAt | date: 'short') : '—' }}
+          </td>
           <td>
-            <button class="btn btn-sm btn-outline-light me-2" (click)="edit(order)">Editar</button>
-            <button class="btn btn-sm btn-outline-danger" (click)="delete(order.id)" *ngIf="authService.currentUser?.role === 'Admin'">Eliminar</button>
+            <button
+              class="btn btn-sm btn-outline-light me-2"
+              (click)="edit(order)"
+            >
+              Editar
+            </button>
+            <button
+              *ngIf="authService.currentUser?.role?.toLowerCase() === 'admin'"
+              class="btn btn-sm btn-outline-danger"
+              (click)="delete(order.id)"
+            >
+              Eliminar
+            </button>
           </td>
         </tr>
         <tr *ngIf="serviceOrders.length === 0">
-          <td colspan="9" class="text-center text-secondary">No se encontraron órdenes.</td>
+          <td [attr.colspan]="authService.currentUser?.role === 'Admin' ? 11 : 9" class="text-center text-secondary">
+            No se encontraron órdenes.
+          </td>
         </tr>
       </tbody>
     </table>

@@ -11,11 +11,12 @@ export class AuthService {
   currentUser: AuthResponse | null = null;
 
   constructor() {
-    const userJson = localStorage.getItem('currentUser');
+    const userJson = sessionStorage.getItem('currentUser'); 
     if (userJson) {
       this.currentUser = JSON.parse(userJson);
     }
   }
+
   login(credentials: AuthRequest): Observable<AuthResponse> {
     const usersMock = [
       {
@@ -57,7 +58,7 @@ export class AuthService {
       };
 
       this.currentUser = response;
-      localStorage.setItem('currentUser', JSON.stringify(response));  
+      sessionStorage.setItem('currentUser', JSON.stringify(response)); 
 
       return of(response).pipe(delay(1000));
     } else {
@@ -67,9 +68,9 @@ export class AuthService {
 
   logout() {
     this.currentUser = null;
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('token');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('role');
+    sessionStorage.removeItem('currentUser'); 
+    sessionStorage.removeItem('token');       
+    sessionStorage.removeItem('userName');    
+    sessionStorage.removeItem('role');        
   }
 }

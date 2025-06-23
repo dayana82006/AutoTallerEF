@@ -19,7 +19,7 @@ export class MecanicoNavbarComponent {
     this.swal.confirm('¿Cerrar sesión?', 'Tu sesión se cerrará y deberás iniciar sesión de nuevo.')
       .then(confirmed => {
         if (confirmed) {
-          localStorage.clear();
+          sessionStorage.clear();
           this.router.navigate(['/login']);
         }
       });
