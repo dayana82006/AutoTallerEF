@@ -1,8 +1,8 @@
-<div class="container py-5" style="max-width: 600px; margin-top: 80px;">
+<div class="container py-5" style="max-width: 600px; margin-top: 80px">
   <h2 class="mb-4 text-white">
     {{ isEditMode ? 'Editar Usuario' : 'Nuevo Usuario' }}
   </h2>
-  
+
   <p class="text-white" *ngIf="isEditMode && editingId !== null">
     <strong>ID:</strong> {{ editingId }}
   </p>
@@ -10,47 +10,56 @@
   <form #userForm="ngForm" (ngSubmit)="saveUser()">
     <div class="mb-3">
       <label class="form-label text-white">Nombre *</label>
-      <input 
-        class="form-control" 
-        [(ngModel)]="user.name" 
-        name="name" 
+      <input
+        class="form-control"
+        [(ngModel)]="user.name"
+        name="name"
         #name="ngModel"
-        required 
+        required
         minlength="2"
         [class.is-invalid]="name.invalid && name.touched"
       />
       <div class="invalid-feedback" *ngIf="name.invalid && name.touched">
         <div *ngIf="name.errors?.['required']">El nombre es requerido</div>
-        <div *ngIf="name.errors?.['minlength']">El nombre debe tener al menos 2 caracteres</div>
+        <div *ngIf="name.errors?.['minlength']">
+          El nombre debe tener al menos 2 caracteres
+        </div>
       </div>
     </div>
 
     <div class="mb-3">
       <label class="form-label text-white">Apellido *</label>
-      <input 
-        class="form-control" 
-        [(ngModel)]="user.lastname" 
-        name="lastname" 
+      <input
+        class="form-control"
+        [(ngModel)]="user.lastname"
+        name="lastname"
         #lastname="ngModel"
-        required 
+        required
         minlength="2"
         [class.is-invalid]="lastname.invalid && lastname.touched"
       />
-      <div class="invalid-feedback" *ngIf="lastname.invalid && lastname.touched">
-        <div *ngIf="lastname.errors?.['required']">El apellido es requerido</div>
-        <div *ngIf="lastname.errors?.['minlength']">El apellido debe tener al menos 2 caracteres</div>
+      <div
+        class="invalid-feedback"
+        *ngIf="lastname.invalid && lastname.touched"
+      >
+        <div *ngIf="lastname.errors?.['required']">
+          El apellido es requerido
+        </div>
+        <div *ngIf="lastname.errors?.['minlength']">
+          El apellido debe tener al menos 2 caracteres
+        </div>
       </div>
     </div>
 
     <div class="mb-3">
       <label class="form-label text-white">Correo *</label>
-      <input 
-        type="email" 
-        class="form-control" 
-        [(ngModel)]="user.email" 
-        name="email" 
+      <input
+        type="email"
+        class="form-control"
+        [(ngModel)]="user.email"
+        name="email"
         #email="ngModel"
-        required 
+        required
         email
         [class.is-invalid]="email.invalid && email.touched"
       />
@@ -62,10 +71,10 @@
 
     <div class="mb-3">
       <label for="role" class="form-label text-white">Rol *</label>
-      <select 
-        [(ngModel)]="user.role" 
-        class="form-select" 
-        name="role" 
+      <select
+        [(ngModel)]="user.role"
+        class="form-select"
+        name="role"
         id="role"
         #role="ngModel"
         required
@@ -87,17 +96,19 @@
         <input
           type="checkbox"
           class="form-check-input"
-          [id]="spec"
-          [checked]="user.specialties.includes(spec)"
-          (change)="toggleSpecialty(spec)"
+          [id]="'spec-' + spec.id"
+          [checked]="user.specialties.includes(spec.name)"
+          (change)="toggleSpecialty(spec.name)"
         />
-        <label class="form-check-label text-white" [for]="spec">{{ spec }}</label>
+        <label class="form-check-label text-white" [for]="'spec-' + spec.id">
+          {{ spec.name }}
+        </label>
       </div>
     </div>
 
     <div class="d-flex justify-content-between mt-4">
-      <button 
-        class="btn btn-primary" 
+      <button
+        class="btn btn-primary"
         type="submit"
         [disabled]="userForm.invalid"
       >

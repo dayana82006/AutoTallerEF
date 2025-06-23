@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MockUserService } from '../../services/mock-user';
 import { UserMember } from '../../models/user-member';
 import { SwalService } from '../../../../shared/swal.service';
+import { MockSpecialtyService } from '../../services/mock-specialty';
+import { Specialty } from '../../models/specialty';
 
 @Component({
   selector: 'app-user-form',
@@ -26,17 +28,22 @@ export class UserFormComponent implements OnInit {
   editingId: number | null = null;
   isEditMode = false;
   availableRoles = ['Admin', 'Mecánico', 'Recepcionista'];
-  availableSpecialties: string[] = ['Motor', 'Electricidad', 'Suspensión', 'Frenos'];  
+  availableSpecialties: Specialty[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private userService: MockUserService,
-    private swalService: SwalService
+    private swalService: SwalService,
+    private specialtyService: MockSpecialtyService
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
+  this.specialtyService.getAll().subscribe(data => {
+    this.availableSpecialties = data;
+  });
+
+  const id = this.route.snapshot.paramMap.get('id');
     if (id && id !== '0') {
       this.isEditMode = true;
       this.editingId = +id;

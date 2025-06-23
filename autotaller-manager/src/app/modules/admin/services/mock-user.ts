@@ -9,34 +9,38 @@ export class MockUserService {
   private users: UserMember[] = [];
 
   private defaultUsers: UserMember[] = [
-    { id: 1, name: 'Juan', lastname: 'Pérez', email: 'juan@example.com', role: 'Admin', specialties: [] },
-    { id: 2, name: 'Ana', lastname: 'García', email: 'ana@example.com', role: 'Mecánico', specialties: ['Frenos'] },
-    { id: 3, name: 'Luis', lastname: 'Mejía', email: 'luis@example.com', role: 'Recepcionista', specialties: [] },
-    { id: 4, name: 'Laura', lastname: 'Torres', email: 'laura@example.com', role: 'Mecánico', specialties: ['Electricidad'] },
-    { id: 5, name: 'Carlos', lastname: 'Martínez', email: 'carlos@example.com', role: 'Mecánico', specialties: ['Motor'] },
-    { id: 6, name: 'Sandra', lastname: 'Vega', email: 'sandra@example.com', role: 'Admin', specialties: [] }
+    { id: 1, name: 'Juan', lastname: 'Pérez', email: 'juan@example.com', role: 'Admin', specialties: [], createdAt: new Date(), updatedAt: undefined },
+    { id: 2, name: 'Ana', lastname: 'García', email: 'ana@example.com', role: 'Mecánico', specialties: ['Frenos'], createdAt: new Date(), updatedAt: undefined },
+    { id: 3, name: 'Luis', lastname: 'Mejía', email: 'luis@example.com', role: 'Recepcionista', specialties: [], createdAt: new Date(), updatedAt: undefined },
+    { id: 4, name: 'Laura', lastname: 'Torres', email: 'laura@example.com', role: 'Mecánico', specialties: ['Electricidad'], createdAt: new Date(), updatedAt: undefined },
+    { id: 5, name: 'Carlos', lastname: 'Martínez', email: 'carlos@example.com', role: 'Mecánico', specialties: ['Motor'], createdAt: new Date(), updatedAt: undefined },
+    { id: 6, name: 'Sandra', lastname: 'Vega', email: 'sandra@example.com', role: 'Admin', specialties: [], createdAt: new Date(), updatedAt: undefined }
   ];
 
   constructor() {
     this.loadUsersFromStorage();
   }
 
-  private loadUsersFromStorage(): void {
-    try {
-      const stored = localStorage.getItem(this.STORAGE_KEY);
-      if (stored) {
-        this.users = JSON.parse(stored);
-        console.log('Usuarios cargados desde localStorage:', this.users.length);
-      } else {
-        this.users = [...this.defaultUsers];
-        this.saveUsersToStorage();
-        console.log('Inicializando con datos por defecto');
-      }
-    } catch (error) {
-      console.error('Error cargando usuarios desde localStorage:', error);
+private loadUsersFromStorage(): void {
+  try {
+    const stored = localStorage.getItem(this.STORAGE_KEY);
+    if (stored) {
+      this.users = JSON.parse(stored).map((u: any) => ({
+        ...u,
+        createdAt: u.createdAt ? new Date(u.createdAt) : undefined,
+        updatedAt: u.updatedAt ? new Date(u.updatedAt) : undefined
+      }));
+      console.log('Usuarios cargados desde localStorage:', this.users.length);
+    } else {
       this.users = [...this.defaultUsers];
+      this.saveUsersToStorage();
+      console.log('Inicializando con datos por defecto');
     }
+  } catch (error) {
+    console.error('Error cargando usuarios desde localStorage:', error);
+    this.users = [...this.defaultUsers];
   }
+}
 
   private saveUsersToStorage(): void {
     try {
@@ -57,7 +61,6 @@ export class MockUserService {
   }
 
   createUser(user: Omit<UserMember, 'id'>): Observable<UserMember> {
-    
     if (!user.name?.trim() || !user.lastname?.trim() || !user.email?.trim()) {
       return throwError(() => new Error('Datos incompletos para crear el usuario'));
     }
@@ -71,13 +74,17 @@ export class MockUserService {
       ? Math.max(...this.users.map(u => u.id)) + 1
       : 1;
 
+    const now = new Date();
+
     const newUser: UserMember = { 
       ...user, 
       id: newId,
       name: user.name.trim(),
       lastname: user.lastname.trim(),
       email: user.email.trim(),
-      specialties: user.specialties || []
+      specialties: user.specialties || [],
+      createdAt: now,
+      updatedAt: undefined
     };
 
     this.users.push(newUser);
@@ -88,7 +95,6 @@ export class MockUserService {
   }
 
   updateUser(id: number, user: UserMember): Observable<UserMember> {
-
     if (!user.name?.trim() || !user.lastname?.trim() || !user.email?.trim()) {
       return throwError(() => new Error('Datos incompletos para actualizar el usuario'));
     }
@@ -105,13 +111,19 @@ export class MockUserService {
       return throwError(() => new Error('Ya existe otro usuario con este correo electrónico'));
     }
 
+    const now = new Date();
+    const existing = this.users[index];
+
     const updatedUser: UserMember = {
+      ...existing,
       ...user,
-      id: id,
+      id,
       name: user.name.trim(),
       lastname: user.lastname.trim(),
       email: user.email.trim(),
-      specialties: user.specialties || []
+      specialties: user.specialties || [],
+      createdAt: existing.createdAt ?? now,
+      updatedAt: now
     };
 
     this.users[index] = updatedUser;
