@@ -8,8 +8,14 @@ import { AuthResponse } from '../models/auth-response.model';
   providedIn: 'root'
 })
 export class AuthService {
-  constructor() {}
+  currentUser: AuthResponse | null = null;
 
+  constructor() {
+    const userJson = localStorage.getItem('currentUser');
+    if (userJson) {
+      this.currentUser = JSON.parse(userJson);
+    }
+  }
   login(credentials: AuthRequest): Observable<AuthResponse> {
     const usersMock = [
       {
@@ -50,9 +56,20 @@ export class AuthService {
         role: user.role
       };
 
-      return of(response).pipe(delay(1000)); 
+      this.currentUser = response;
+      localStorage.setItem('currentUser', JSON.stringify(response)); // 👈 esto permite que persista
+
+      return of(response).pipe(delay(1000));
     } else {
       return throwError(() => new Error('Credenciales inválidas'));
     }
+  }
+
+  logout() {
+    this.currentUser = null;
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('role');
   }
 }

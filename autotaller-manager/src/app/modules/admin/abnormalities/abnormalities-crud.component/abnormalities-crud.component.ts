@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { of, forkJoin } from 'rxjs';
 import { SwalService } from '../../../../shared/swal.service';
-
+import { AuthService } from '../../../auth/services/auth';
 @Component({
   selector: 'app-vehicle-anormality-crud',
   templateUrl: './abnormalities-crud.component.html',
@@ -33,7 +33,8 @@ export class VehicleAnormalityCrudComponent implements OnInit {
     private anormalityService: MockAnormalityService,
     private detailService: MockAnormalityDetailService,
     private vehicleService: MockVehicleService,
-    private swalService: SwalService
+    private swalService: SwalService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -78,6 +79,11 @@ save() {
 
   if (!trimmedName || trimmedName.length < 3) {
     this.swalService.error('El nombre de la anormalidad es obligatorio y debe tener al menos 3 caracteres.');
+    return;
+  }
+
+    if (this.selectedSerials.length === 0) {
+    this.swalService.error('Debe seleccionar al menos un vehículo asociado.');
     return;
   }
 

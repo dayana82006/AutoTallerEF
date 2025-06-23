@@ -31,6 +31,8 @@ export class LoginComponent {
         localStorage.setItem('userName', res.userName);
         localStorage.setItem('role', res.role);
 
+        this.authService.currentUser = res;
+
         if (res.role === 'Admin') {
           this.router.navigate(['/admin']);
         } else if (res.role === 'Mecánico') {
