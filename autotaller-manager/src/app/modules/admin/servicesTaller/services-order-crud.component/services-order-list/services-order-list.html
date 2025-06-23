@@ -57,7 +57,7 @@
           <td>{{ order.unitPrice | currency:'COP':'symbol':'1.0-0' }}</td>
           <td>
             <button class="btn btn-sm btn-outline-light me-2" (click)="edit(order)">Editar</button>
-            <button class="btn btn-sm btn-outline-danger" (click)="delete(order.id)">Eliminar</button>
+            <button class="btn btn-sm btn-outline-danger" (click)="delete(order.id)" *ngIf="authService.currentUser?.role === 'Admin'">Eliminar</button>
           </td>
         </tr>
         <tr *ngIf="serviceOrders.length === 0">

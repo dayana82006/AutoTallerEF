@@ -7,6 +7,7 @@ import { MockServiceOrderService } from '../../../services/mock-service-order';
 import { ServiceTypesCrudComponent } from '../../services-type-crud.component/services-type-crud.component';
 import { SwalService } from '../../../../../shared/swal.service';
 import { ServiceOrderFormComponent } from '../services-order-form/services-order-form';
+import { AuthService } from '../../../../auth/services/auth';
 
 @Component({
   selector: 'app-service-order-list',
@@ -27,7 +28,8 @@ export class ServiceOrderListComponent implements OnInit {
 
   constructor(
     private serviceOrderService: MockServiceOrderService,
-    private swalService: SwalService
+    private swalService: SwalService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
