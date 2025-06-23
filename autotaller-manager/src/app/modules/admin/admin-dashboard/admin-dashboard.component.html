@@ -1,16 +1,29 @@
 <div class="dashboard-container">
+  <h2 class="dashboard-title">Auditoría del Sistema</h2>
+
   <div class="charts-row">
     <div class="chart-box">
+      <h5 class="chart-title">Actividad: Creados vs Actualizados</h5>
       <canvas id="lineChart"></canvas>
     </div>
     <div class="chart-box">
-      <canvas id="barChart"></canvas>
+      <h5 class="chart-title">Distribución por Entidad</h5>
+      <canvas id="entityDistributionChart"></canvas>
     </div>
   </div>
 
   <div class="charts-row">
     <div class="chart-box small">
-      <canvas id="doughnut1"></canvas>
+      <h5 class="chart-title">Roles de Usuario</h5>
+      <canvas id="userRolesChart"></canvas>
+    </div>
+    <div class="chart-box small">
+      <h5 class="chart-title">Órdenes por Estado</h5>
+      <canvas id="orderStatusChart"></canvas>
+    </div>
+    <div class="chart-box small">
+      <h5 class="chart-title">Vehículos por Cliente</h5>
+      <canvas id="vehiclesByClientChart"></canvas>
     </div>
   </div>
 </div>
