@@ -8,9 +8,9 @@ import { Specialty } from '../models/specialty';
 })
 export class MockSpecialtyService {
   private specialties: Specialty[] = [
-    { id: 1, name: 'Mecánica General' },
-    { id: 2, name: 'Electricidad Automotriz' },
-    { id: 3, name: 'Frenos y Suspensión' }
+    { id: 1, name: 'Mecánica General', createdAt: new Date(), updatedAt: undefined  },
+    { id: 2, name: 'Electricidad Automotriz',createdAt: new Date(), updatedAt: undefined  },
+    { id: 3, name: 'Frenos y Suspensión', createdAt: new Date(), updatedAt: undefined  }
   ];
 
   getAll(): Observable<Specialty[]> {
@@ -27,20 +27,30 @@ create(specialty: Specialty): Observable<Specialty> {
     ? Math.max(...this.specialties.map(s => s.id)) + 1
     : 1;
 
-  const newSpecialty = { ...specialty, id: newId };
+  const now = new Date();
+  const newSpecialty = { ...specialty, id: newId, createdAt: now, updatedAt: undefined };
+
   this.specialties.push(newSpecialty);
 
   return of(newSpecialty).pipe(delay(300));
 }
 
-  update(id: number, specialty: Specialty): Observable<Specialty> {
-    const index = this.specialties.findIndex(s => s.id === id);
-    if (index > -1) {
-      this.specialties[index] = { ...specialty, id }; 
-      return of(this.specialties[index]).pipe(delay(300));
-    }
-    return of(specialty).pipe(delay(300)); 
+update(id: number, specialty: Specialty): Observable<Specialty> {
+  const index = this.specialties.findIndex(s => s.id === id);
+  if (index > -1) {
+    const existing = this.specialties[index];
+    this.specialties[index] = {
+      ...existing,
+      ...specialty,
+      id,
+      createdAt: existing.createdAt || new Date(),
+      updatedAt: new Date()
+    };
+    return of(this.specialties[index]).pipe(delay(300));
   }
+  return of(specialty).pipe(delay(300));
+}
+
 
   delete(id: number): Observable<void> {
     console.log('Eliminando especialidad con ID:', id);
