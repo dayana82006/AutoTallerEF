@@ -8,21 +8,34 @@ import { delay } from 'rxjs/operators';
 })
 export class MockServiceTypeService {
   private serviceTypes: ServiceType[] = [
-    { id: 1, description: 'Cambio de aceite' },
-    { id: 2, description: 'Alineación y balanceo' },
-    { id: 3, description: 'Revisión de frenos' },
-    { id: 4, description: 'Cambio de batería' }
+    { id: 1, description: 'Cambio de aceite', createdAt: new Date(), updatedAt: undefined },
+    { id: 2, description: 'Alineación y balanceo', createdAt: new Date(), updatedAt: undefined },
+    { id: 3, description: 'Revisión de frenos', createdAt: new Date(), updatedAt: undefined },
+    { id: 4, description: 'Cambio de batería', createdAt: new Date(), updatedAt: undefined }
   ];
 
   getAll(): Observable<ServiceType[]> {
-    return of(this.serviceTypes).pipe(delay(300));
+    return of([...this.serviceTypes]).pipe(delay(300));
+  }
+
+  getById(id: number): Observable<ServiceType | undefined> {
+    const found = this.serviceTypes.find(s => s.id === id);
+    return of(found ? { ...found } : undefined).pipe(delay(300));
   }
 
   create(serviceType: Omit<ServiceType, 'id'>): Observable<ServiceType> {
     const newId = this.serviceTypes.length > 0
       ? Math.max(...this.serviceTypes.map(s => s.id)) + 1
       : 1;
-    const newServiceType: ServiceType = { id: newId, ...serviceType };
+
+    const now = new Date();
+    const newServiceType: ServiceType = {
+      ...serviceType,
+      id: newId,
+      createdAt: now,
+      updatedAt: undefined
+    };
+
     this.serviceTypes.push(newServiceType);
     return of(newServiceType).pipe(delay(300));
   }
@@ -30,7 +43,14 @@ export class MockServiceTypeService {
   update(id: number, updated: ServiceType): Observable<ServiceType | undefined> {
     const index = this.serviceTypes.findIndex(s => s.id === id);
     if (index !== -1) {
-      this.serviceTypes[index] = { ...updated };
+      const existing = this.serviceTypes[index];
+      this.serviceTypes[index] = {
+        ...existing,
+        ...updated,
+        id,
+        createdAt: existing.createdAt || new Date(),
+        updatedAt: new Date()
+      };
       return of(this.serviceTypes[index]).pipe(delay(300));
     }
     return of(undefined).pipe(delay(300));

@@ -27,6 +27,8 @@
         <tr>
           <th>ID</th>
           <th>Descripción</th>
+          <th style="width: 20%; white-space: nowrap;">Creado</th>
+          <th style="width: 20%; white-space: nowrap;">Actualizado</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -34,13 +36,15 @@
         <tr *ngFor="let t of filteredServiceTypes">
           <td>{{ t.id }}</td>
           <td>{{ t.description }}</td>
+          <td>{{ t.createdAt | date:'short' }}</td>
+          <td>{{ t.updatedAt ? (t.updatedAt | date:'short') : '—' }}</td>
           <td>
             <button class="btn btn-sm btn-outline-light me-2" (click)="edit(t)">Editar</button>
             <button class="btn btn-sm btn-outline-danger" (click)="delete(t.id)">Eliminar</button>
           </td>
         </tr>
         <tr *ngIf="filteredServiceTypes.length === 0">
-          <td colspan="3" class="text-center text-secondary">No hay tipos de servicio</td>
+          <td colspan="5" class="text-center text-secondary">No hay tipos de servicio</td>
         </tr>
       </tbody>
     </table>
