@@ -68,7 +68,7 @@ export class ServiceOrderListComponent implements OnInit {
   onFormSubmit(): void {
     this.selectedServiceOrder = null;
     this.showForm = false;
-    this.ngOnInit(); // recargar lista
+    this.ngOnInit(); 
   }
 
   cancelForm(): void {

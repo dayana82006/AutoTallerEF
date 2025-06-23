@@ -15,7 +15,15 @@ export class ClientFormComponent implements OnInit {
   @Output() formSubmitted = new EventEmitter<void>();
   @Output() cancelForm = new EventEmitter<void>();
 
-  client: Client = { id: 0, name: '', lastname: '', telephone: '', email: '' };
+    client: Client = {
+    id: 0,
+    name: '',
+    lastname: '',
+    telephone: '',
+    email: '',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
   editMode = false;
 
   constructor(private clientService: MockClientService) {}
@@ -27,19 +35,24 @@ export class ClientFormComponent implements OnInit {
     }
   }
 
-  save(): void {
+ save(): void {
+    const now = new Date();
+
     if (this.editMode) {
+      this.client.updatedAt = now;
       this.clientService.update(this.client.id, this.client).subscribe(() => {
         this.formSubmitted.emit();
       });
-    } else {
-      this.clientService.create(this.client).subscribe(() => {
-        this.formSubmitted.emit();
-      });
-    }
+  } else {
+    this.client.createdAt = new Date();
+    delete this.client.updatedAt;
+    this.clientService.create(this.client).subscribe(() => {
+      this.formSubmitted.emit();
+    });
+  }
   }
 
   cancel(): void {
-    this.formSubmitted.emit();
+    this.cancelForm.emit();
   }
 }

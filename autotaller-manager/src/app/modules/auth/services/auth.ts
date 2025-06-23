@@ -57,7 +57,7 @@ export class AuthService {
       };
 
       this.currentUser = response;
-      localStorage.setItem('currentUser', JSON.stringify(response)); // 👈 esto permite que persista
+      localStorage.setItem('currentUser', JSON.stringify(response));  
 
       return of(response).pipe(delay(1000));
     } else {

@@ -5,6 +5,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ClientFormComponent } from "../client-form/client-form.component";
 import { SwalService } from "../../../../shared/swal.service";
+import { AuthService } from '../../../auth/services/auth';
 @Component({
   selector: 'app-client-list',
   standalone: true,
@@ -24,7 +25,8 @@ export class ClientListComponent implements OnInit {
 
   constructor(
     private clientService: MockClientService,
-     private swalService: SwalService
+     private swalService: SwalService,
+     public authService: AuthService
   ) {}
 
   ngOnInit(): void {

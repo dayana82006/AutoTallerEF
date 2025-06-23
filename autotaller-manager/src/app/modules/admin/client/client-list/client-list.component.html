@@ -8,6 +8,10 @@
 <div *ngIf="!showForm" class="container py-4" style="margin-top: 70px">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="text-white title">Gestión de Clientes</h2>
+
+  <!--<p class="text-warning text-center"> 
+    Usuario actual: {{ authService.currentUser?.role }}
+  </p>-->
     <button class="btn btn-primary subtitle" (click)="newClient()">Añadir Cliente</button>
   </div>
 
@@ -32,6 +36,8 @@
           <th>Nombre</th>
           <th>Teléfono</th>
           <th>Email</th>
+          <th *ngIf="authService.currentUser?.role === 'Admin'">Creado</th>
+          <th *ngIf="authService.currentUser?.role === 'Admin'">Actualizado</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -41,6 +47,12 @@
           <td>{{ client.name }} {{ client.lastname }}</td>
           <td>{{ client.telephone }}</td>
           <td>{{ client.email }}</td>
+        <td *ngIf="authService.currentUser?.role === 'Admin'">
+          {{ client.createdAt | date: 'short' }}
+        </td>
+        <td *ngIf="authService.currentUser?.role === 'Admin'">
+          {{ client.updatedAt | date: 'short' }}
+        </td>
           <td>
             <button class="btn btn-sm btn-outline-light me-2" (click)="edit(client)">Editar</button>
             <button class="btn btn-sm btn-outline-danger" (click)="delete(client.id)">Eliminar</button>

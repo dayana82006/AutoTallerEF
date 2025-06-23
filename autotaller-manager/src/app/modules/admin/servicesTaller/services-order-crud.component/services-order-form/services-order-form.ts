@@ -48,19 +48,17 @@ export class ServiceOrderFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Vehículos quemados
+
     this.vehicles = [
       { id: 1, serialNumber: 'ABC123', releaseYear: 2020, km: 10000, vehicleModelId: 1, clientId: 1, fuelTypeId: 1, vehicleTypeId: 1 },
       { id: 2, serialNumber: 'XYZ789', releaseYear: 2019, km: 20000, vehicleModelId: 2, clientId: 2, fuelTypeId: 2, vehicleTypeId: 2 }
     ];
 
-    // Tipos de servicio quemados
     this.serviceTypes = [
       { id: 1, description: 'Cambio de aceite' },
       { id: 2, description: 'Mantenimiento general' }
     ];
 
-    // Técnicos quemados
     this.users = [
       { id: 1, name: 'Carlos', lastname: 'Ramírez', email: 'carlos@taller.com', role: 'Operario', specialties: [] },
       { id: 2, name: 'Laura', lastname: 'López', email: 'laura@taller.com', role: 'Operario', specialties: [] }
