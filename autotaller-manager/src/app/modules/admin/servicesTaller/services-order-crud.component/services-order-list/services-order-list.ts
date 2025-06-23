@@ -7,6 +7,7 @@ import { MockServiceOrderService } from '../../../services/mock-service-order';
 import { ServiceTypesCrudComponent } from '../../services-type-crud.component/services-type-crud.component';
 import { SwalService } from '../../../../../shared/swal.service';
 import { ServiceOrderFormComponent } from '../services-order-form/services-order-form';
+import { AuthService } from '../../../../auth/services/auth';
 
 @Component({
   selector: 'app-service-order-list',
@@ -27,7 +28,8 @@ export class ServiceOrderListComponent implements OnInit {
 
   constructor(
     private serviceOrderService: MockServiceOrderService,
-    private swalService: SwalService
+    private swalService: SwalService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -35,7 +37,14 @@ export class ServiceOrderListComponent implements OnInit {
       this.allServiceOrders = orders;
       this.applyFilters();
     });
+    
   }
+private refreshOrders(): void {
+  this.serviceOrderService.getServiceOrders().subscribe((orders) => {
+    this.allServiceOrders = orders;
+    this.applyFilters();
+  });
+}
 
   applyFilters(): void {
     const filtered = this.allServiceOrders.filter((o) =>
@@ -65,11 +74,24 @@ export class ServiceOrderListComponent implements OnInit {
     });
   }
 
-  onFormSubmit(): void {
-    this.selectedServiceOrder = null;
-    this.showForm = false;
-    this.ngOnInit(); // recargar lista
+onFormSubmit(order: ServiceOrder): void {
+  if (this.selectedServiceOrder) {
+
+    this.serviceOrderService.updateServiceOrder(order.id, order).subscribe(() => {
+      this.swalService.success('Orden actualizada');
+      this.refreshOrders();
+    });
+  } else {
+    this.serviceOrderService.createServiceOrder(order).subscribe(() => {
+      this.swalService.success('Orden creada');
+      this.refreshOrders();
+    });
   }
+
+  this.selectedServiceOrder = null;
+  this.showForm = false;
+}
+
 
   cancelForm(): void {
     this.selectedServiceOrder = null;

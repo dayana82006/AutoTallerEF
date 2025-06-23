@@ -17,6 +17,7 @@ import { MockFuelTypes } from '../../services/mock-fuel-types';
 import { MockVehicleModel } from '../../services/mock-vehicle-models';
 import { MockVehicleTypes } from '../../services/mock-vehicle-types';
 import { SwalService } from '../../../../shared/swal.service';
+import { AuthService } from '../../../auth/services/auth';
 
 @Component({
   selector: 'app-vehicle-list',
@@ -42,7 +43,8 @@ export class VehicleListComponent implements OnInit {
   constructor(
     private vehicleService: MockVehicleService,
     private clientService: MockClientService,
-    private swalService: SwalService
+    private swalService: SwalService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {

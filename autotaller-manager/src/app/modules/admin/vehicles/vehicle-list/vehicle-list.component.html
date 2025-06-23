@@ -38,6 +38,8 @@
           <th>Cliente</th>
           <th>Combustible</th>
           <th>Tipo</th>
+          <th *ngIf="authService.currentUser?.role === 'Admin'">Creado</th>
+          <th *ngIf="authService.currentUser?.role === 'Admin'">Actualizado</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -51,6 +53,8 @@
           <td>{{ getClientName(vehicle.clientId) }}</td>
           <td>{{ getFuelTypeName(vehicle.fuelTypeId) }}</td>
           <td>{{ getVehicleTypeName(vehicle.vehicleTypeId) }}</td>
+          <td *ngIf="authService.currentUser?.role === 'Admin'">{{ vehicle.createdAt | date: 'short' }}</td>
+          <td *ngIf="authService.currentUser?.role === 'Admin'">{{ vehicle.updatedAt ? (vehicle.updatedAt | date: 'short') : '—' }}</td>
           <td>
             <button
               class="btn btn-sm btn-outline-light me-2"
@@ -61,13 +65,15 @@
             <button
               class="btn btn-sm btn-outline-danger"
               (click)="delete(vehicle.id)"
+              *ngIf="authService.currentUser?.role === 'Admin'"
             >
               Eliminar
             </button>
           </td>
         </tr>
         <tr *ngIf="vehicles.length === 0">
-          <td colspan="8" class="text-center text-secondary">
+          <td [attr.colspan]="authService.currentUser?.role === 'Admin' ? 11 : 9"
+            class="text-center text-secondary">
             No se encontraron vehículos.
           </td>
         </tr>

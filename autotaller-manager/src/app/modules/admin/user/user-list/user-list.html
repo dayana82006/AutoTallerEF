@@ -26,6 +26,8 @@
           <th>Email</th>
           <th>Role</th>
           <th>Especialidades</th>
+          <th>Creado</th>
+          <th>Actualizado</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -49,7 +51,12 @@
               <span class="text-muted">N/A</span>
             </ng-template>
           </td>
-
+        <td>
+          {{ user.createdAt | date:'short' }}
+        </td>
+        <td>
+          {{ user.updatedAt | date:'short' }}
+        </td>
           <td>
             <a class="btn btn-sm btn-outline-light me-2" [attr.href]="'/admin/usuarios/edit/' + user.id">Edit</a>
             <button class="btn btn-sm btn-outline-danger" (click)="deleteUser(user.id)">Delete</button>

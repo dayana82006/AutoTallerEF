@@ -15,5 +15,7 @@ unitPrice: number,
 status: {
     id:number,
     description:string
-}
+};
+    createdAt?: Date;
+    updatedAt?: Date;
 }

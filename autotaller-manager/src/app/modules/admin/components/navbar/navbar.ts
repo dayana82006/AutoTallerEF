@@ -7,7 +7,6 @@ import { SwalService } from '../../../../shared/swal.service';
   standalone: true,
   templateUrl: './navbar.component.html',
 })
-
 export class AdminNavbarComponent {
   constructor(
     private router: Router,
@@ -20,7 +19,7 @@ export class AdminNavbarComponent {
     this.swal.confirm('¿Cerrar sesión?', 'Tu sesión se cerrará y deberás iniciar sesión de nuevo.')
       .then(confirmed => {
         if (confirmed) {
-          localStorage.clear();
+          sessionStorage.clear();
           this.router.navigate(['/login']);
         }
       });

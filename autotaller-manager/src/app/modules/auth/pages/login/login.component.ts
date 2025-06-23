@@ -17,7 +17,11 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
 
-  constructor(private authService: AuthService, private router: Router, private swalService: SwalService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private swalService: SwalService
+  ) {}
 
   onSubmit(): void {
     const credentials: AuthRequest = {
@@ -27,16 +31,22 @@ export class LoginComponent {
 
     this.authService.login(credentials).subscribe({
       next: (res) => {
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('userName', res.userName);
-        localStorage.setItem('role', res.role);
+        sessionStorage.setItem('currentUser', JSON.stringify(res));
+        
+        this.authService.currentUser = res;
 
-        if (res.role === 'Admin') {
-          this.router.navigate(['/admin']);
-        } else if (res.role === 'Mecánico') {
-          this.router.navigate(['/mecanico']);
-        } else if (res.role === 'Recepcionista') {
-          this.router.navigate(['/recepcionista']);
+        switch (res.role) {
+          case 'Admin':
+            this.router.navigate(['/admin']);
+            break;
+          case 'Mecánico':
+            this.router.navigate(['/mecanico']);
+            break;
+          case 'Recepcionista':
+            this.router.navigate(['/recepcionista']);
+            break;
+          default:
+            this.swalService.error('Error', 'Rol no reconocido');
         }
       },
       error: () => {

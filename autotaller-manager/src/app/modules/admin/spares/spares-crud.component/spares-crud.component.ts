@@ -4,7 +4,7 @@ import { MockSpareService } from '../../services/mock-spares';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SwalService } from '../../../../shared/swal.service';
-
+import { AuthService } from '../../../auth/services/auth';
 @Component({
   selector: 'app-spares-crud',
   standalone: true,
@@ -30,7 +30,8 @@ export class SparesCrudComponent implements OnInit {
 
   constructor(
     private spareService: MockSpareService,
-    private swal: SwalService
+    private swal: SwalService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
