@@ -37,7 +37,6 @@ export class ReceptionistDashboardComponent implements AfterViewInit {
   }
 
   renderCharts(clients: any[], vehicles: any[], orders: any[]) {
-    // Gráfico: Órdenes por Estado
     const orderStates = orders.reduce((acc, o) => {
       const estado = o.status?.description ?? 'Desconocido';
       acc[estado] = (acc[estado] || 0) + 1;
@@ -63,7 +62,6 @@ export class ReceptionistDashboardComponent implements AfterViewInit {
       }
     });
 
-    // Gráfico: Vehículos por Cliente
     const vehiclesByClient = clients.map(c => ({
       label: `${c.name} ${c.lastname}`,
       count: vehicles.filter(v => v.clientId === c.id).length
@@ -83,7 +81,6 @@ export class ReceptionistDashboardComponent implements AfterViewInit {
       }
     });
 
-    // Gráfico: Clientes con más órdenes
     const ordersPerClient = clients.map(c => ({
       label: `${c.name} ${c.lastname}`,
       count: orders.filter(o => o.clientId === c.id).length
@@ -106,7 +103,6 @@ export class ReceptionistDashboardComponent implements AfterViewInit {
       }
     });
 
-    // Gráfico: Tipos de Servicios Solicitados
     const services = orders.reduce((acc, o) => {
       const tipo = o.serviceType?.description ?? 'Sin especificar';
       acc[tipo] = (acc[tipo] || 0) + 1;
@@ -127,7 +123,6 @@ export class ReceptionistDashboardComponent implements AfterViewInit {
       }
     });
 
-    // Gráfico: Órdenes ingresadas esta semana
     const today = new Date();
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - today.getDay());

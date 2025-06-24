@@ -33,7 +33,7 @@ export class AuthService {
         token: 'mock-mechanic-token',
         userId: 2,
         userName: 'MecanicoUser',
-        role: 'Mecánico'
+        role: 'Mecanico'
       },
       {
         email: 'recepcion@mail.com',

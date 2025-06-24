@@ -1,4 +1,3 @@
-// admin-dashboard.component.ts
 import { Component, AfterViewInit } from '@angular/core';
 import Chart from 'chart.js/auto';
 import { forkJoin } from 'rxjs';

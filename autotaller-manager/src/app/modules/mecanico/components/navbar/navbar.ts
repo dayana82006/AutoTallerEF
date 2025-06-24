@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { SwalService } from '../../../../shared/swal.service'; 
 
 @Component({
-  selector: 'app-navbar',
+  selector: 'app-navbar-mecanico',
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss'
 })
