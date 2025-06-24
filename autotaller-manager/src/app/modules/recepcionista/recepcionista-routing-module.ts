@@ -14,8 +14,8 @@ const routes: Routes = [
       { path: 'vehiculos/new', loadComponent: () => import('../admin/vehicles/vehicle-form/vehicle-form.component').then(m => m.VehicleFormComponent) },
       { path: 'vehiculos/edit/:id', loadComponent: () => import('../admin/vehicles/vehicle-form/vehicle-form.component').then(m => m.VehicleFormComponent) },      
       {path: 'ordenes', loadComponent: () => import ('../admin/servicesTaller/services-order-crud.component/services-order-list/services-order-list').then(m=>m.ServiceOrderListComponent)},
+      { path: '', loadComponent: () => import('../recepcionista/recepcionista-dashboard/recepcionista-dashboard.component/recepcionista-dashboard.component').then(m=>m.ReceptionistDashboardComponent)}
 
-      { path: '', redirectTo: 'usuarios', pathMatch: 'full' }
     ]
   } 
 ];

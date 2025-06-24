@@ -9,8 +9,9 @@
 .charts-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
   justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .chart-box {
@@ -18,11 +19,12 @@
   border: 1px solid #374151;
   padding: 1rem;
   border-radius: 1rem;
-  flex: 1 1 calc(33.33% - 1rem); 
-  max-width: calc(33.33% - 1rem);
-  min-width: 280px; 
+  width: 100%;
+  max-width: 300px;  /* 🟢 Reduce el tamaño para que quepan 3 por fila */
+  flex: 1 1 300px;
   box-sizing: border-box;
 }
+
 
 .chart-title {
   color: #d1d5db;
@@ -32,16 +34,16 @@
   font-weight: 500;
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
   .chart-box {
-    flex: 1 1 45%;
+    flex: 1 1 45%;  /* 2 por fila */
     max-width: 45%;
   }
 }
 
 @media (max-width: 768px) {
   .chart-box {
-    flex: 1 1 100%;
+    flex: 1 1 100%;  /* 1 por fila en móviles */
     max-width: 100%;
   }
 }
