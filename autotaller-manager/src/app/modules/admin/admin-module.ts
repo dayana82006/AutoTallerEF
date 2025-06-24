@@ -1,3 +1,5 @@
+import { HttpClientModule } from '@angular/common/http';
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,7 +19,7 @@ import { ServiceOrderListComponent } from './servicesTaller/services-order-crud.
 
 @NgModule({
   declarations: [
-  
+
   ],
   imports: [
     AdminLayoutComponent,
@@ -32,8 +34,9 @@ import { ServiceOrderListComponent } from './servicesTaller/services-order-crud.
     SparesCrudComponent,
     ServiceTypesCrudComponent,
     ServiceOrderFormComponent,
-    ServiceOrderListComponent
-    
+    ServiceOrderListComponent,
+      HttpClientModule
+
   ]
 })
 export class AdminModule { }
