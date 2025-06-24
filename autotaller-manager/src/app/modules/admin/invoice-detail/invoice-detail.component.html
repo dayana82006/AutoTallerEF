@@ -1,0 +1,42 @@
+<ng-template #sinFactura>
+  <p class="text-warning">No se encontró una factura para esta orden.</p>
+</ng-template>
+<div class="container mt-5 title" *ngIf="invoice && serviceOrder && vehicle && client; else sinFactura">
+  <h2 class="mb-4">Factura de la Orden #{{ serviceOrder.id }}</h2>
+
+  <div class="row mb-4 subtitle">
+    <div class="col-md-6">
+      <h5>Información del Cliente</h5>
+      <p><strong>Nombre:</strong> {{ client.name }} {{ client.lastname }}</p>
+      <p><strong>Email:</strong> {{ client.email }}</p>
+      <p><strong>Teléfono:</strong> {{ client.telephone }}</p>
+    </div>
+    <div class="col-md-6">
+      <h5>Información del Vehículo</h5>
+      <p><strong>Placa / Serial:</strong> {{ vehicle.serialNumber }}</p>
+      <p><strong>Año:</strong> {{ vehicle.releaseYear }}</p>
+      <p><strong>Kilometraje:</strong> {{ vehicle.km | number }} km</p>
+    </div>
+  </div>
+
+  <div class="card p-4 mb-4 subtitle" style="background-color: #121417;">
+    <h5 class="mb-3">Resumen de la Factura</h5>
+    <p><strong>Total Repuestos:</strong> {{ invoice.totalSpares | currency:'COP' }}</p>
+    <p><strong>Mano de Obra:</strong> {{ invoice.totalServices | currency:'COP' }}</p>
+    <p><strong>Total Final:</strong> {{ invoice.finalAmount | currency:'COP' }}</p>
+    <p><strong>Fecha:</strong> {{ invoice.createdAt | date:'short' }}</p>
+  </div>
+
+<a *ngIf="authService.currentUser?.role === 'Admin'"
+   href="/admin/servicios/ordenes"
+   class="btn btn-outline-light">
+  Volver a Órdenes (Admin)
+</a>
+
+<a *ngIf="authService.currentUser?.role === 'Mecanico'"
+   href="/mecanico/ordenes"
+   class="btn btn-outline-light">
+  Volver a Órdenes (Mecánico)
+</a>
+
+

@@ -67,12 +67,14 @@
             {{ order.updatedAt ? (order.updatedAt | date: 'short') : '—' }}
           </td>
           <td>
-            <button
-              class="btn btn-sm btn-outline-light me-2"
-              (click)="edit(order)"
-            >
-              Editar
-            </button>
+          <button class="btn btn-sm btn-outline-light me-2" (click)="edit(order)">
+            Editar
+          </button>
+          <button
+            class="btn btn-sm btn-outline-success"
+            (click)="viewInvoice(order.id)">
+            Ver Factura
+          </button>
             <button
               *ngIf="authService.currentUser?.role?.toLowerCase() === 'admin'"
               class="btn btn-sm btn-outline-danger"

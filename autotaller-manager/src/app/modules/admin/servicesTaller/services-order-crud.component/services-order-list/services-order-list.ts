@@ -8,6 +8,7 @@ import { ServiceTypesCrudComponent } from '../../services-type-crud.component/se
 import { SwalService } from '../../../../../shared/swal.service';
 import { ServiceOrderFormComponent } from '../services-order-form/services-order-form';
 import { AuthService } from '../../../../auth/services/auth';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-service-order-list',
@@ -29,7 +30,8 @@ export class ServiceOrderListComponent implements OnInit {
   constructor(
     private serviceOrderService: MockServiceOrderService,
     private swalService: SwalService,
-    public authService: AuthService
+    public authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -73,14 +75,19 @@ private refreshOrders(): void {
       }
     });
   }
-
-onFormSubmit(order: ServiceOrder): void {
-  if (this.selectedServiceOrder) {
-
-    this.serviceOrderService.updateServiceOrder(order.id, order).subscribe(() => {
-      this.swalService.success('Orden actualizada');
-      this.refreshOrders();
-    });
+  
+  selectedInvoiceOrderId?: number;
+  
+viewInvoice(orderId: number): void {
+  this.router.navigate(['/admin/invoices', orderId]);
+}
+  onFormSubmit(order: ServiceOrder): void {
+    if (this.selectedServiceOrder) {
+      
+      this.serviceOrderService.updateServiceOrder(order.id, order).subscribe(() => {
+        this.swalService.success('Orden actualizada');
+        this.refreshOrders();
+      });
   } else {
     this.serviceOrderService.createServiceOrder(order).subscribe(() => {
       this.swalService.success('Orden creada');

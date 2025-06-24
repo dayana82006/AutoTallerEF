@@ -21,6 +21,7 @@ const routes: Routes = [
       { path: 'vehiculos/repuestos', loadComponent: () => import('../admin/spares/spares-crud.component/spares-crud.component').then(m => m.SparesCrudComponent) },
       { path: 'servicios/tipos', loadComponent: () => import('../admin/servicesTaller/services-type-crud.component/services-type-crud.component').then(m=>m.ServiceTypesCrudComponent)},
       {path: 'servicios/ordenes', loadComponent: () => import ('../admin/servicesTaller/services-order-crud.component/services-order-list/services-order-list').then(m=>m.ServiceOrderListComponent)},
+      { path: 'invoices/:id', loadComponent: () => import ('../admin/invoice-detail/invoice-detail.component').then(m=>m.InvoicePageComponent)},
       { path: '', loadComponent: () => import('../admin/admin-dashboard/admin-dashboard').then(m=>m.AdminDashboardComponent)}
     ]
   }
