@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs.Entities
 {
-    public class VehicleAnormalityDetail
+    public class VehicleAnormalityDetailDto
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
