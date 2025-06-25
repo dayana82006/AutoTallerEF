@@ -28,7 +28,7 @@ public class UserRoleConfiguration : BaseEntityConfiguration<UserRole>
             .IsRequired();
 
         builder.HasOne(ur => ur.UserMember)
-            .WithMany(um => um.UserMembers)
+            .WithMany(um => um.UserRoles)
             .HasForeignKey(ur => ur.UserMemberId);
 
         builder.HasOne(ur => ur.Role)

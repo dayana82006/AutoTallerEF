@@ -13,8 +13,9 @@ namespace Domain.Entities
         public string? Username { get; set; }
         public string? Email { get; set; }
         public string? Password { get; set; }
-        public List<UserRole>? UserMembers { get; set; } = new List<UserRole>();
+        public List<UserRole>? UserRoles { get; set; } = new List<UserRole>();
         public List<ServiceOrder>? ServiceOrders { get; set; } = new List<ServiceOrder>();
         public List<UserSpecialty>? UserSpecialties { get; set; } = new List<UserSpecialty>();
+        public List<RefreshToken>? RefreshTokens { get; set; } = new List<RefreshToken>();
     }
 }
