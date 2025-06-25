@@ -1,5 +1,7 @@
 using System.Reflection;
+using Application.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using TallerApi.Extensions;
 using TallerApi.Helpers.Errors;
@@ -27,6 +29,9 @@ builder.Services.AddDbContext<PublicDbContext>(options =>
     string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
     options.UseNpgsql(connectionString);
 });
+
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

@@ -11,6 +11,10 @@ namespace Infrastructure.UnitOfWork
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly PublicDbContext _context;
+        public UnitOfWork(PublicDbContext context)
+{
+    _context = context ?? throw new ArgumentNullException(nameof(context));
+}
         private IBrandRepository _brand;
         private IClientRepository _client;
         private IFuelTypeRepository _fuelType;
