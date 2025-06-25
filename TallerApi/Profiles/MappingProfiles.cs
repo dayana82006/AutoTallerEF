@@ -17,7 +17,7 @@ namespace TallerApi.Profiles
             CreateMap<Client, ClientDto>().ReverseMap();
             CreateMap<FuelType, FuelTypeDto>().ReverseMap();
             CreateMap<Invoice, InvoiceDto>().ReverseMap();
-            CreateMap<InvoiceDetail, InvoiceDetaiDto>().ReverseMap();
+            CreateMap<InvoiceDetail, InvoiceDetailDto>().ReverseMap();
             CreateMap<OrderDetail, OrderDetailDto>().ReverseMap();
             CreateMap<ServiceOrder, ServiceOrderDto>().ReverseMap();
             CreateMap<ServiceStatus, ServiceStatusDto>().ReverseMap();
@@ -29,6 +29,7 @@ namespace TallerApi.Profiles
             CreateMap<VehicleAnormalityDetail, VehicleAnormalityDetailDto>().ReverseMap();
             CreateMap<VehicleModel, VehicleModelDto>().ReverseMap();
             CreateMap<VehicleType, VehicleTypeDto>().ReverseMap();
+            CreateMap<UserSpecialty, UserSpecialtyDto>().ReverseMap();
             
             
         }

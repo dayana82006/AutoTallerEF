@@ -8,6 +8,6 @@ namespace Application.Interfaces
 {
     public interface IVehicleRepository:IGenericRepository<Vehicle>
     {
-        
+        Task<Vehicle> GetByIdAsync(string SerialNumber);
     }
 }

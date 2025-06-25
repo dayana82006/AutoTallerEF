@@ -8,6 +8,6 @@ namespace Application.Interfaces
 {
     public interface ISpareRepostiroy:IGenericRepository<Spare>
     {
-        
+        Task<Spare> GetByIdAsync(string Code);
     }
 }

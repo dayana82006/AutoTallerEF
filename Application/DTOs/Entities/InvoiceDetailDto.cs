@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs.Entities
 {
-    public class InvoiceDetaiDto
+    public class InvoiceDetailDto
     {
         public int Id { get; set; }
         public int InvoiceId { get; set; }
