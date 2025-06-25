@@ -18,7 +18,9 @@ namespace Infrastructure.Data.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false)
+                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -34,11 +36,28 @@ namespace Infrastructure.Data.Migrations
                     name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     lastname = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     telephone = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
+                    email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_clients", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "fuel_type",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_fuel_type", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -48,7 +67,9 @@ namespace Infrastructure.Data.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
-                    description = table.Column<string>(type: "text", nullable: false)
+                    description = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -61,7 +82,9 @@ namespace Infrastructure.Data.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false)
+                    name = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -75,7 +98,8 @@ namespace Infrastructure.Data.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    unit_price = table.Column<decimal>(type: "numeric(10,2)", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -89,11 +113,28 @@ namespace Infrastructure.Data.Migrations
                     code = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     stock_quantity = table.Column<int>(type: "integer", nullable: false),
-                    unit_price = table.Column<decimal>(type: "numeric(10,2)", nullable: false)
+                    unit_price = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_spares", x => x.code);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "specialties",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_specialties", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -104,12 +145,46 @@ namespace Infrastructure.Data.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     lastname = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    username = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    password = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
+                    password = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_user_member", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "vehicle_anormalities",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    entry_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_vehicle_anormalities", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "vehicle_type",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_vehicle_type", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -119,7 +194,9 @@ namespace Infrastructure.Data.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
-                    id_brand = table.Column<int>(type: "integer", nullable: false)
+                    id_brand = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -141,7 +218,9 @@ namespace Infrastructure.Data.Migrations
                     total_spares = table.Column<decimal>(type: "numeric(12,2)", nullable: false),
                     total_services = table.Column<decimal>(type: "numeric(12,2)", nullable: false),
                     final_amount = table.Column<decimal>(type: "numeric(12,2)", nullable: false),
-                    id_client = table.Column<int>(type: "integer", nullable: false)
+                    id_client = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -155,13 +234,41 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RefreshToken",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    MemberId = table.Column<int>(type: "integer", nullable: false),
+                    UsersId = table.Column<int>(type: "integer", nullable: false),
+                    Token = table.Column<string>(type: "text", nullable: false),
+                    Expires = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Revoked = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshToken", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshToken_user_member_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "user_member",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "user_role",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     id_user_member = table.Column<int>(type: "integer", nullable: false),
-                    id_role = table.Column<int>(type: "integer", nullable: false)
+                    id_role = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -181,6 +288,34 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "user_specialties",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id_user = table.Column<int>(type: "integer", nullable: false),
+                    id_specialty = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user_specialties", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_user_specialties_specialties_id_specialty",
+                        column: x => x.id_specialty,
+                        principalTable: "specialties",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_user_specialties_user_member_id_user",
+                        column: x => x.id_user,
+                        principalTable: "user_member",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "vehicles",
                 columns: table => new
                 {
@@ -188,7 +323,11 @@ namespace Infrastructure.Data.Migrations
                     release_year = table.Column<int>(type: "integer", nullable: false),
                     km = table.Column<long>(type: "bigint", nullable: false),
                     id_model = table.Column<int>(type: "integer", nullable: false),
-                    id_client = table.Column<int>(type: "integer", nullable: false)
+                    id_client = table.Column<int>(type: "integer", nullable: false),
+                    id_fuel_type = table.Column<int>(type: "integer", nullable: false),
+                    id_vehicle_type = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -200,9 +339,21 @@ namespace Infrastructure.Data.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_vehicles_fuel_type_id_fuel_type",
+                        column: x => x.id_fuel_type,
+                        principalTable: "fuel_type",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_vehicles_vehicle_models_id_model",
                         column: x => x.id_model,
                         principalTable: "vehicle_models",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_vehicles_vehicle_type_id_vehicle_type",
+                        column: x => x.id_vehicle_type,
+                        principalTable: "vehicle_type",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -216,10 +367,14 @@ namespace Infrastructure.Data.Migrations
                     description = table.Column<string>(type: "text", nullable: true),
                     date_entry = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     delivery_date = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    client_approved = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     serial_number = table.Column<string>(type: "text", nullable: false),
+                    unit_price = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     id_service_type = table.Column<int>(type: "integer", nullable: false),
                     id_user_member = table.Column<int>(type: "integer", nullable: false),
-                    id_status = table.Column<int>(type: "integer", nullable: false)
+                    id_status = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -251,13 +406,43 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "vehicle_anormalities_details",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id_anormality = table.Column<int>(type: "integer", nullable: false),
+                    serial_number = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_vehicle_anormalities_details", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_vehicle_anormalities_details_vehicle_anormalities_id_anorma~",
+                        column: x => x.id_anormality,
+                        principalTable: "vehicle_anormalities",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_vehicle_anormalities_details_vehicles_serial_number",
+                        column: x => x.serial_number,
+                        principalTable: "vehicles",
+                        principalColumn: "serial_number",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "invoice_details",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     id_invoice = table.Column<int>(type: "integer", nullable: false),
-                    id_service_order = table.Column<int>(type: "integer", nullable: false)
+                    id_service_order = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -284,7 +469,9 @@ namespace Infrastructure.Data.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     spare_quantity = table.Column<int>(type: "integer", nullable: false),
                     id_service_order = table.Column<int>(type: "integer", nullable: false),
-                    code_spare = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
+                    code_spare = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -322,6 +509,12 @@ namespace Infrastructure.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_fuel_type_name",
+                table: "fuel_type",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_invoice_details_id_invoice",
                 table: "invoice_details",
                 column: "id_invoice");
@@ -345,6 +538,11 @@ namespace Infrastructure.Data.Migrations
                 name: "IX_order_details_id_service_order",
                 table: "order_details",
                 column: "id_service_order");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshToken_UsersId",
+                table: "RefreshToken",
+                column: "UsersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_roles_name",
@@ -385,6 +583,12 @@ namespace Infrastructure.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_specialties_name",
+                table: "specialties",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_user_member_email",
                 table: "user_member",
                 column: "email",
@@ -401,6 +605,32 @@ namespace Infrastructure.Data.Migrations
                 column: "id_user_member");
 
             migrationBuilder.CreateIndex(
+                name: "IX_user_specialties_id_specialty",
+                table: "user_specialties",
+                column: "id_specialty");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_specialties_id_user",
+                table: "user_specialties",
+                column: "id_user");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_vehicle_anormalities_name",
+                table: "vehicle_anormalities",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_vehicle_anormalities_details_id_anormality",
+                table: "vehicle_anormalities_details",
+                column: "id_anormality");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_vehicle_anormalities_details_serial_number",
+                table: "vehicle_anormalities_details",
+                column: "serial_number");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_vehicle_models_id_brand",
                 table: "vehicle_models",
                 column: "id_brand");
@@ -412,14 +642,30 @@ namespace Infrastructure.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_vehicle_type_name",
+                table: "vehicle_type",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_vehicles_id_client",
                 table: "vehicles",
                 column: "id_client");
 
             migrationBuilder.CreateIndex(
+                name: "IX_vehicles_id_fuel_type",
+                table: "vehicles",
+                column: "id_fuel_type");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_vehicles_id_model",
                 table: "vehicles",
                 column: "id_model");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_vehicles_id_vehicle_type",
+                table: "vehicles",
+                column: "id_vehicle_type");
         }
 
         /// <inheritdoc />
@@ -432,7 +678,16 @@ namespace Infrastructure.Data.Migrations
                 name: "order_details");
 
             migrationBuilder.DropTable(
+                name: "RefreshToken");
+
+            migrationBuilder.DropTable(
                 name: "user_role");
+
+            migrationBuilder.DropTable(
+                name: "user_specialties");
+
+            migrationBuilder.DropTable(
+                name: "vehicle_anormalities_details");
 
             migrationBuilder.DropTable(
                 name: "invoices");
@@ -445,6 +700,12 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "roles");
+
+            migrationBuilder.DropTable(
+                name: "specialties");
+
+            migrationBuilder.DropTable(
+                name: "vehicle_anormalities");
 
             migrationBuilder.DropTable(
                 name: "service_status");
@@ -462,7 +723,13 @@ namespace Infrastructure.Data.Migrations
                 name: "clients");
 
             migrationBuilder.DropTable(
+                name: "fuel_type");
+
+            migrationBuilder.DropTable(
                 name: "vehicle_models");
+
+            migrationBuilder.DropTable(
+                name: "vehicle_type");
 
             migrationBuilder.DropTable(
                 name: "brands");

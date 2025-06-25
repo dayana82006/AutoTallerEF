@@ -238,6 +238,46 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("order_details", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("MemberId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("Revoked")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UsersId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("RefreshToken");
+                });
+
             modelBuilder.Entity("Domain.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -806,6 +846,17 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Spare");
                 });
 
+            modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("Domain.Entities.UserMember", "Users")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("Domain.Entities.ServiceOrder", b =>
                 {
                     b.HasOne("Domain.Entities.ServiceStatus", "ServiceStatus")
@@ -850,7 +901,7 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.UserMember", "UserMember")
-                        .WithMany("UserMembers")
+                        .WithMany("UserRoles")
                         .HasForeignKey("UserMemberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1000,9 +1051,11 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.UserMember", b =>
                 {
+                    b.Navigation("RefreshTokens");
+
                     b.Navigation("ServiceOrders");
 
-                    b.Navigation("UserMembers");
+                    b.Navigation("UserRoles");
 
                     b.Navigation("UserSpecialties");
                 });
