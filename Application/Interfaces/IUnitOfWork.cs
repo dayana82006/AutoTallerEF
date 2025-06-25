@@ -27,6 +27,9 @@ namespace Application.Interfaces
         IVehicleModelRepository VehicleModel { get; }
         IVehicleRepository Vehicle { get; }
         IVehicleTypeRepository VehicleType { get; }
+        IMemberRolRepository MemberRol { get; }
+        object MemberRols { get; }
+
         Task<int> SaveAsync(); 
     }
 }

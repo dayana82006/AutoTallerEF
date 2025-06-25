@@ -32,6 +32,20 @@ namespace Infrastructure.UnitOfWork
         private IVehicleTypeRepository _vehicleType;
         private IRoleRepository _role;
         private IServiceTypeRepository _serviceType;
+        private IMemberRolRepository _MemberRols;
+        
+
+        public IMemberRolRepository MemberRol
+        {
+            get
+            {
+                if (_MemberRols == null)
+                {
+                    _MemberRols = new MemberRolesRepository(_context);
+                }
+                return _MemberRols;
+            }
+        }
 
         public IBrandRepository Brand
         {
@@ -283,6 +297,8 @@ namespace Infrastructure.UnitOfWork
                 return _serviceType;
             }
         }
+
+        public object MemberRols => throw new NotImplementedException();
 
         public void Dispose()
         {

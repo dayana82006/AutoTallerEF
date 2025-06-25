@@ -48,7 +48,7 @@ public class UserMemberConfiguration : BaseEntityConfiguration<UserMember>
             .HasMaxLength(100)
             .IsRequired();
 
-        builder.HasMany(um => um.UserMembers)
+        builder.HasMany(um => um.UserRoles)
             .WithOne(ur => ur.UserMember)
             .HasForeignKey(ur => ur.UserMemberId);
 
