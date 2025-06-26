@@ -31,6 +31,16 @@ builder.Services.AddDbContext<PublicDbContext>(options =>
 });
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200") 
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+              // .AllowCredentials(); 
+    });
+});
 
 
 var app = builder.Build();
@@ -51,9 +61,8 @@ app.UseHttpsRedirection();
 
 
 app.UseCors("CorsPolicy");
-app.UseHttpsRedirection();
 app.UseRateLimiter();
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.Run();
