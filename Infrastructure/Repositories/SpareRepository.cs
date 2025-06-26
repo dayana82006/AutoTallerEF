@@ -8,8 +8,13 @@ using Infrastructure.Data;
 
 namespace Infrastructure.Repositories
 {
-    public class SpareRepository:GenericRepository<Spare>, ISpareRepostiroy
+    public class SpareRepository : GenericRepository<Spare>, ISpareRepostiroy
     {
-        public SpareRepository(PublicDbContext context): base(context){}
+        public SpareRepository(PublicDbContext context) : base(context) { }
+        
+        public override async Task<Spare> GetByIdAsync(string code)
+{
+    return await _context.Set<Spare>().FindAsync(code);
+}
     }
 }

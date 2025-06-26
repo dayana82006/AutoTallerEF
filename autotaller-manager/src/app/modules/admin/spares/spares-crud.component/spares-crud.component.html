@@ -43,7 +43,6 @@
     <table class="table table-dark table-striped table-hover">
       <thead>
         <tr>
-          <th>ID</th>
           <th>Código</th>
           <th>Descripción</th>
           <th>Stock</th>
@@ -55,7 +54,6 @@
       </thead>
       <tbody>
         <tr *ngFor="let s of spares">
-          <td>{{ s.id }}</td>
           <td>{{ s.code }}</td>
           <td>{{ s.description || "-" }}</td>
           <td>{{ s.stockQuantity }}</td>
@@ -72,7 +70,7 @@
             </button>
             <button
               class="btn btn-sm btn-outline-danger"
-              (click)="delete(s.id)"
+              (click)="delete(s.code)"
             >
               Eliminar
             </button>

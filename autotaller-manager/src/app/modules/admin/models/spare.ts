@@ -1,5 +1,4 @@
-export interface Spare {
-  id: number;                
+export interface Spare {             
   code: string;
   description?: string;
   stockQuantity: number;

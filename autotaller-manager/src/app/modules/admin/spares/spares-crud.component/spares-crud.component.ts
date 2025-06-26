@@ -5,10 +5,11 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SwalService } from '../../../../shared/swal.service';
 import { AuthService } from '../../../auth/services/auth';
+import { HttpClientModule } from '@angular/common/http';
 @Component({
   selector: 'app-spares-crud',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './spares-crud.component.html'
 })
 export class SparesCrudComponent implements OnInit {
@@ -21,7 +22,6 @@ export class SparesCrudComponent implements OnInit {
   editMode = false;
 
   newSpare: Spare = {
-    id: 0,
     code: '',
     description: '',
     stockQuantity: 0,
@@ -84,7 +84,7 @@ save() {
   }
 
   const save$ = this.editMode
-    ? this.spareService.update(this.newSpare.id, this.newSpare)
+    ? this.spareService.update(this.newSpare.code, this.newSpare)
     : this.spareService.create({
         code: trimmedCode,
         description: this.newSpare.description?.trim() || '',
@@ -109,10 +109,10 @@ save() {
   }, 0);
   }
 
-  delete(id: number) {
+  delete(code: string) {
     this.swal.confirm('¿Eliminar repuesto?', 'Esta acción no se puede deshacer.').then(confirmed => {
       if (confirmed) {
-        this.spareService.delete(id).subscribe(() => {
+        this.spareService.delete(code).subscribe(() => {
           this.loadSpares();
           this.swal.success('Repuesto eliminado');
         });
@@ -126,7 +126,6 @@ save() {
 
 resetForm() {
   this.newSpare = {
-    id: 0,
     code: '',
     description: '',
     stockQuantity: 0,
