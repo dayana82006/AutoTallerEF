@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MockUserService } from '../../services/mock-user';
+import { UserService } from '../../services/user.service';
 import { UserMember } from '../../models/user-member';
 import { SwalService } from '../../../../shared/swal.service';
 
@@ -14,13 +14,14 @@ import { SwalService } from '../../../../shared/swal.service';
 })
 export class UserListComponent implements OnInit {
   users: UserMember[] = [];
+  filteredUsers: UserMember[] = [];
   total = 0;
   page = 1;
   pageSize = 5;
   search = '';
 
   constructor(
-    private userService: MockUserService,
+    private userService: UserService,
     private swalService: SwalService
   ) {}
 
@@ -29,30 +30,55 @@ export class UserListComponent implements OnInit {
   }
 
   loadUsers(): void {
-    this.userService.getUsers(this.search, this.page, this.pageSize).subscribe(res => {
-      this.users = res.users;
-      this.total = res.total;
+    this.userService.getUsers().subscribe({
+      next: data => {
+        this.users = data;
+        this.applyFilters();
+      },
+      error: err => {
+        console.error('❌ Error al obtener usuarios:', err);
+      }
     });
+  }
+
+  applyFilters(): void {
+    const searchLower = this.search.toLowerCase();
+    this.filteredUsers = this.users.filter(user =>
+      user.name.toLowerCase().includes(searchLower) ||
+      user.lastname.toLowerCase().includes(searchLower) ||
+      user.email.toLowerCase().includes(searchLower) ||
+      user.role.toLowerCase().includes(searchLower)
+    );
+
+    this.total = this.filteredUsers.length;
+  }
+
+  get pagedUsers(): UserMember[] {
+    const start = (this.page - 1) * this.pageSize;
+    return this.filteredUsers.slice(start, start + this.pageSize);
   }
 
   onSearchChange(): void {
     this.page = 1;
-    this.loadUsers();
+    this.applyFilters();
   }
 
   onPageChange(newPage: number): void {
     this.page = newPage;
-    this.loadUsers();
   }
 
-deleteUser(id: number): void {
-  this.swalService.confirm('¿Eliminar usuario?', 'Esta acción no se puede deshacer.').then(confirmed => {
-    if (confirmed) {
-      this.userService.deleteUser(id).subscribe(() => {
-        this.loadUsers();
-      });
-    }
-  });
-}
-
+  deleteUser(id: number): void {
+    this.swalService.confirm('¿Eliminar usuario?', 'Esta acción no se puede deshacer.').then(confirmed => {
+      if (confirmed) {
+        this.userService.deleteUser(id).subscribe({
+          next: () => {
+            this.loadUsers(); // recargar usuarios luego de eliminar
+          },
+          error: err => {
+            console.error('❌ Error al eliminar usuario:', err);
+          }
+        });
+      }
+    });
+  }
 }

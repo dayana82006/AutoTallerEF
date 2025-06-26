@@ -1,22 +1,49 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { User } from '../models/user.model'; // Asegúrate de tener este modelo creado
+import { UserMember } from '../models/user-member'; // asegúrate que el modelo exista
+import { environment } from 'src/environments/environment';
 
 @Injectable({
-  providedIn: 'root' // O puedes usar 'providedIn: AdminModule' si solo se usa ahí
+  providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = '/api/users'; // Usa proxy para evitar problemas de CORS
+  private apiUrl = `${environment.apiUrl}/users`; 
 
   constructor(private http: HttpClient) {}
 
-  getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.apiUrl);
+  /**
+   * Obtener todos los usuarios
+   */
+  getUsers(): Observable<UserMember[]> {
+    return this.http.get<UserMember[]>(this.apiUrl);
   }
 
-  createUser(user: User): Observable<User> {
-    return this.http.post<User>(this.apiUrl, user);
+  /**
+   * Obtener un usuario por su ID
+   */
+  getUserById(id: number): Observable<UserMember> {
+    return this.http.get<UserMember>(`${this.apiUrl}/${id}`);
   }
 
+  /**
+   * Crear un nuevo usuario
+   */
+  createUser(user: UserMember): Observable<UserMember> {
+    return this.http.post<UserMember>(this.apiUrl, user);
+  }
+
+  /**
+   * Actualizar un usuario existente
+   */
+  updateUser(id: number, user: UserMember): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}`, user);
+  }
+
+  /**
+   * Eliminar un usuario
+   */
+  deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

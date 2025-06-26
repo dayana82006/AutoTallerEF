@@ -30,39 +30,39 @@
           <th>Actualizado</th>
           <th>Acciones</th>
         </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of users">
-          <td>{{ user.name }} {{ user.lastname }}</td>
-          <td>{{ user.email }}</td>
-          <td>
-            <span class="badge bg-secondary">{{ user.role }}</span>
-          </td>
-          <td>
-            <ng-container *ngIf="user.specialties.length; else noSpec">
-              <span
-                *ngFor="let spec of user.specialties"
-                class="badge bg-secondary"
-              >
-                {{ spec }}
-              </span>
-            </ng-container>
-            <ng-template #noSpec>
-              <span class="text-muted">N/A</span>
-            </ng-template>
-          </td>
-        <td>
-          {{ user.createdAt | date:'short' }}
-        </td>
-        <td>
-          {{ user.updatedAt | date:'short' }}
-        </td>
-          <td>
-            <a class="btn btn-sm btn-outline-light me-2" [attr.href]="'/admin/usuarios/edit/' + user.id">Edit</a>
-            <button class="btn btn-sm btn-outline-danger" (click)="deleteUser(user.id)">Delete</button>
-          </td>
-        </tr>
-      </tbody>
+      </thead><tbody>
+  <tr *ngFor="let user of pagedUsers"> <!-- CAMBIO: de "users" a "pagedUsers" -->
+    <td>{{ user.name }} {{ user.lastname }}</td>
+    <td>{{ user.email }}</td>
+    <td>
+      <span class="badge bg-secondary">{{ user.role }}</span>
+    </td>
+    <td>
+      <ng-container *ngIf="user.specialties.length; else noSpec">
+        <span
+          *ngFor="let spec of user.specialties"
+          class="badge bg-secondary"
+        >
+          {{ spec }}
+        </span>
+      </ng-container>
+      <ng-template #noSpec>
+        <span class="text-muted">N/A</span>
+      </ng-template>
+    </td>
+    <td>
+      {{ user.createdAt | date:'short' }}
+    </td>
+    <td>
+      {{ user.updatedAt | date:'short' }}
+    </td>
+    <td>
+      <a class="btn btn-sm btn-outline-light me-2" [attr.href]="'/admin/usuarios/edit/' + user.id">Edit</a>
+      <button class="btn btn-sm btn-outline-danger" (click)="deleteUser(user.id)">Delete</button>
+    </td>
+  </tr>
+</tbody>
+
     </table>
   </div>
 

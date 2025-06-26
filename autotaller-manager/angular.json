@@ -73,7 +73,15 @@
               "buildTarget": "autotaller-manager:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "architect": {
+  
+    "options": {
+      "proxyConfig": "proxy.conf.json"
+    
+  }
+}
+
         },
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n"
