@@ -6,6 +6,7 @@ using Domain.Entities;
 using AutoMapper;
 using Application.DTOs.Auth;
 using Application.DTOs.Entities;
+using Application.DTOs;
 
 namespace TallerApi.Profiles
 {
@@ -30,6 +31,7 @@ namespace TallerApi.Profiles
             CreateMap<VehicleModel, VehicleModelDto>().ReverseMap();
             CreateMap<VehicleType, VehicleTypeDto>().ReverseMap();
             CreateMap<UserSpecialty, UserSpecialtyDto>().ReverseMap();
+            CreateMap<UserMember, UserMemberDto>().ReverseMap();
             
             
         }
