@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { UserService } from '../services/user.service';
 import { UserMember } from '../../models/user-member';
 import { SwalService } from '../../../../shared/swal.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-user-list',

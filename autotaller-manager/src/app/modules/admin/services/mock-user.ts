@@ -6,6 +6,7 @@ import { UserMember } from '../models/user-member';
 @Injectable({ providedIn: 'root' })
 export class MockUserService {
   private readonly STORAGE_KEY = 'mock-users-data';
+  private readonly apiUrl='http://localhost:5005/api/Spare';
   private users: UserMember[] = [];
 
   private defaultUsers: UserMember[] = [
