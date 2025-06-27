@@ -80,8 +80,8 @@ namespace TallerApi.Controllers
                     };
                 }
 
-                // Especialidades
-                if (usermemberDto.Specialties != null)
+                // Especialidades solo si es mecánico
+                if (role != null && role.Name == "Mecánico" && usermemberDto.Specialties != null)
                 {
                     user.UserSpecialties = new List<UserSpecialty>();
                     foreach (var specName in usermemberDto.Specialties)
@@ -134,6 +134,7 @@ namespace TallerApi.Controllers
                 existingUser.Password = hasher.HashPassword(existingUser, usermemberDto.Password);
             }
 
+            // Obtener nuevo rol
             var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == usermemberDto.Role);
             if (role != null)
             {
@@ -143,9 +144,10 @@ namespace TallerApi.Controllers
                 };
             }
 
-            existingUser.UserSpecialties = new List<UserSpecialty>();
-            if (usermemberDto.Specialties != null)
+            // Si es mecánico, asignar especialidades
+            if (role != null && role.Name == "Mecánico" && usermemberDto.Specialties != null)
             {
+                existingUser.UserSpecialties = new List<UserSpecialty>();
                 foreach (var specName in usermemberDto.Specialties)
                 {
                     var spec = await _context.Specialties.FirstOrDefaultAsync(s => s.Name == specName);
@@ -158,6 +160,10 @@ namespace TallerApi.Controllers
                         });
                     }
                 }
+            }
+            else
+            {
+                existingUser.UserSpecialties.Clear();
             }
 
             _context.UserMembers.Update(existingUser);
