@@ -60,7 +60,7 @@ export class VehicleFormComponent implements OnInit {
     this.vehicleModels = MockVehicleModel;
     this.fuelTypes = MockFuelTypes;
     this.vehicleTypes = MockVehicleTypes;
-    this.clientService.getClients().subscribe((data) => {
+    this.clientService.getAll().subscribe((data) => {
       this.clients = data;
     });
 

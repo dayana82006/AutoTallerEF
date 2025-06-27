@@ -62,25 +62,28 @@ namespace TallerApi.Controllers
             return CreatedAtAction(nameof(Post), new { id = clientDto.Id }, clientDto);
         }
 
-        [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Put(int id, [FromBody] ClientDto clientDto)
-        {
-            if (clientDto == null)
-                return BadRequest(new ApiResponse(400, "Datos inválidos."));
+[HttpPut("{id}")]
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
+public async Task<IActionResult> Put(int id, [FromBody] ClientDto clientDto)
+{
+    if (clientDto == null || id != clientDto.Id)
+        return BadRequest(new ApiResponse(400, "Datos inválidos."));
 
-            var existingClient = await _unitOfWork.Client.GetByIdAsync(id);
-            if (existingClient == null)
-                return NotFound(new ApiResponse(404, "El cliente solicitado no existe."));
+    var existingClient = await _unitOfWork.Client.GetByIdAsync(id);
+    if (existingClient == null)
+        return NotFound(new ApiResponse(404, "El cliente solicitado no existe."));
 
-            var client = _mapper.Map<Client>(clientDto);
-            _unitOfWork.Client.Update(client);
-            await _unitOfWork.SaveAsync();
+    // 🚨 Actualiza la entidad rastreada directamente
+    _mapper.Map(clientDto, existingClient);
 
-            return Ok(clientDto);
-        }
+    _unitOfWork.Client.Update(existingClient); // Ya está trackeado
+    await _unitOfWork.SaveAsync();
+
+    return Ok(_mapper.Map<ClientDto>(existingClient));
+}
+
 
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

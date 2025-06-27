@@ -49,7 +49,7 @@ export class VehicleListComponent implements OnInit {
 
   ngOnInit(): void {
     forkJoin({
-      clients: this.clientService.getClients(),
+      clients: this.clientService.getAll(),
       vehicles: this.vehicleService.getVehicles()
     }).subscribe(({ clients, vehicles }) => {
       this.clients = clients;
@@ -115,7 +115,7 @@ onFormSubmit(): void {
   this.showForm = false;
 
   forkJoin({
-    clients: this.clientService.getClients(),
+    clients: this.clientService.getAll(),
     vehicles: this.vehicleService.getVehicles()
   }).subscribe(({ clients, vehicles }) => {
     this.clients = clients;

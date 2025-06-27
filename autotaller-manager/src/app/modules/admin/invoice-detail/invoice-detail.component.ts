@@ -57,7 +57,7 @@ export class InvoicePageComponent implements OnInit {
 
             return forkJoin({
               vehicle: this.vehicleService.getVehicleById(vehicleId),
-              clients: this.clientService.getClients()
+              clients: this.clientService.getAll()
             });
           })
         );
