@@ -8,13 +8,13 @@ import { SwalService } from '../../../../shared/swal.service';
 
 @Component({
   selector: 'app-login',
-  standalone: true, 
-  imports: [CommonModule, FormsModule], 
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  email: string = '';
+ email: string = '';
   password: string = '';
 
   constructor(
@@ -25,31 +25,30 @@ export class LoginComponent {
 
   onSubmit(): void {
     const credentials: AuthRequest = {
-      email: this.email,
+     email: this.email,
       password: this.password
     };
 
     this.authService.login(credentials).subscribe({
-next: (res) => {
-  console.log('Rol autenticado:', res.role); 
+      next: (res) => {
+        console.log('Rol autenticado:', res.role[0]);
 
-  this.authService.currentUser = res;
-  sessionStorage.setItem('currentUser', JSON.stringify(res));
+        sessionStorage.setItem('currentUser', JSON.stringify(res));
 
-  switch (res.role) {
-    case 'Admin':
-      this.router.navigate(['/admin']);
-      break;
-    case 'Mecanico':
-      this.router.navigate(['/mecanico']);
-      break;
-    case 'Recepcionista':
-      this.router.navigate(['/recepcionista']);
-      break;
-    default:
-      this.swalService.error('Error', 'Rol no reconocido');
-  }
-},
+        switch (res.role[0]) {
+          case 'Admin':
+            this.router.navigate(['/admin']);
+            break;
+          case 'Mecanico':
+            this.router.navigate(['/mecanico']);
+            break;
+          case 'Recepcionista':
+            this.router.navigate(['/recepcionista']);
+            break;
+          default:
+            this.swalService.error('Error', 'Rol no reconocido');
+        }
+      },
       error: () => {
         this.swalService.error('Error', 'Credenciales inválidas');
       }

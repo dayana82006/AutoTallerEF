@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LandingComponent } from './modules/landing/pages/landing/landing.component';
 import { LoginComponent } from './modules/auth/pages/login/login.component';
 import { OrderSearch } from './modules/landing/pages/order-search/order-search';
+
 import { HttpClientModule } from '@angular/common/http';
 
 export const routes: Routes = [

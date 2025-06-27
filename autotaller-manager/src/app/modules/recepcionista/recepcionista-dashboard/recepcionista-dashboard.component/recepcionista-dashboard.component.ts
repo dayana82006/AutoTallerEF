@@ -31,7 +31,7 @@ export class ReceptionistDashboardComponent implements AfterViewInit {
       this.orderService.getServiceOrders().toPromise()
     ]).then(([clients, vehicles, orders]) => {
       if (clients && vehicles && orders) {
-        this.renderCharts(clients, vehicles, orders);
+        this.renderCharts(clients, vehicles, orders); 
       }
     });
   }
