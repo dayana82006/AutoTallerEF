@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Application.DTOs;
 using Application.DTOs.Auth;
 using Application.Interfaces;
 using Domain.Entities;
@@ -59,6 +60,57 @@ public class UserService : IUserService
 
         return $"Usuario {registerDto.Username} registrado exitosamente.";
     }
+public async Task<UserMember> CreateUserFromDtoAsync(UserMemberDto dto)
+{
+    var user = new UserMember
+    {
+        Name = dto.Name,
+        Lastname = dto.Lastname,
+        Username = dto.Username,
+        Email = dto.Email,
+        Password = _passwordHasher.HashPassword(null, dto.Password),
+        CreatedAt = DateTime.UtcNow,
+        UpdatedAt = DateTime.UtcNow
+    };
+
+    _unitOfWork.UserMember.Add(user);
+    await _unitOfWork.SaveAsync(); // ✅ Necesario para tener el ID del usuario
+
+    // Asignar rol
+    var role = _unitOfWork.Role.Find(r => r.Name == dto.Role).FirstOrDefault();
+    if (role != null)
+    {
+        var userRole = new UserRole
+        {
+            UserMemberId = user.Id,
+            RoleId = role.Id
+        };
+        _unitOfWork.UserRole.Add(userRole);
+    }
+
+    // Asignar especialidades
+    if (dto.Specialties != null && dto.Specialties.Any())
+    {
+        foreach (var specName in dto.Specialties)
+        {
+            var specialty = _unitOfWork.Specialty.Find(s => s.Name == specName).FirstOrDefault();
+            if (specialty != null)
+            {
+                var userSpecialty = new UserSpecialty
+                {
+                    IdUser = user.Id,
+                    IdSpecialty = specialty.Id
+                };
+                _unitOfWork.UserSpecialty.Add(userSpecialty);
+            }
+        }
+    }
+
+    await _unitOfWork.SaveAsync(); // ✅ Guardar relaciones
+
+    return user;
+}
+
 
     public async Task<DataUserDto> GetTokenAsync(LoginDto model)
     {

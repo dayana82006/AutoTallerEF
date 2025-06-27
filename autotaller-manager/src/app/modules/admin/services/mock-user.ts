@@ -26,21 +26,10 @@ export class MockUserService {
 
     const normalizedRole = roleAliasMap[user.role] ?? user.role;
 
-    const roleMap: Record<string, number> = {
-      'Administrador': 1,
-      'Recepcionista': 2,
-      'Mecánico': 3
-    };
-
-    const roleId = roleMap[normalizedRole.trim()];
-    if (!roleId) {
-      throw new Error(`Rol inválido: ${user.role}`);
-    }
-
     const payload = {
       ...user,
-      idRole: roleId,
-      role: undefined
+      role: normalizedRole, // ✅ se envía correctamente como string
+      specialties: user.specialties ?? [] // ✅ se asegura que siempre exista el array
     };
 
     return this.http.post<UserMember>(this.apiUrl, payload);
@@ -55,21 +44,10 @@ export class MockUserService {
 
     const normalizedRole = roleAliasMap[user.role] ?? user.role;
 
-    const roleMap: Record<string, number> = {
-      'Administrador': 1,
-      'Recepcionista': 2,
-      'Mecánico': 3
-    };
-
-    const roleId = roleMap[normalizedRole.trim()];
-    if (!roleId) {
-      throw new Error(`Rol inválido: ${user.role}`);
-    }
-
     const payload = {
       ...user,
-      idRole: roleId,
-      role: undefined
+      role: normalizedRole, // ✅ se envía correctamente también en update
+      specialties: user.specialties ?? [] // ✅ asegurar array no nulo
     };
 
     return this.http.put<UserMember>(`${this.apiUrl}/${id}`, payload);

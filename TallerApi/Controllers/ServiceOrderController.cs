@@ -42,7 +42,7 @@ namespace TallerApi.Controllers
 
             return Ok(_mapper.Map<ServiceOrderDto>(order));
         }
-
+[HttpPost]
 public async Task<ActionResult<ServiceOrderDto>> Post(ServiceOrderDto orderDto)
 {
     if (orderDto == null)
