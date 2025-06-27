@@ -60,13 +60,11 @@ export class ServiceOrderFormComponent implements OnInit {
       error: () => this.swalService.error('Error al cargar los vehículos')
     });
 
-    // ✅ Tipos de servicio reales
     this.serviceTypeService.getAll().subscribe({
       next: (data) => this.serviceTypes = data,
       error: () => this.swalService.error('Error al cargar tipos de servicio')
     });
 
-    // ✅ Usuarios reales filtrados por rol 'Mecánico'
     this.userService.getAll().subscribe({
       next: (data) => {
         this.users = data.filter(user => user.role.toLowerCase() === 'mecánico');

@@ -1,14 +1,18 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Application.DTOs;
 using Application.DTOs.Entities;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TallerApi.Helpers.Errors;
-using TallerApi.Services;
 
 namespace TallerApi.Controllers
 {
@@ -18,18 +22,16 @@ namespace TallerApi.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IUserService _userService;
+        private readonly PublicDbContext _context; 
 
-        public UserMemberController(IUnitOfWork unitOfWork, IMapper mapper, IUserService userService)
+        public UserMemberController(IUnitOfWork unitOfWork, IMapper mapper, PublicDbContext context)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _userService = userService;
+            _context = context;
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IEnumerable<UserMemberDto>>> Get()
         {
             var userMembers = await _unitOfWork.UserMember.GetAllAsync();
@@ -37,20 +39,20 @@ namespace TallerApi.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<UserMemberDto>> Get(int id)
         {
-            var user = await _unitOfWork.UserMember.GetByIdAsync(id);
+            var user = await _context.UserMembers
+                .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
+                .Include(u => u.UserSpecialties).ThenInclude(us => us.Specialty)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
             if (user == null)
-                return NotFound(new ApiResponse(404, "El Usuario no existe."));
+                return NotFound(new ApiResponse(404, "El usuario no existe."));
 
             return Ok(_mapper.Map<UserMemberDto>(user));
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<UserMemberDto>> Post(UserMemberDto usermemberDto)
         {
             if (usermemberDto == null)
@@ -58,48 +60,118 @@ namespace TallerApi.Controllers
 
             try
             {
-                var user = await _userService.CreateUserFromDtoAsync(usermemberDto);
-                var resultDto = _mapper.Map<UserMemberDto>(user);
-                return CreatedAtAction(nameof(Get), new { id = user.Id }, resultDto);
+                var user = _mapper.Map<UserMember>(usermemberDto);
+                user.CreatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow;
+
+                if (!string.IsNullOrWhiteSpace(usermemberDto.Password))
+                {
+                    var hasher = new PasswordHasher<UserMember>();
+                    user.Password = hasher.HashPassword(user, usermemberDto.Password);
+                }
+
+                // Rol
+                var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == usermemberDto.Role);
+                if (role != null)
+                {
+                    user.UserRoles = new List<UserRole>
+                    {
+                        new UserRole { RoleId = role.Id }
+                    };
+                }
+
+                // Especialidades
+                if (usermemberDto.Specialties != null)
+                {
+                    user.UserSpecialties = new List<UserSpecialty>();
+                    foreach (var specName in usermemberDto.Specialties)
+                    {
+                        var spec = await _context.Specialties.FirstOrDefaultAsync(s => s.Name == specName);
+                        if (spec != null)
+                        {
+                            user.UserSpecialties.Add(new UserSpecialty
+                            {
+                                IdSpecialty = spec.Id
+                            });
+                        }
+                    }
+                }
+
+                await _context.UserMembers.AddAsync(user);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(Get), new { id = user.Id }, _mapper.Map<UserMemberDto>(user));
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(new ApiResponse(400, $"Error al crear usuario: {ex.Message}"));
             }
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Put(int id, [FromBody] UserMemberDto usermemberDto)
         {
             if (usermemberDto == null)
                 return BadRequest(new ApiResponse(400, "Datos inválidos."));
 
-            var existingUser = await _unitOfWork.UserMember.GetByIdAsync(id);
+            var existingUser = await _context.UserMembers
+                .Include(u => u.UserRoles)
+                .Include(u => u.UserSpecialties)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
             if (existingUser == null)
-                return NotFound(new ApiResponse(404, "El usuario solicitado no existe."));
+                return NotFound(new ApiResponse(404, "El usuario no existe."));
 
-            var updatedUser = _mapper.Map(usermemberDto, existingUser);
+            existingUser.Name = usermemberDto.Name;
+            existingUser.Lastname = usermemberDto.Lastname;
+            existingUser.Username = usermemberDto.Username;
+            existingUser.Email = usermemberDto.Email;
+            existingUser.UpdatedAt = DateTime.UtcNow;
 
-            if (string.IsNullOrWhiteSpace(usermemberDto.Password))
-                updatedUser.Password = existingUser.Password;
+            if (!string.IsNullOrWhiteSpace(usermemberDto.Password))
+            {
+                var hasher = new PasswordHasher<UserMember>();
+                existingUser.Password = hasher.HashPassword(existingUser, usermemberDto.Password);
+            }
 
-            _unitOfWork.UserMember.Update(updatedUser);
-            await _unitOfWork.SaveAsync();
+            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == usermemberDto.Role);
+            if (role != null)
+            {
+                existingUser.UserRoles = new List<UserRole>
+                {
+                    new UserRole { RoleId = role.Id, UserMemberId = id }
+                };
+            }
 
-            return Ok(_mapper.Map<UserMemberDto>(updatedUser));
+            existingUser.UserSpecialties = new List<UserSpecialty>();
+            if (usermemberDto.Specialties != null)
+            {
+                foreach (var specName in usermemberDto.Specialties)
+                {
+                    var spec = await _context.Specialties.FirstOrDefaultAsync(s => s.Name == specName);
+                    if (spec != null)
+                    {
+                        existingUser.UserSpecialties.Add(new UserSpecialty
+                        {
+                            IdUser = id,
+                            IdSpecialty = spec.Id
+                        });
+                    }
+                }
+            }
+
+            _context.UserMembers.Update(existingUser);
+            await _context.SaveChangesAsync();
+
+            return Ok(_mapper.Map<UserMemberDto>(existingUser));
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int id)
         {
             var user = await _unitOfWork.UserMember.GetByIdAsync(id);
             if (user == null)
-                return NotFound(new ApiResponse(404, "El usuario solicitado no existe."));
+                return NotFound(new ApiResponse(404, "El usuario no existe."));
 
             _unitOfWork.UserMember.Remove(user);
             await _unitOfWork.SaveAsync();

@@ -28,8 +28,8 @@ export class MockUserService {
 
     const payload = {
       ...user,
-      role: normalizedRole, // ✅ se envía correctamente como string
-      specialties: user.specialties ?? [] // ✅ se asegura que siempre exista el array
+      role: normalizedRole, 
+      specialties: user.specialties ?? [] 
     };
 
     return this.http.post<UserMember>(this.apiUrl, payload);
@@ -46,8 +46,8 @@ export class MockUserService {
 
     const payload = {
       ...user,
-      role: normalizedRole, // ✅ se envía correctamente también en update
-      specialties: user.specialties ?? [] // ✅ asegurar array no nulo
+      role: normalizedRole, 
+      specialties: user.specialties ?? []
     };
 
     return this.http.put<UserMember>(`${this.apiUrl}/${id}`, payload);
