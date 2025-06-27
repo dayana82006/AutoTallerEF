@@ -49,7 +49,7 @@ export class VehicleListComponent implements OnInit {
 
   ngOnInit(): void {
     forkJoin({
-      clients: this.clientService.getClients(),
+      clients: this.clientService.getAll(),
       vehicles: this.vehicleService.getVehicles()
     }).subscribe(({ clients, vehicles }) => {
       this.clients = clients;
@@ -102,7 +102,7 @@ getFuelTypeName(id: number): string {
     this.showForm = true;
   }
 
-delete(id: number): void {
+delete(id: string): void {
   this.swalService.confirm('¿Eliminar vehículo?', 'Esta acción no se puede deshacer.').then(confirmed => {
     if (confirmed) {
       this.vehicleService.deleteVehicle(id).subscribe(() => this.ngOnInit());
@@ -115,7 +115,7 @@ onFormSubmit(): void {
   this.showForm = false;
 
   forkJoin({
-    clients: this.clientService.getClients(),
+    clients: this.clientService.getAll(),
     vehicles: this.vehicleService.getVehicles()
   }).subscribe(({ clients, vehicles }) => {
     this.clients = clients;

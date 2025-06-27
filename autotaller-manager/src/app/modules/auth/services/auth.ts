@@ -1,76 +1,51 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap, throwError } from 'rxjs';
 import { AuthRequest } from '../models/auth-request.model';
-import { AuthResponse } from '../models/auth-response.model';
+import { AuthResponse } from '../models/auth-response.model'; 
+import { Router } from '@angular/router';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  currentUser: AuthResponse | null = null;
+  private apiUrl = 'http://localhost:5005/api/Auth/login';
 
-  constructor() {
-    const userJson = sessionStorage.getItem('currentUser'); 
-    if (userJson) {
-      this.currentUser = JSON.parse(userJson);
-    }
-  }
+  constructor(private http: HttpClient, private router: Router) {}
 
   login(credentials: AuthRequest): Observable<AuthResponse> {
-    const usersMock = [
-      {
-        email: 'admin@mail.com',
-        password: '123',
-        token: 'mock-admin-token',
-        userId: 1,
-        userName: 'AdminUser',
-        role: 'Admin'
-      },
-      {
-        email: 'mecanico@mail.com',
-        password: '123',
-        token: 'mock-mechanic-token',
-        userId: 2,
-        userName: 'MecanicoUser',
-        role: 'Mecanico'
-      },
-      {
-        email: 'recepcion@mail.com',
-        password: '123',
-        token: 'mock-recep-token',
-        userId: 3,
-        userName: 'RecepUser',
-        role: 'Recepcionista'
-      }
-    ];
-
-    const user = usersMock.find(
-      u => u.email === credentials.email && u.password === credentials.password
+    return this.http.post<AuthResponse>(this.apiUrl, credentials).pipe(
+      tap(response => {
+        if (response.estaAutenticado && response.token) {
+          sessionStorage.setItem('token', response.token);
+          sessionStorage.setItem('user', JSON.stringify(response));
+        }
+      })
     );
-
-    if (user) {
-      const response: AuthResponse = {
-        token: user.token,
-        userId: user.userId,
-        userName: user.userName,
-        role: user.role
-      };
-
-      this.currentUser = response;
-      sessionStorage.setItem('currentUser', JSON.stringify(response)); 
-
-      return of(response).pipe(delay(1000));
-    } else {
-      return throwError(() => new Error('Credenciales inválidas'));
-    }
   }
 
   logout() {
-    this.currentUser = null;
-    sessionStorage.removeItem('currentUser'); 
-    sessionStorage.removeItem('token');       
-    sessionStorage.removeItem('userName');    
-    sessionStorage.removeItem('role');        
+    sessionStorage.clear();
+    this.router.navigate(['/login']);
+  }
+
+  getToken(): string | null {
+    return sessionStorage.getItem('token');
+  }
+
+  getUser(): AuthResponse | null {
+    const user = sessionStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  }
+
+  getRole(): string {
+    const user = this.getUser();
+    return user?.role?.[0] || ''; 
+  }
+  
+    get currentUser(): AuthResponse | null {
+    return this.getUser();
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
   }
 }

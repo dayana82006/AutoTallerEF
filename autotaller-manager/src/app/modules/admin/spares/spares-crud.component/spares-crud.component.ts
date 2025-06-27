@@ -5,10 +5,12 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SwalService } from '../../../../shared/swal.service';
 import { AuthService } from '../../../auth/services/auth';
+import { HttpClientModule } from '@angular/common/http';
+
 @Component({
   selector: 'app-spares-crud',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './spares-crud.component.html'
 })
 export class SparesCrudComponent implements OnInit {
@@ -21,7 +23,6 @@ export class SparesCrudComponent implements OnInit {
   editMode = false;
 
   newSpare: Spare = {
-    id: 0,
     code: '',
     description: '',
     stockQuantity: 0,
@@ -53,66 +54,75 @@ export class SparesCrudComponent implements OnInit {
     );
   }
 
-save() {
-  const trimmedCode = this.newSpare.code.trim();
-  const stock = this.newSpare.stockQuantity;
-  const price = this.newSpare.unitPrice;
+  save() {
+    const trimmedCode = this.newSpare.code.trim();
+    const stock = this.newSpare.stockQuantity;
+    const price = this.newSpare.unitPrice;
 
-  if (!trimmedCode) {
-    this.swal.error('El código del repuesto es obligatorio');
-    return;
+    if (!trimmedCode) {
+      this.swal.error('El código del repuesto es obligatorio');
+      return;
+    }
+
+    if (stock === null || stock === undefined || isNaN(stock) || typeof stock !== 'number') {
+      this.swal.error('El stock debe ser un número válido');
+      return;
+    }
+
+    if (stock < 0) {
+      this.swal.error('El stock no puede ser negativo');
+      return;
+    }
+
+    if (price === null || price === undefined || isNaN(price) || typeof price !== 'number') {
+      this.swal.error('El precio debe ser un número válido');
+      return;
+    }
+
+    if (price < 0) {
+      this.swal.error('El precio no puede ser negativo');
+      return;
+    }
+
+    const save$ = this.editMode
+      ? this.spareService.update(this.newSpare.code, this.newSpare)
+      : this.spareService.create({
+          code: trimmedCode,
+          description: this.newSpare.description?.trim() || '',
+          stockQuantity: stock,
+          unitPrice: price
+        });
+
+    save$.subscribe({
+      next: () => {
+        this.swal.success(this.editMode ? 'Repuesto actualizado' : 'Repuesto creado');
+        this.resetForm();
+        this.loadSpares();
+      },
+      error: (error) => {
+        console.error('Error al guardar repuesto:', error);
+
+        if (error.status === 409) {
+          this.swal.error(`Ya existe un repuesto con el código "${trimmedCode}".`);
+        } else {
+          this.swal.error('Ocurrió un error al guardar el repuesto.');
+        }
+      }
+    });
   }
-
-  if (stock === null || stock === undefined || isNaN(stock) || typeof stock !== 'number') {
-    this.swal.error('El stock debe ser un número válido');
-    return;
-  }
-
-  if (stock < 0) {
-    this.swal.error('El stock no puede ser negativo');
-    return;
-  }
-
-  if (price === null || price === undefined || isNaN(price) || typeof price !== 'number') {
-    this.swal.error('El precio debe ser un número válido');
-    return;
-  }
-
-  if (price < 0) {
-    this.swal.error('El precio no puede ser negativo');
-    return;
-  }
-
-  const save$ = this.editMode
-    ? this.spareService.update(this.newSpare.id, this.newSpare)
-    : this.spareService.create({
-        code: trimmedCode,
-        description: this.newSpare.description?.trim() || '',
-        stockQuantity: stock,
-        unitPrice: price
-      });
-
-  save$.subscribe(() => {
-    this.swal.success(
-      this.editMode ? 'Repuesto actualizado' : 'Repuesto creado'
-    );
-    this.resetForm();
-    this.loadSpares();
-  });
-}
 
   edit(spare: Spare) {
     this.newSpare = { ...spare };
     this.editMode = true;
     setTimeout(() => {
-    this.formSection.nativeElement.scrollIntoView({ behavior: 'smooth' });
-  }, 0);
+      this.formSection.nativeElement.scrollIntoView({ behavior: 'smooth' });
+    }, 0);
   }
 
-  delete(id: number) {
+  delete(code: string) {
     this.swal.confirm('¿Eliminar repuesto?', 'Esta acción no se puede deshacer.').then(confirmed => {
       if (confirmed) {
-        this.spareService.delete(id).subscribe(() => {
+        this.spareService.delete(code).subscribe(() => {
           this.loadSpares();
           this.swal.success('Repuesto eliminado');
         });
@@ -124,20 +134,19 @@ save() {
     this.resetForm();
   }
 
-resetForm() {
-  this.newSpare = {
-    id: 0,
-    code: '',
-    description: '',
-    stockQuantity: 0,
-    unitPrice: 0
-  };
-  this.editMode = false;
+  resetForm() {
+    this.newSpare = {
+      code: '',
+      description: '',
+      stockQuantity: 0,
+      unitPrice: 0
+    };
+    this.editMode = false;
 
-  if (this.spareForm) {
-    this.spareForm.resetForm(); 
+    if (this.spareForm) {
+      this.spareForm.resetForm(); 
+    }
   }
-}
 
   onMinStockFilter() {
     if (typeof this.minStockLevel !== 'number' || isNaN(this.minStockLevel) || this.minStockLevel <= 0) {

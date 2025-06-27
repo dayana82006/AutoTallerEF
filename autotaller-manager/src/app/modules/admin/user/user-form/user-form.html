@@ -50,6 +50,23 @@
         </div>
       </div>
     </div>
+<div class="mb-3">
+  <label class="form-label text-white">Nombre de usuario *</label>
+  <input
+    type="text"
+    class="form-control"
+    [(ngModel)]="user.username"
+    name="username"
+    #username="ngModel"
+    required
+    minlength="4"
+    [class.is-invalid]="username.invalid && username.touched"
+  />
+  <div class="invalid-feedback" *ngIf="username.invalid && username.touched">
+    <div *ngIf="username.errors?.['required']">El nombre de usuario es requerido</div>
+    <div *ngIf="username.errors?.['minlength']">Debe tener al menos 4 caracteres</div>
+  </div>
+</div>
 
     <div class="mb-3">
       <label class="form-label text-white">Correo *</label>
@@ -68,6 +85,23 @@
         <div *ngIf="email.errors?.['email']">Ingresa un correo válido</div>
       </div>
     </div>
+<div class="mb-3" *ngIf="!isEditMode">
+  <label class="form-label title">Contraseña</label>
+  <input
+    type="password"
+    class="form-control"
+    placeholder="Mínimo 6 caracteres"
+    [(ngModel)]="user.password"
+    name="password"
+    minlength="6"
+    required
+    #passwordInput="ngModel"
+  />
+  <div *ngIf="(passwordInput.invalid && passwordInput.touched) || (passwordInput.invalid && formSubmitted)" class="text-danger mt-1">
+    La contraseña es obligatoria y debe tener al menos 6 caracteres.
+  </div>
+</div>
+
 
     <div class="mb-3">
       <label for="role" class="form-label text-white">Rol *</label>
@@ -97,7 +131,7 @@
           type="checkbox"
           class="form-check-input"
           [id]="'spec-' + spec.id"
-          [checked]="user.specialties.includes(spec.name)"
+          [checked]="(user.specialties || []).includes(spec.name)"
           (change)="toggleSpecialty(spec.name)"
         />
         <label class="form-check-label text-white" [for]="'spec-' + spec.id">

@@ -62,21 +62,23 @@ namespace TallerApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Put(string Code, [FromBody] SpareDto spareDto)
-        {
-            if (spareDto == null)
-                return BadRequest(new ApiResponse(400, "Datos inválidos."));
+public async Task<IActionResult> Put(string Code, [FromBody] SpareDto spareDto)
+{
+    if (spareDto == null)
+        return BadRequest(new ApiResponse(400, "Datos inválidos."));
 
-            var existingSpare = await _unitOfWork.Spare.GetByIdAsync(Code);
-            if (existingSpare == null)
-                return NotFound(new ApiResponse(404, "El repuesto solicitado no existe."));
+    var existingSpare = await _unitOfWork.Spare.GetByIdAsync(Code);
+    if (existingSpare == null)
+        return NotFound(new ApiResponse(404, "El repuesto solicitado no existe."));
 
-            var spare = _mapper.Map<Spare>(spareDto);
-            _unitOfWork.Spare.Update(spare);
-            await _unitOfWork.SaveAsync();
+    _mapper.Map(spareDto, existingSpare); 
 
-            return Ok(spareDto);
-        }
+    _unitOfWork.Spare.Update(existingSpare);
+    await _unitOfWork.SaveAsync();
+
+    return Ok(spareDto);
+}
+
 
         [HttpDelete("{Code}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

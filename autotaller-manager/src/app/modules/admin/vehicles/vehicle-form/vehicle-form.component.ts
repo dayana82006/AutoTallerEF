@@ -24,7 +24,6 @@ import { MockVehicleTypes } from '../../services/mock-vehicle-types';
   templateUrl: './vehicle-form.component.html'
 })
 export class VehicleFormComponent implements OnInit {
-
   @Input() vehicleToEdit?: Vehicle | null;
   @Output() formSubmitted = new EventEmitter<void>();
   @Output() cancelForm = new EventEmitter<void>();
@@ -44,7 +43,7 @@ export class VehicleFormComponent implements OnInit {
   fuelTypes: FuelType[] = [];
   clients: Client[] = [];
   vehicleTypes: VehicleType[] = [];
-  editingId: number | null = null;
+  editingSerialNumber: string | null = null;  // CAMBIO
   editMode = false;
 
   constructor(
@@ -56,92 +55,92 @@ export class VehicleFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
     this.vehicleModels = MockVehicleModel;
     this.fuelTypes = MockFuelTypes;
     this.vehicleTypes = MockVehicleTypes;
-    this.clientService.getClients().subscribe((data) => {
+
+    this.clientService.getAll().subscribe(data => {
       this.clients = data;
     });
 
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id && id !== '0') {
-      this.editingId = +id;
+    const serial = this.route.snapshot.paramMap.get('id'); // Aquí sigue viniendo como "id" en la URL
+    if (serial && serial !== '0') {
+      this.editingSerialNumber = serial;
       this.editMode = true;
-      this.loadVehicleForEdit(this.editingId);
-      return; 
+      this.loadVehicleForEdit(serial);
+      return;
     }
 
     if (this.vehicleToEdit) {
-      this.editingId = this.vehicleToEdit.id;
+      this.editingSerialNumber = this.vehicleToEdit.serialNumber;
       this.vehicle = { ...this.vehicleToEdit };
       this.editMode = true;
     }
   }
 
-  private loadVehicleForEdit(id: number): void {
-    this.vehicleService.getVehicleById(id).subscribe((vehicle) => {
-      if (vehicle) {
-        this.vehicle = { ...vehicle };
-      } else {
-        this.swalService.error('Vehículo no encontrado');
+  private loadVehicleForEdit(serialNumber: string): void {
+    this.vehicleService.getVehicleBySerialNumber(serialNumber).subscribe({
+      next: (vehicle) => {
+        if (vehicle) {
+          this.vehicle = { ...vehicle };
+        } else {
+          this.swalService.error('Vehículo no encontrado');
+          this.router.navigate(['/admin/vehiculos']);
+        }
+      },
+      error: () => {
+        this.swalService.error('Error al cargar el vehículo');
         this.router.navigate(['/admin/vehiculos']);
       }
     });
   }
 
   save(): void {
-  this.vehicle.vehicleModelId = Number(this.vehicle.vehicleModelId);
-  this.vehicle.clientId = Number(this.vehicle.clientId);
-  this.vehicle.fuelTypeId = Number(this.vehicle.fuelTypeId);
-  this.vehicle.vehicleTypeId = Number(this.vehicle.vehicleTypeId); 
-  if (
-    !this.vehicle.serialNumber.trim() ||
-    !this.vehicle.releaseYear ||
-    !this.vehicle.km ||
-    !this.vehicle.vehicleModelId ||
-    !this.vehicle.clientId ||
-    !this.vehicle.fuelTypeId
-  ) {
-    this.swalService.error('Por favor completa todos los campos obligatorios');
-    return;
+    this.vehicle.vehicleModelId = Number(this.vehicle.vehicleModelId);
+    this.vehicle.clientId = Number(this.vehicle.clientId);
+    this.vehicle.fuelTypeId = Number(this.vehicle.fuelTypeId);
+    this.vehicle.vehicleTypeId = Number(this.vehicle.vehicleTypeId);
+
+    if (
+      !this.vehicle.serialNumber.trim() ||
+      !this.vehicle.releaseYear ||
+      !this.vehicle.km ||
+      !this.vehicle.vehicleModelId ||
+      !this.vehicle.clientId ||
+      !this.vehicle.fuelTypeId
+    ) {
+      this.swalService.error('Por favor completa todos los campos obligatorios');
+      return;
+    }
+
+    if (this.editMode && this.editingSerialNumber) {
+      this.vehicleService.updateVehicle(this.editingSerialNumber, this.vehicle).subscribe({
+        next: () => this.formSubmitted.emit(),
+        error: () => this.swalService.error('Error al actualizar el vehículo')
+      });
+    } else {
+      const newVehicle: Omit<Vehicle, 'id'> = {
+        serialNumber: this.vehicle.serialNumber.trim(),
+        releaseYear: this.vehicle.releaseYear,
+        km: this.vehicle.km,
+        vehicleModelId: this.vehicle.vehicleModelId,
+        clientId: this.vehicle.clientId,
+        fuelTypeId: this.vehicle.fuelTypeId,
+        vehicleTypeId: this.vehicle.vehicleTypeId
+      };
+
+      this.vehicleService.createVehicle(newVehicle).subscribe({
+        next: () => this.formSubmitted.emit(),
+        error: () => this.swalService.error('Error al crear el vehículo')
+      });
+    }
   }
-
-  if (this.editMode && this.editingId !== null) {
-    const updatedVehicle: Vehicle = {
-      ...this.vehicle,
-      id: this.editingId
-    };
-
-    this.vehicleService.updateVehicle(this.editingId, updatedVehicle).subscribe({
-      next: () => this.formSubmitted.emit(),
-      error: () => this.swalService.error('Error al actualizar el vehículo')
-    });
-  } else {
-    const newVehicle: Omit<Vehicle, 'id'> = {
-      serialNumber: this.vehicle.serialNumber.trim(),
-      releaseYear: this.vehicle.releaseYear,
-      km: this.vehicle.km,
-      vehicleModelId: this.vehicle.vehicleModelId,
-      clientId: this.vehicle.clientId,
-      fuelTypeId: this.vehicle.fuelTypeId,
-      vehicleTypeId: this.vehicle.vehicleTypeId
-    };
-
-    this.vehicleService.createVehicle(newVehicle).subscribe({
-      next: () => this.formSubmitted.emit(),
-      error: () => this.swalService.error('Error al crear el vehículo')
-    });
-  }
-}
-
 
   cancel(): void {
     this.cancelForm.emit();
   }
 
-    trackById(index: number, item: { id: number }) {
+  trackById(index: number, item: { id: number }) {
     return item.id;
   }
-
 }

@@ -11,6 +11,7 @@
     <button class="btn btn-primary subtitle" (click)="newVehicle()">
       Añadir Vehículo
     </button>
+    
   </div>
 
   <div class="input-group mb-3">
@@ -30,7 +31,6 @@
     <table class="table table-dark table-hover align-middle">
       <thead class="table-borderless subtitle">
         <tr>
-          <th>#</th>
           <th>Serial</th>
           <th>Año</th>
           <th>Kilometraje</th>
@@ -45,8 +45,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let vehicle of vehicles">
-          <td>{{ vehicle.id }}</td>
-          <td>{{ vehicle.serialNumber }}</td>
+          <td >{{ vehicle.serialNumber }}</td>
           <td>{{ vehicle.releaseYear }}</td>
           <td>{{ vehicle.km | number }} km</td>
           <td>{{ getModelName(vehicle.vehicleModelId) }}</td>
@@ -64,7 +63,7 @@
             </button>
             <button
               class="btn btn-sm btn-outline-danger"
-              (click)="delete(vehicle.id)"
+              (click)="delete(vehicle.serialNumber)"
               *ngIf="authService.currentUser?.role === 'Admin'"
             >
               Eliminar

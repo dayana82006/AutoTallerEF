@@ -9,6 +9,7 @@ namespace Application.DTOs.Entities
     {
         public string? SerialNumber { get; set; }
         public long Km { get; set; }
+         public int ReleaseYear { get; set; }
         public int VehicleModelId { get; set; }
         public int ClientId { get; set; }
         public int FuelTypeId { get; set; }

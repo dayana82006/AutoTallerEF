@@ -58,25 +58,27 @@ namespace TallerApi.Controllers
             return CreatedAtAction(nameof(Post), new { id = typeDto.Id }, typeDto);
         }
 
-        [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Put(int id, [FromBody] ServiceTypeDto typeDto)
-        {
-            if (typeDto == null)
-                return BadRequest(new ApiResponse(400, "Datos inválidos."));
+[HttpPut("{id}")]
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
+public async Task<IActionResult> Put(int id, [FromBody] ServiceTypeDto typeDto)
+{
+    if (typeDto == null || id != typeDto.Id)
+        return BadRequest(new ApiResponse(400, "Datos inválidos."));
 
-            var existingType = await _unitOfWork.ServiceType.GetByIdAsync(id);
-            if (existingType == null)
-                return NotFound(new ApiResponse(404, "El tipo de servicio solicitado no existe."));
+    var existingType = await _unitOfWork.ServiceType.GetByIdAsync(id);
+    if (existingType == null)
+        return NotFound(new ApiResponse(404, "El tipo de servicio solicitado no existe."));
 
-            var type = _mapper.Map<ServiceType>(typeDto);
-            _unitOfWork.ServiceType.Update(type);
-            await _unitOfWork.SaveAsync();
+    // ✅ Mapear dto sobre la entidad ya rastreada
+    _mapper.Map(typeDto, existingType);
 
-            return Ok(typeDto);
-        }
+    _unitOfWork.ServiceType.Update(existingType); // Evita crear una nueva instancia
+    await _unitOfWork.SaveAsync();
+
+    return Ok(_mapper.Map<ServiceTypeDto>(existingType));
+}
 
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

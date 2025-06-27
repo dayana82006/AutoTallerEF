@@ -52,7 +52,8 @@ export class MockServiceOrderService {
             lastname: 'Pérez',
             email: 'juan@example.com',
             role: 'Admin',
-            specialties: []
+            specialties: [],
+            username: ''
           },
           unitPrice: 120000,
           status: {
@@ -86,7 +87,8 @@ export class MockServiceOrderService {
             lastname: 'Gómez',
             email: 'laura@example.com',
             role: 'Operario',
-            specialties: []
+            specialties: [],
+            username: ''
           },
           unitPrice: 80000,
           status: {
