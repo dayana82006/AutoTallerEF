@@ -1,4 +1,3 @@
-// src/app/auth/guards/role.guard.ts
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { AuthService } from '../services/auth';
@@ -8,10 +7,10 @@ export class RoleGuard implements CanActivate {
   constructor(private auth: AuthService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    const expectedRole = route.data['role'];
+    const expectedRole = route.data['expectedRole'];
     const currentUser = this.auth.getUser();
 
-    if (!currentUser || !currentUser.role?.includes(expectedRole)) {
+    if (!currentUser || !currentUser.role.includes(expectedRole)) {
       this.router.navigate(['/unauthorized']);
       return false;
     }
