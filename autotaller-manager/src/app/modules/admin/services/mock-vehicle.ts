@@ -16,7 +16,7 @@ export class MockVehicleService {
     return this.http.get<Vehicle[]>(this.baseUrl);
   }
 
-  // Obtener un vehículo por su serial number (no por ID)
+  // Obtener un vehículo por su serial number 
   getVehicleBySerialNumber(serialNumber: string): Observable<Vehicle> {
     return this.http.get<Vehicle>(`${this.baseUrl}/${serialNumber}`);
   }
