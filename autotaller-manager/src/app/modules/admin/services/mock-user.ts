@@ -18,11 +18,39 @@ export class MockUserService {
   }
 
   createUser(user: Omit<UserMember, 'id' | 'createdAt' | 'updatedAt'>): Observable<UserMember> {
-    return this.http.post<UserMember>(this.apiUrl, user);
+    const roleAliasMap: Record<string, string> = {
+      'Admin': 'Administrador',
+      'Receptionist': 'Recepcionista',
+      'Mechanic': 'Mecánico'
+    };
+
+    const normalizedRole = roleAliasMap[user.role] ?? user.role;
+
+    const payload = {
+      ...user,
+      role: normalizedRole, 
+      specialties: user.specialties ?? [] 
+    };
+
+    return this.http.post<UserMember>(this.apiUrl, payload);
   }
 
   updateUser(id: number, user: UserMember): Observable<UserMember> {
-    return this.http.put<UserMember>(`${this.apiUrl}/${id}`, user);
+    const roleAliasMap: Record<string, string> = {
+      'Admin': 'Administrador',
+      'Receptionist': 'Recepcionista',
+      'Mechanic': 'Mecánico'
+    };
+
+    const normalizedRole = roleAliasMap[user.role] ?? user.role;
+
+    const payload = {
+      ...user,
+      role: normalizedRole, 
+      specialties: user.specialties ?? []
+    };
+
+    return this.http.put<UserMember>(`${this.apiUrl}/${id}`, payload);
   }
 
   deleteUser(id: number): Observable<void> {

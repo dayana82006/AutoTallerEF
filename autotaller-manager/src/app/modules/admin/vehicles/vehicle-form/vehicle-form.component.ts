@@ -29,7 +29,6 @@ export class VehicleFormComponent implements OnInit {
   @Output() cancelForm = new EventEmitter<void>();
 
   vehicle: Vehicle = {
-    id: 0,
     serialNumber: '',
     releaseYear: new Date().getFullYear(),
     km: 0,

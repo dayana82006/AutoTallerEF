@@ -42,21 +42,26 @@ namespace TallerApi.Controllers
 
             return Ok(_mapper.Map<ServiceOrderDto>(order));
         }
+[HttpPost]
+public async Task<ActionResult<ServiceOrderDto>> Post(ServiceOrderDto orderDto)
+{
+    if (orderDto == null)
+        return BadRequest(new ApiResponse(400));
 
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<ServiceOrderDto>> Post(ServiceOrderDto orderDto)
-        {
-            if (orderDto == null)
-                return BadRequest(new ApiResponse(400));
+    var vehicle = await _unitOfWork.Vehicle.GetByIdAsync(orderDto.SerialNumber);
+    if (vehicle == null)
+        return BadRequest(new ApiResponse(400, "El vehículo especificado no existe."));
 
-            var order = _mapper.Map<ServiceOrder>(orderDto);
-            _unitOfWork.ServiceOrder.Add(order);
-            await _unitOfWork.SaveAsync();
+    var order = _mapper.Map<ServiceOrder>(orderDto);
+    order.VehicleSerialNumber = vehicle.SerialNumber;  // Asignar el serial real
 
-            return CreatedAtAction(nameof(Post), new { id = orderDto.Id }, orderDto);
-        }
+    _unitOfWork.ServiceOrder.Add(order);
+    await _unitOfWork.SaveAsync();
+
+    var resultDto = _mapper.Map<ServiceOrderDto>(order);
+
+    return CreatedAtAction(nameof(Get), new { id = order.Id }, resultDto);
+}
 
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
