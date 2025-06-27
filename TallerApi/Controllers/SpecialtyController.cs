@@ -58,25 +58,29 @@ namespace TallerApi.Controllers
             return CreatedAtAction(nameof(Post), new { id = specialtyDto.Id }, specialtyDto);
         }
 
-        [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Put(int id, [FromBody] SpecialityDto specialtyDto)
-        {
-            if (specialtyDto == null)
-                return BadRequest(new ApiResponse(400, "Datos inválidos."));
+[HttpPut("{id}")]
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
+public async Task<IActionResult> Put(int id, [FromBody] SpecialityDto specialtyDto)
+{
+    if (specialtyDto == null)
+        return BadRequest(new ApiResponse(400, "Datos inválidos."));
 
-            var existingSpecialty = await _unitOfWork.Specialty.GetByIdAsync(id);
-            if (existingSpecialty == null)
-                return NotFound(new ApiResponse(404, "La especialidad solicitada no existe."));
+    var existingSpecialty = await _unitOfWork.Specialty.GetByIdAsync(id);
+    if (existingSpecialty == null)
+        return NotFound(new ApiResponse(404, "La especialidad solicitada no existe."));
 
-            var specialty = _mapper.Map<Specialty>(specialtyDto);
-            _unitOfWork.Specialty.Update(specialty);
-            await _unitOfWork.SaveAsync();
+    // Actualiza propiedades manualmente o usa el mapper sobre el objeto existente
+    _mapper.Map(specialtyDto, existingSpecialty);
+    existingSpecialty.UpdatedAt = DateTime.UtcNow;
 
-            return Ok(specialtyDto);
-        }
+    _unitOfWork.Specialty.Update(existingSpecialty);
+    await _unitOfWork.SaveAsync();
+
+    return Ok(specialtyDto);
+}
+
 
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

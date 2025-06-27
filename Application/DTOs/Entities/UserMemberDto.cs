@@ -7,8 +7,12 @@ namespace Application.DTOs
         public string? Lastname { get; set; }
         public string? Username { get; set; }
         public string? Email { get; set; }
-        public List<string>? Roles { get; set; }
-        public List<string>? Specialties { get; set; }
+        public string? Password { get; set; }
 
+        public string? Role { get; set; } // ✅ Un solo rol
+        public List<string>? Specialties { get; set; } = new(); // ✅ Lista segura
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

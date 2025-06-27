@@ -16,9 +16,11 @@ import { Specialty } from '../../models/specialty';
   styleUrls: ['./user-form.scss']
 })
 export class UserFormComponent implements OnInit {
+    formSubmitted: boolean = false;
   user: UserMember = {
     id: 0, 
     name: '',
+    username: '',
     lastname: '',
     email: '',
     role: 'Admin', 
@@ -57,6 +59,7 @@ export class UserFormComponent implements OnInit {
     this.user = {
       id: 0,
       name: '',
+      username: '',
       lastname: '',
       email: '',
       role: 'Admin',
@@ -70,6 +73,7 @@ export class UserFormComponent implements OnInit {
         this.user = {
           id: u.id,
           name: u.name,
+          username: u.username,
           lastname: u.lastname,
           email: u.email,
           role: u.role,
@@ -101,49 +105,93 @@ export class UserFormComponent implements OnInit {
               this.user.role);
   }
 
-  saveUser(): void {
-    if (!this.isFormValid()) {
-      this.swalService.error('Por favor completa todos los campos requeridos');
+saveUser(): void {
+  if (!this.isFormValid()) {
+    this.swalService.error('Por favor completa todos los campos requeridos');
+    return;
+  }
+
+  const trimmedName = this.user.name.trim();
+  const trimmedLastName = this.user.lastname.trim();
+  const trimmedEmail = this.user.email.trim();
+  const trimmedRole = this.user.role.trim();
+  const trimmedUsername = this.user.username.trim();
+  const trimmedPassword = this.user.password?.trim();
+
+  // Validación extra para creación
+  if (!this.isEditMode) {
+    if (!trimmedPassword || trimmedPassword.length < 6) {
+      this.swalService.error('La contraseña es obligatoria y debe tener al menos 6 caracteres.');
       return;
     }
-
-    if (this.isEditMode && this.editingId !== null) {
-      const userToUpdate: UserMember = {
-        ...this.user,
-        id: this.editingId
-      };
-      
-      this.userService.updateUser(this.editingId, userToUpdate).subscribe({
-        next: (updatedUser) => {
-          console.log('Usuario actualizado:', updatedUser);
-          this.router.navigate(['/admin/usuarios']);
-        },
-        error: (error) => {
-          console.error('Error al actualizar usuario:', error);
-          this.swalService.error('Error al actualizar el usuario');
-        }
-      });
-    } else {
-      const newUserData: Omit<UserMember, 'id'> = {
-        name: this.user.name.trim(),
-        lastname: this.user.lastname.trim(),
-        email: this.user.email.trim(),
-        role: this.user.role,
-        specialties: this.user.specialties || []
-      };
-
-      this.userService.createUser(newUserData).subscribe({
-        next: (createdUser) => {
-          console.log('Usuario creado con ID:', createdUser.id);
-          this.router.navigate(['/admin/usuarios']);
-        },
-        error: (error) => {
-          console.error('Error al crear usuario:', error);
-          this.swalService.error('Error al crear el usuario');
-        }
-      });
-    }
   }
+
+  if (this.isEditMode && this.editingId !== null) {
+    // Modo edición: NO se envía contraseña
+    const userToUpdate: UserMember = {
+      id: this.editingId,
+      name: trimmedName,
+      lastname: trimmedLastName,
+      email: trimmedEmail,
+      role: trimmedRole,
+      username: trimmedUsername,
+      specialties: this.user.specialties || []
+    };
+
+    this.userService.updateUser(this.editingId, userToUpdate).subscribe({
+      next: (updatedUser) => {
+        console.log('Usuario actualizado:', updatedUser);
+
+
+        this.swalService.success('Usuario actualizado correctamente');
+        this.router.navigate(['/admin/usuarios']);
+      },
+      error: (error) => {
+        console.error('Error al actualizar usuario:', error);
+        this.swalService.error('Error al actualizar el usuario');
+      }
+    });
+  } else {
+    // Modo creación: se envía todo, incluida la contraseña
+    const newUserData: Omit<UserMember, 'id'> = {
+      name: trimmedName,
+      lastname: trimmedLastName,
+      email: trimmedEmail,
+      role: trimmedRole,
+      username: trimmedUsername,
+      password: trimmedPassword,
+      specialties: this.user.specialties || []
+    };
+
+    this.userService.createUser(newUserData).subscribe({
+      next: (createdUser) => {
+        console.log('Usuario creado con ID:', createdUser.id);
+        this.swalService.success('Usuario creado correctamente');
+        this.router.navigate(['/admin/usuarios']);
+        this.resetForm();
+      },
+      error: (error) => {
+        console.error('Error al crear usuario:', error);
+        this.swalService.error('Error al crear el usuario');
+      }
+    });
+  }
+}
+resetForm(): void {
+  this.user = {
+    id: 0,
+    name: '',
+    lastname: '',
+    email: '',
+    role: '',
+    username: '',
+    password: '',
+    specialties: []
+  };
+  this.isEditMode = false;
+  this.editingId = null;
+}
+
 
   cancel(): void {
     this.router.navigate(['/admin/usuarios']);

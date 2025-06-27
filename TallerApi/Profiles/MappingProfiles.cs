@@ -32,6 +32,9 @@ namespace TallerApi.Profiles
             CreateMap<VehicleType, VehicleTypeDto>().ReverseMap();
             CreateMap<UserSpecialty, UserSpecialtyDto>().ReverseMap();
             CreateMap<UserMember, UserMemberDto>().ReverseMap();
+            CreateMap<UserMemberDto, UserMember>()
+    .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
             
             
         }

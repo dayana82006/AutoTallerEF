@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class MockSpareService {
-  private readonly apiUrl = 'http://localhost:5005/api/Spare'; // Asegúrate que esta ruta coincida con tu backend
+  private readonly apiUrl = 'http://localhost:5005/api/Spare'; 
 
   constructor(private http: HttpClient) {}
 

@@ -59,8 +59,14 @@ export class ServiceOrderFormComponent implements OnInit {
     ];
 
     this.users = [
-      { id: 1, name: 'Carlos', lastname: 'Ramírez', email: 'carlos@taller.com', role: 'Operario', specialties: [] },
-      { id: 2, name: 'Laura', lastname: 'López', email: 'laura@taller.com', role: 'Operario', specialties: [] }
+      {
+        id: 1, name: 'Carlos', lastname: 'Ramírez', email: 'carlos@taller.com', role: 'Operario', specialties: [],
+        username: ''
+      },
+      {
+        id: 2, name: 'Laura', lastname: 'López', email: 'laura@taller.com', role: 'Operario', specialties: [],
+        username: ''
+      }
     ];
 
     if (this.serviceOrderToEdit) {
