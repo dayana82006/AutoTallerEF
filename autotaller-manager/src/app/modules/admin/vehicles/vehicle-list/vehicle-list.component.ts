@@ -102,7 +102,7 @@ getFuelTypeName(id: number): string {
     this.showForm = true;
   }
 
-delete(id: number): void {
+delete(id: string): void {
   this.swalService.confirm('¿Eliminar vehículo?', 'Esta acción no se puede deshacer.').then(confirmed => {
     if (confirmed) {
       this.vehicleService.deleteVehicle(id).subscribe(() => this.ngOnInit());

@@ -58,25 +58,28 @@ namespace TallerApi.Controllers
             return CreatedAtAction(nameof(Post), new { dto.SerialNumber }, dto);
         }
 
-        [HttpPut("{SerialNumber}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Put(string SerialNumber, [FromBody] VehicleDto dto)
-        {
-            if (dto == null)
-                return BadRequest(new ApiResponse(400, "Datos inválidos."));
+[HttpPut("{serialNumber}")]
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
+public async Task<IActionResult> Put(string serialNumber, [FromBody] VehicleDto dto)
+{
+    if (dto == null || serialNumber != dto.SerialNumber)
+        return BadRequest(new ApiResponse(400, "Datos inválidos."));
 
-            var existingVehicle = await _unitOfWork.Vehicle.GetByIdAsync(SerialNumber);
-            if (existingVehicle == null)
-                return NotFound(new ApiResponse(404, "El vehículo solicitado no existe."));
+    var existingVehicle = await _unitOfWork.Vehicle.GetByIdAsync(serialNumber);
+    if (existingVehicle == null)
+        return NotFound(new ApiResponse(404, "El vehículo solicitado no existe."));
 
-            var vehicle = _mapper.Map<Vehicle>(dto);
-            _unitOfWork.Vehicle.Update(vehicle);
-            await _unitOfWork.SaveAsync();
+    // 🔁 Mapear DTO sobre la entidad rastreada
+    _mapper.Map(dto, existingVehicle);
 
-            return Ok(dto);
-        }
+    _unitOfWork.Vehicle.Update(existingVehicle);
+    await _unitOfWork.SaveAsync();
+
+    return Ok(_mapper.Map<VehicleDto>(existingVehicle));
+}
+
 
         [HttpDelete("{SerialNumber}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
