@@ -106,6 +106,7 @@
             required
             #code="ngModel"
             [ngClass]="{ 'is-invalid': code.invalid && code.touched }"
+            [disabled]="editMode"
           />
           <div *ngIf="code.invalid && code.touched" class="invalid-feedback">
             El código es obligatorio

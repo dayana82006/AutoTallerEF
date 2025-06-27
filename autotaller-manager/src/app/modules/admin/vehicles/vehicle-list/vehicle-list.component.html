@@ -30,7 +30,6 @@
     <table class="table table-dark table-hover align-middle">
       <thead class="table-borderless subtitle">
         <tr>
-          <th>#</th>
           <th>Serial</th>
           <th>Año</th>
           <th>Kilometraje</th>
@@ -45,8 +44,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let vehicle of vehicles">
-          <td>{{ vehicle.id }}</td>
-          <td>{{ vehicle.serialNumber }}</td>
+          <td >{{ vehicle.serialNumber }}</td>
           <td>{{ vehicle.releaseYear }}</td>
           <td>{{ vehicle.km | number }} km</td>
           <td>{{ getModelName(vehicle.vehicleModelId) }}</td>
