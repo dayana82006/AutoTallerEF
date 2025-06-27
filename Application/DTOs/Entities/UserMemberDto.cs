@@ -14,5 +14,10 @@ namespace Application.DTOs
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        public static implicit operator string(UserMemberDto v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
