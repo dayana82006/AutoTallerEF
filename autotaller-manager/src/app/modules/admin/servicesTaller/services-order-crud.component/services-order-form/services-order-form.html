@@ -11,8 +11,8 @@
         class="form-control"
         [(ngModel)]="serviceOrder.description"
         name="description"
-        #description="ngModel"
         required
+        #description="ngModel"
         [class.is-invalid]="description.invalid && description.touched"
       />
       <div class="invalid-feedback" *ngIf="description.invalid && description.touched">
@@ -26,13 +26,13 @@
         class="form-select"
         [(ngModel)]="serviceOrder.serialNumber"
         name="serialNumber"
-        #serialNumber="ngModel"
         required
+        #serialNumber="ngModel"
         [class.is-invalid]="serialNumber.invalid && serialNumber.touched"
       >
         <option [ngValue]="null" disabled>Seleccione un vehículo</option>
-        <option *ngFor="let vehicle of vehicles" [ngValue]="vehicle">
-          {{ vehicle.serialNumber }}
+        <option *ngFor="let vehicle of vehicles" [value]="vehicle.serialNumber">
+          {{ vehicle.serialNumber }} - Año {{ vehicle.releaseYear }}
         </option>
       </select>
       <div class="invalid-feedback" *ngIf="serialNumber.invalid && serialNumber.touched">
@@ -44,18 +44,18 @@
       <label class="form-label text-white">Tipo de Servicio *</label>
       <select
         class="form-select"
-        [(ngModel)]="serviceOrder.serviceType"
-        name="serviceType"
-        #serviceType="ngModel"
+        [(ngModel)]="serviceOrder.serviceTypeId"
+        name="serviceTypeId"
         required
-        [class.is-invalid]="serviceType.invalid && serviceType.touched"
+        #serviceTypeId="ngModel"
+        [class.is-invalid]="serviceTypeId.invalid && serviceTypeId.touched"
       >
         <option [ngValue]="null" disabled>Seleccione un tipo</option>
-        <option *ngFor="let type of serviceTypes" [ngValue]="type">
+        <option *ngFor="let type of serviceTypes" [value]="type.id">
           {{ type.description }}
         </option>
       </select>
-      <div class="invalid-feedback" *ngIf="serviceType.invalid && serviceType.touched">
+      <div class="invalid-feedback" *ngIf="serviceTypeId.invalid && serviceTypeId.touched">
         El tipo de servicio es requerido
       </div>
     </div>
@@ -64,36 +64,19 @@
       <label class="form-label text-white">Técnico *</label>
       <select
         class="form-select"
-        [(ngModel)]="serviceOrder.UserMember"
-        name="user"
-        #user="ngModel"
+        [(ngModel)]="serviceOrder.userId"
+        name="userId"
         required
-        [class.is-invalid]="user.invalid && user.touched"
+        #userId="ngModel"
+        [class.is-invalid]="userId.invalid && userId.touched"
       >
         <option [ngValue]="null" disabled>Seleccione un técnico</option>
-        <option *ngFor="let user of users" [ngValue]="user">
+        <option *ngFor="let user of users" [value]="user.id">
           {{ user.name }} {{ user.lastname }}
         </option>
       </select>
-      <div class="invalid-feedback" *ngIf="user.invalid && user.touched">
+      <div class="invalid-feedback" *ngIf="userId.invalid && userId.touched">
         El técnico es requerido
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label text-white">Precio Unitario *</label>
-      <input
-        type="number"
-        class="form-control"
-        [(ngModel)]="serviceOrder.unitPrice"
-        name="unitPrice"
-        #unitPrice="ngModel"
-        required
-        min="0"
-        [class.is-invalid]="unitPrice.invalid && unitPrice.touched"
-      />
-      <div class="invalid-feedback" *ngIf="unitPrice.invalid && unitPrice.touched">
-        Ingrese un precio válido
       </div>
     </div>
 
@@ -101,14 +84,14 @@
       <label class="form-label text-white">Estado *</label>
       <select
         class="form-select"
-        [(ngModel)]="serviceOrder.status"
-        name="status"
-        #status="ngModel"
+        [(ngModel)]="serviceOrder.serviceStatusId"
+        name="serviceStatusId"
         required
+        #status="ngModel"
         [class.is-invalid]="status.invalid && status.touched"
       >
         <option [ngValue]="null" disabled>Seleccione un estado</option>
-        <option *ngFor="let st of statuses" [ngValue]="st">
+        <option *ngFor="let st of statuses" [value]="st.id">
           {{ st.description }}
         </option>
       </select>

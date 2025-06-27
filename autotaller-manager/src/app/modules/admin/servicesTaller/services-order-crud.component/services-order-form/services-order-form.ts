@@ -8,6 +8,9 @@ import { Vehicle } from '../../../models/vehicle';
 import { ServiceType } from '../../../models/service-type';
 import { UserMember } from '../../../models/user-member';
 import { SwalService } from '../../../../../shared/swal.service';
+import { MockVehicleService } from '../../../services/mock-vehicle';
+import { MockServiceTypeService } from '../../../services/mock-service-type';
+import { MockUserService } from '../../../services/mock-user'; // ✅ Importar servicio real de usuarios
 
 @Component({
   selector: 'app-service-order-form',
@@ -24,11 +27,12 @@ export class ServiceOrderFormComponent implements OnInit {
     id: 0,
     description: '',
     clientApproved: false,
-    serialNumber: null!,
-    serviceType: null!,
-    UserMember: null!,
+    serialNumber: '',
+    serviceStatusId: 0,
+    serviceTypeId: 0,
+    userId: 0,
     unitPrice: 0,
-    status: null!
+    status: 0,
   };
 
   vehicles: Vehicle[] = [];
@@ -44,30 +48,31 @@ export class ServiceOrderFormComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private swalService: SwalService
+    private swalService: SwalService,
+    private vehicleService: MockVehicleService,
+    private serviceTypeService: MockServiceTypeService,
+    private userService: MockUserService 
   ) {}
 
   ngOnInit(): void {
-    this.vehicles = [
-      { id: 1, serialNumber: 'ABC123', releaseYear: 2020, km: 10000, vehicleModelId: 1, clientId: 1, fuelTypeId: 1, vehicleTypeId: 1 },
-      { id: 2, serialNumber: 'XYZ789', releaseYear: 2019, km: 20000, vehicleModelId: 2, clientId: 2, fuelTypeId: 2, vehicleTypeId: 2 }
-    ];
+    this.vehicleService.getVehicles().subscribe({
+      next: (data) => this.vehicles = data,
+      error: () => this.swalService.error('Error al cargar los vehículos')
+    });
 
-    this.serviceTypes = [
-      { id: 1, description: 'Cambio de aceite' },
-      { id: 2, description: 'Mantenimiento general' }
-    ];
+    // ✅ Tipos de servicio reales
+    this.serviceTypeService.getAll().subscribe({
+      next: (data) => this.serviceTypes = data,
+      error: () => this.swalService.error('Error al cargar tipos de servicio')
+    });
 
-    this.users = [
-      {
-        id: 1, name: 'Carlos', lastname: 'Ramírez', email: 'carlos@taller.com', role: 'Operario', specialties: [],
-        username: ''
+    // ✅ Usuarios reales filtrados por rol 'Mecánico'
+    this.userService.getAll().subscribe({
+      next: (data) => {
+        this.users = data.filter(user => user.role.toLowerCase() === 'mecánico');
       },
-      {
-        id: 2, name: 'Laura', lastname: 'López', email: 'laura@taller.com', role: 'Operario', specialties: [],
-        username: ''
-      }
-    ];
+      error: () => this.swalService.error('Error al cargar los usuarios')
+    });
 
     if (this.serviceOrderToEdit) {
       this.serviceOrder = { ...this.serviceOrderToEdit };
@@ -79,15 +84,14 @@ export class ServiceOrderFormComponent implements OnInit {
     if (
       !this.serviceOrder.description.trim() ||
       !this.serviceOrder.serialNumber ||
-      !this.serviceOrder.serviceType ||
-      !this.serviceOrder.UserMember ||
-      !this.serviceOrder.status ||
+      !this.serviceOrder.serviceStatusId ||
+      !this.serviceOrder.serviceTypeId ||
+      !this.serviceOrder.userId ||
       this.serviceOrder.unitPrice < 0
     ) {
       this.swalService.error('Por favor completa todos los campos obligatorios');
       return;
     }
-
     this.swalService.success(this.editMode ? 'Orden actualizada' : 'Orden creada');
     this.formSubmitted.emit(this.serviceOrder);
   }

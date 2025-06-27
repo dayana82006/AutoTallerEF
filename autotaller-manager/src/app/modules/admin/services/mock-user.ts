@@ -18,11 +18,61 @@ export class MockUserService {
   }
 
   createUser(user: Omit<UserMember, 'id' | 'createdAt' | 'updatedAt'>): Observable<UserMember> {
-    return this.http.post<UserMember>(this.apiUrl, user);
+    const roleAliasMap: Record<string, string> = {
+      'Admin': 'Administrador',
+      'Receptionist': 'Recepcionista',
+      'Mechanic': 'Mecánico'
+    };
+
+    const normalizedRole = roleAliasMap[user.role] ?? user.role;
+
+    const roleMap: Record<string, number> = {
+      'Administrador': 1,
+      'Recepcionista': 2,
+      'Mecánico': 3
+    };
+
+    const roleId = roleMap[normalizedRole.trim()];
+    if (!roleId) {
+      throw new Error(`Rol inválido: ${user.role}`);
+    }
+
+    const payload = {
+      ...user,
+      idRole: roleId,
+      role: undefined
+    };
+
+    return this.http.post<UserMember>(this.apiUrl, payload);
   }
 
   updateUser(id: number, user: UserMember): Observable<UserMember> {
-    return this.http.put<UserMember>(`${this.apiUrl}/${id}`, user);
+    const roleAliasMap: Record<string, string> = {
+      'Admin': 'Administrador',
+      'Receptionist': 'Recepcionista',
+      'Mechanic': 'Mecánico'
+    };
+
+    const normalizedRole = roleAliasMap[user.role] ?? user.role;
+
+    const roleMap: Record<string, number> = {
+      'Administrador': 1,
+      'Recepcionista': 2,
+      'Mecánico': 3
+    };
+
+    const roleId = roleMap[normalizedRole.trim()];
+    if (!roleId) {
+      throw new Error(`Rol inválido: ${user.role}`);
+    }
+
+    const payload = {
+      ...user,
+      idRole: roleId,
+      role: undefined
+    };
+
+    return this.http.put<UserMember>(`${this.apiUrl}/${id}`, payload);
   }
 
   deleteUser(id: number): Observable<void> {

@@ -46,49 +46,50 @@
       </thead>
       <tbody>
         <tr *ngFor="let order of serviceOrders">
-          <td>{{ order.id }}</td>
-          <td>{{ order.serialNumber.serialNumber }}</td>
-          <td>{{ order.description }}</td>
-          <td>{{ order.serviceType.description }}</td>
-          <td>{{ order.UserMember.name }} {{ order.UserMember.lastname }}</td>
-          <td>
-            <span
-              [ngClass]="{ 'text-success': order.clientApproved, 'text-danger': !order.clientApproved }"
-            >
-              {{ order.clientApproved ? 'Sí' : 'No' }}
-            </span>
-          </td>
-          <td>{{ order.status.description }}</td>
-          <td>{{ order.unitPrice | currency:'COP':'symbol':'1.0-0' }}</td>
-          <td *ngIf="authService.currentUser?.role === 'Admin'">
-            {{ order.createdAt | date: 'short' }}
-          </td>
-          <td *ngIf="authService.currentUser?.role === 'Admin'">
-            {{ order.updatedAt ? (order.updatedAt | date: 'short') : '—' }}
-          </td>
-          <td>
-            <button
-              class="btn btn-sm btn-outline-light me-2"
-              (click)="edit(order)"
-            >
-              Editar
-            </button>
-            <button
-              class="btn btn-sm btn-outline-success"
-              *ngIf="authService.currentUser?.role === 'Admin' || authService.currentUser?.role === 'Mecanico'"
-              (click)="viewInvoice(order.id)"
-            >
-              Ver Factura
-            </button>
-            <button
-              *ngIf="authService.currentUser?.role?.toLowerCase() === 'admin'"
-              class="btn btn-sm btn-outline-danger"
-              (click)="delete(order.id)"
-            >
-              Eliminar
-            </button>
-          </td>
-        </tr>
+  <td>{{ order.id }}</td>
+  <td>{{ order.serialNumber }}</td>
+  <td>{{ order.description }}</td>
+  <td>{{ getServiceTypeDescription(order.serviceTypeId) }}</td>
+  <td>{{ getUserName(order.userId) }}</td>
+  <td>
+    <span
+      [ngClass]="{ 'text-success': order.clientApproved, 'text-danger': !order.clientApproved }"
+    >
+      {{ order.clientApproved ? 'Sí' : 'No' }}
+    </span>
+  </td>
+  <td>{{ getStatusDescription(order.status) }}</td>
+  <td>{{ order.unitPrice | currency:'COP':'symbol':'1.0-0' }}</td>
+  <td *ngIf="authService.currentUser?.role === 'Admin'">
+    {{ order.createdAt | date: 'short' }}
+  </td>
+  <td *ngIf="authService.currentUser?.role === 'Admin'">
+    {{ order.updatedAt ? (order.updatedAt | date: 'short') : '—' }}
+  </td>
+  <td>
+    <button
+      class="btn btn-sm btn-outline-light me-2"
+      (click)="edit(order)"
+    >
+      Editar
+    </button>
+    <button
+      class="btn btn-sm btn-outline-success"
+      *ngIf="authService.currentUser?.role === 'Admin' || authService.currentUser?.role === 'Mecanico'"
+      (click)="viewInvoice(order.id)"
+    >
+      Ver Factura
+    </button>
+    <button
+      *ngIf="authService.currentUser?.role?.toLowerCase() === 'admin'"
+      class="btn btn-sm btn-outline-danger"
+      (click)="delete(order.id)"
+    >
+      Eliminar
+    </button>
+  </td>
+</tr>
+
         <tr *ngIf="serviceOrders.length === 0">
           <td
             [attr.colspan]="authService.currentUser?.role === 'Admin' ? 11 : 9"

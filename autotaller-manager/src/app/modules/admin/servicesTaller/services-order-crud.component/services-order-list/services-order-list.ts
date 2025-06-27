@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { ServiceOrder } from '../../../models/service-order';
 import { MockServiceOrderService } from '../../../services/mock-service-order';
-import { ServiceTypesCrudComponent } from '../../services-type-crud.component/services-type-crud.component';
 import { SwalService } from '../../../../../shared/swal.service';
 import { ServiceOrderFormComponent } from '../services-order-form/services-order-form';
 import { AuthService } from '../../../../auth/services/auth';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-service-order-list',
@@ -27,6 +26,25 @@ export class ServiceOrderListComponent implements OnInit {
   pageSize = 5;
   search = '';
 
+  selectedInvoiceOrderId?: number;
+
+  // 🔧 Datos mock locales
+  serviceTypes = [
+    { id: 1, description: 'Cambio de aceite' },
+    { id: 2, description: 'Mantenimiento general' }
+  ];
+
+  users = [
+    { id: 1, name: 'Carlos', lastname: 'Ramírez' },
+    { id: 2, name: 'Laura', lastname: 'López' }
+  ];
+
+  statuses = [
+    { id: 1, description: 'Pendiente' },
+    { id: 2, description: 'En proceso' },
+    { id: 3, description: 'Finalizado' }
+  ];
+
   constructor(
     private serviceOrderService: MockServiceOrderService,
     private swalService: SwalService,
@@ -35,22 +53,19 @@ export class ServiceOrderListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.refreshOrders();
+  }
+
+  private refreshOrders(): void {
     this.serviceOrderService.getServiceOrders().subscribe((orders) => {
       this.allServiceOrders = orders;
       this.applyFilters();
     });
-    
   }
-private refreshOrders(): void {
-  this.serviceOrderService.getServiceOrders().subscribe((orders) => {
-    this.allServiceOrders = orders;
-    this.applyFilters();
-  });
-}
 
   applyFilters(): void {
     const filtered = this.allServiceOrders.filter((o) =>
-      o.serialNumber.serialNumber.toLowerCase().includes(this.search.toLowerCase())
+      o.serialNumber.toLowerCase().includes(this.search.toLowerCase())
     );
     this.total = filtered.length;
     const start = (this.page - 1) * this.pageSize;
@@ -71,34 +86,31 @@ private refreshOrders(): void {
   delete(id: number): void {
     this.swalService.confirm('¿Eliminar orden?', 'Esta acción no se puede deshacer.').then(confirmed => {
       if (confirmed) {
-        this.serviceOrderService.deleteServiceOrder(id).subscribe(() => this.ngOnInit());
+        this.serviceOrderService.deleteServiceOrder(id).subscribe(() => this.refreshOrders());
       }
     });
   }
-  
-  selectedInvoiceOrderId?: number;
-  
-viewInvoice(orderId: number): void {
-  this.router.navigate(['/admin/invoices', orderId]);
-}
+
+  viewInvoice(orderId: number): void {
+    this.router.navigate(['/admin/invoices', orderId]);
+  }
+
   onFormSubmit(order: ServiceOrder): void {
     if (this.selectedServiceOrder) {
-      
       this.serviceOrderService.updateServiceOrder(order.id, order).subscribe(() => {
         this.swalService.success('Orden actualizada');
         this.refreshOrders();
       });
-  } else {
-    this.serviceOrderService.createServiceOrder(order).subscribe(() => {
-      this.swalService.success('Orden creada');
-      this.refreshOrders();
-    });
+    } else {
+      this.serviceOrderService.createServiceOrder(order).subscribe(() => {
+        this.swalService.success('Orden creada');
+        this.refreshOrders();
+      });
+    }
+
+    this.selectedServiceOrder = null;
+    this.showForm = false;
   }
-
-  this.selectedServiceOrder = null;
-  this.showForm = false;
-}
-
 
   cancelForm(): void {
     this.selectedServiceOrder = null;
@@ -113,5 +125,19 @@ viewInvoice(orderId: number): void {
   onPageChange(newPage: number): void {
     this.page = newPage;
     this.applyFilters();
+  }
+
+  // ✅ Métodos auxiliares para mostrar info en la tabla
+  getServiceTypeDescription(id: number): string {
+    return this.serviceTypes.find(t => t.id === id)?.description ?? 'Desconocido';
+  }
+
+  getUserName(userId: number): string {
+    const user = this.users.find(u => u.id === userId);
+    return user ? `${user.name} ${user.lastname}` : 'Desconocido';
+  }
+
+  getStatusDescription(statusId: number): string {
+    return this.statuses.find(s => s.id === statusId)?.description ?? 'Desconocido';
   }
 }

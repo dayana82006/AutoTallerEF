@@ -53,7 +53,7 @@ export class InvoicePageComponent implements OnInit {
             if (!order) return of(null);
             this.serviceOrder = order;
 
-            const vehicleId = order.serialNumber.serialNumber;
+            const vehicleId = order.serialNumber;
 
             return forkJoin({
               vehicle: this.vehicleService.getVehicleBySerialNumber(vehicleId),
