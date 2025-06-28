@@ -7,6 +7,7 @@ import { SwalService } from '../../../../shared/swal.service';
 
 @Component({
   selector: 'app-service-types-crud',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './services-type-crud.component.html',
 })
@@ -59,14 +60,25 @@ export class ServiceTypesCrudComponent implements OnInit {
   }
 
   save() {
-    const trimmed = this.newType.description.trim();
+    const trimmed = this.newType.description.trim().toLowerCase();
+
     if (!trimmed) {
       this.swal.error('La descripción es obligatoria');
       return;
     }
 
+    const duplicate = this.allServiceTypes.some(t =>
+      t.description.trim().toLowerCase() === trimmed &&
+      (!this.editMode || t.id !== this.newType.id)
+    );
+
+    if (duplicate) {
+      this.swal.error('Ya existe un tipo de servicio con esa descripción');
+      return;
+    }
+
     const save$ = this.editMode
-      ? this.typeService.update(this.newType.id, this.newType)
+      ? this.typeService.update(this.newType.id, { ...this.newType, description: trimmed })
       : this.typeService.create({ description: trimmed });
 
     save$.subscribe(() => {
