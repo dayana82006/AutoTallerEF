@@ -64,24 +64,22 @@ export class SparesCrudComponent implements OnInit {
       return;
     }
 
-    if (stock === null || stock === undefined || isNaN(stock) || typeof stock !== 'number') {
-      this.swal.error('El stock debe ser un número válido');
+    if (stock == null || isNaN(stock) || stock < 0) {
+      this.swal.error('El stock debe ser un número válido y no negativo');
       return;
     }
 
-    if (stock < 0) {
-      this.swal.error('El stock no puede ser negativo');
+    if (price == null || isNaN(price) || price < 0) {
+      this.swal.error('El precio debe ser un número válido y no negativo');
       return;
     }
 
-    if (price === null || price === undefined || isNaN(price) || typeof price !== 'number') {
-      this.swal.error('El precio debe ser un número válido');
-      return;
-    }
-
-    if (price < 0) {
-      this.swal.error('El precio no puede ser negativo');
-      return;
+    if (!this.editMode) {
+      const codeExists = this.allSpares.some(s => s.code.trim().toLowerCase() === trimmedCode.toLowerCase());
+      if (codeExists) {
+        this.swal.error(`Ya existe un repuesto con el código "${trimmedCode}".`);
+        return;
+      }
     }
 
     const save$ = this.editMode
@@ -101,12 +99,7 @@ export class SparesCrudComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error al guardar repuesto:', error);
-
-        if (error.status === 409) {
-          this.swal.error(`Ya existe un repuesto con el código "${trimmedCode}".`);
-        } else {
-          this.swal.error('Ocurrió un error al guardar el repuesto.');
-        }
+        this.swal.error('Ocurrió un error al guardar el repuesto.');
       }
     });
   }
