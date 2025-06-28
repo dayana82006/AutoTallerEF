@@ -14,6 +14,7 @@
       #serialNumber="ngModel"
       required
       [class.is-invalid]="serialNumber.invalid && serialNumber.touched"
+      [disabled]="editMode"
     />
     <div
       class="invalid-feedback"
