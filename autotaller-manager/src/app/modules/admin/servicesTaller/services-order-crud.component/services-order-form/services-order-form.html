@@ -62,19 +62,20 @@
 
     <div class="mb-3">
       <label class="form-label text-white">Técnico *</label>
-      <select
-        class="form-select"
-        [(ngModel)]="serviceOrder.userId"
-        name="userId"
-        required
-        #userId="ngModel"
-        [class.is-invalid]="userId.invalid && userId.touched"
-      >
-        <option [ngValue]="null" disabled>Seleccione un técnico</option>
-        <option *ngFor="let user of users" [value]="user.id">
-          {{ user.name }} {{ user.lastname }}
-        </option>
-      </select>
+<select
+  class="form-select"
+  [(ngModel)]="serviceOrder.userMemberId"  
+  name="userMemberId"
+  required
+  #userId="ngModel"
+  [class.is-invalid]="userId.invalid && userId.touched"
+>
+  <option [ngValue]="null" disabled>Seleccione un técnico</option>
+  <option *ngFor="let user of users" [value]="user.id">
+    {{ user.name }} {{ user.lastname }}
+  </option>
+</select>
+
       <div class="invalid-feedback" *ngIf="userId.invalid && userId.touched">
         El técnico es requerido
       </div>

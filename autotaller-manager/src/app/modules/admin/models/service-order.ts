@@ -9,7 +9,7 @@ export interface ServiceOrder {
   serialNumber: string; 
   serviceStatusId: number;
   serviceTypeId: number; 
-  userId: number; 
+  userMemberId: number; 
   unitPrice: number;
   status: number; 
   createdAt?: Date;

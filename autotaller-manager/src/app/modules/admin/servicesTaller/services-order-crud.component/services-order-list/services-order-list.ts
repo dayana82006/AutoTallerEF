@@ -4,7 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ServiceOrder } from '../../../models/service-order';
+import { ServiceType } from '../../../models/service-type';
+import { Vehicle } from '../../../models/vehicle';
+import { UserMember } from '../../../models/user-member';
+
 import { MockServiceOrderService } from '../../../services/mock-service-order';
+import { MockServiceTypeService } from '../../../services/mock-service-type';
+import { MockVehicleService } from '../../../services/mock-vehicle';
+import { MockUserService } from '../../../services/mock-user';
+
 import { SwalService } from '../../../../../shared/swal.service';
 import { ServiceOrderFormComponent } from '../services-order-form/services-order-form';
 import { AuthService } from '../../../../auth/services/auth';
@@ -28,16 +36,9 @@ export class ServiceOrderListComponent implements OnInit {
 
   selectedInvoiceOrderId?: number;
 
-  // 🔧 Datos mock locales
-  serviceTypes = [
-    { id: 1, description: 'Cambio de aceite' },
-    { id: 2, description: 'Mantenimiento general' }
-  ];
-
-  users = [
-    { id: 1, name: 'Carlos', lastname: 'Ramírez' },
-    { id: 2, name: 'Laura', lastname: 'López' }
-  ];
+  serviceTypes: ServiceType[] = [];
+  users: UserMember[] = [];
+  vehicles: Vehicle[] = [];
 
   statuses = [
     { id: 1, description: 'Pendiente' },
@@ -47,13 +48,37 @@ export class ServiceOrderListComponent implements OnInit {
 
   constructor(
     private serviceOrderService: MockServiceOrderService,
+    private vehicleService: MockVehicleService,
+    private serviceTypeService: MockServiceTypeService,
+    private userService: MockUserService,
     private swalService: SwalService,
     public authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.loadData();
+  }
+
+  private loadData(): void {
     this.refreshOrders();
+
+    this.serviceTypeService.getAll().subscribe({
+      next: (data) => this.serviceTypes = data,
+      error: () => this.swalService.error('Error al cargar tipos de servicio')
+    });
+
+    this.vehicleService.getVehicles().subscribe({
+      next: (data) => this.vehicles = data,
+      error: () => this.swalService.error('Error al cargar vehículos')
+    });
+
+    this.userService.getAll().subscribe({
+      next: (data) => {
+        this.users = data.filter(user => user.role.toLowerCase() === 'mecánico');
+      },
+      error: () => this.swalService.error('Error al cargar usuarios')
+    });
   }
 
   private refreshOrders(): void {
@@ -65,7 +90,7 @@ export class ServiceOrderListComponent implements OnInit {
 
   applyFilters(): void {
     const filtered = this.allServiceOrders.filter((o) =>
-      o.serialNumber.toLowerCase().includes(this.search.toLowerCase())
+      (o.serialNumber ?? '').toLowerCase().includes(this.search.toLowerCase())
     );
     this.total = filtered.length;
     const start = (this.page - 1) * this.pageSize;
@@ -127,13 +152,12 @@ export class ServiceOrderListComponent implements OnInit {
     this.applyFilters();
   }
 
-  // ✅ Métodos auxiliares para mostrar info en la tabla
   getServiceTypeDescription(id: number): string {
     return this.serviceTypes.find(t => t.id === id)?.description ?? 'Desconocido';
   }
 
-  getUserName(userId: number): string {
-    const user = this.users.find(u => u.id === userId);
+  getUserName(userMemberId: number): string {
+    const user = this.users.find(u => u.id === userMemberId);
     return user ? `${user.name} ${user.lastname}` : 'Desconocido';
   }
 

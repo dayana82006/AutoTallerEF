@@ -10,7 +10,7 @@ import { UserMember } from '../../../models/user-member';
 import { SwalService } from '../../../../../shared/swal.service';
 import { MockVehicleService } from '../../../services/mock-vehicle';
 import { MockServiceTypeService } from '../../../services/mock-service-type';
-import { MockUserService } from '../../../services/mock-user'; // ✅ Importar servicio real de usuarios
+import { MockUserService } from '../../../services/mock-user'; 
 
 @Component({
   selector: 'app-service-order-form',
@@ -30,7 +30,7 @@ export class ServiceOrderFormComponent implements OnInit {
     serialNumber: '',
     serviceStatusId: 0,
     serviceTypeId: 0,
-    userId: 0,
+    userMemberId: 0,
     unitPrice: 0,
     status: 0,
   };
@@ -84,7 +84,7 @@ export class ServiceOrderFormComponent implements OnInit {
       !this.serviceOrder.serialNumber ||
       !this.serviceOrder.serviceStatusId ||
       !this.serviceOrder.serviceTypeId ||
-      !this.serviceOrder.userId ||
+      !this.serviceOrder.userMemberId ||
       this.serviceOrder.unitPrice < 0
     ) {
       this.swalService.error('Por favor completa todos los campos obligatorios');

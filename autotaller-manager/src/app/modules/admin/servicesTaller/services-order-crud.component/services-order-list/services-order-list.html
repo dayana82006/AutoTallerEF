@@ -50,7 +50,7 @@
   <td>{{ order.serialNumber }}</td>
   <td>{{ order.description }}</td>
   <td>{{ getServiceTypeDescription(order.serviceTypeId) }}</td>
-  <td>{{ getUserName(order.userId) }}</td>
+  <td>{{ getUserName(order.userMemberId) }}</td>
   <td>
     <span
       [ngClass]="{ 'text-success': order.clientApproved, 'text-danger': !order.clientApproved }"
