@@ -164,4 +164,11 @@ export class ServiceOrderListComponent implements OnInit {
   getStatusDescription(statusId: number): string {
     return this.statuses.find(s => s.id === statusId)?.description ?? 'Desconocido';
   }
+
+  getVehicleDescription(serial: string): string {
+    const vehicle = this.vehicles.find(v => v.serialNumber === serial);
+    return vehicle
+      ? `${vehicle.model})`
+      : serial ?? 'Desconocido';
+  }
 }

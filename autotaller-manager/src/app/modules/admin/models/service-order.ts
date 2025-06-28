@@ -7,11 +7,10 @@ export interface ServiceOrder {
   description: string;
   clientApproved: boolean;
   serialNumber: string; 
-  serviceStatusId: number;
   serviceTypeId: number; 
   userMemberId: number; 
   unitPrice: number;
-  status: number; 
+  serviceStatusId: number; 
   createdAt?: Date;
   updatedAt?: Date;
 }

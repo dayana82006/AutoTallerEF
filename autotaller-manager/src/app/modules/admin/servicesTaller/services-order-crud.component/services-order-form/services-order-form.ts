@@ -1,7 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 
 import { ServiceOrder } from '../../../models/service-order';
 import { Vehicle } from '../../../models/vehicle';
@@ -10,7 +9,7 @@ import { UserMember } from '../../../models/user-member';
 import { SwalService } from '../../../../../shared/swal.service';
 import { MockVehicleService } from '../../../services/mock-vehicle';
 import { MockServiceTypeService } from '../../../services/mock-service-type';
-import { MockUserService } from '../../../services/mock-user'; 
+import { MockUserService } from '../../../services/mock-user';
 
 @Component({
   selector: 'app-service-order-form',
@@ -28,16 +27,16 @@ export class ServiceOrderFormComponent implements OnInit {
     description: '',
     clientApproved: false,
     serialNumber: '',
-    serviceStatusId: 0,
-    serviceTypeId: 0,
-    userMemberId: 0,
-    unitPrice: 0,
-    status: 0,
+    serviceStatusId: null!,
+    serviceTypeId: null!,
+    userMemberId: null!,
+    unitPrice: 0
   };
 
   vehicles: Vehicle[] = [];
   serviceTypes: ServiceType[] = [];
   users: UserMember[] = [];
+
   statuses = [
     { id: 1, description: 'Pendiente' },
     { id: 2, description: 'En proceso' },
@@ -47,11 +46,10 @@ export class ServiceOrderFormComponent implements OnInit {
   editMode = false;
 
   constructor(
-    private router: Router,
-    private swalService: SwalService,
     private vehicleService: MockVehicleService,
     private serviceTypeService: MockServiceTypeService,
-    private userService: MockUserService 
+    private userService: MockUserService,
+    private swalService: SwalService
   ) {}
 
   ngOnInit(): void {
@@ -66,10 +64,8 @@ export class ServiceOrderFormComponent implements OnInit {
     });
 
     this.userService.getAll().subscribe({
-      next: (data) => {
-        this.users = data.filter(user => user.role.toLowerCase() === 'mecánico');
-      },
-      error: () => this.swalService.error('Error al cargar los usuarios')
+      next: (data) => this.users = data.filter(user => user.role.toLowerCase() === 'mecánico'),
+      error: () => this.swalService.error('Error al cargar los técnicos')
     });
 
     if (this.serviceOrderToEdit) {
@@ -79,26 +75,21 @@ export class ServiceOrderFormComponent implements OnInit {
   }
 
   save(): void {
-    if (
-      !this.serviceOrder.description.trim() ||
-      !this.serviceOrder.serialNumber ||
-      !this.serviceOrder.serviceStatusId ||
-      !this.serviceOrder.serviceTypeId ||
-      !this.serviceOrder.userMemberId ||
-      this.serviceOrder.unitPrice < 0
+    if (!this.serviceOrder.description.trim()
+      || !this.serviceOrder.serialNumber
+      || !this.serviceOrder.serviceStatusId
+      || !this.serviceOrder.serviceTypeId
+      || !this.serviceOrder.userMemberId
+      || this.serviceOrder.unitPrice < 0
     ) {
       this.swalService.error('Por favor completa todos los campos obligatorios');
       return;
     }
-    this.swalService.success(this.editMode ? 'Orden actualizada' : 'Orden creada');
+
     this.formSubmitted.emit(this.serviceOrder);
   }
 
   cancel(): void {
     this.cancelForm.emit();
-  }
-
-  trackById(index: number, item: { id: number }) {
-    return item.id;
   }
 }
