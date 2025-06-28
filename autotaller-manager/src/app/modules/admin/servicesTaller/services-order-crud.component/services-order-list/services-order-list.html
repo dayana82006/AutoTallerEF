@@ -52,9 +52,9 @@
           <td>{{ getUserName(order.userMemberId) }}</td>
           <td>
             <span
-              [ngClass]="{ 'text-success': order.clientApproved, 'text-danger': !order.clientApproved }"
+              [ngClass]="{ 'text-success': order.approvedByClient, 'text-danger': !order.approvedByClient }"
             >
-              {{ order.clientApproved ? 'Sí' : 'No' }}
+              {{ order.approvedByClient ? 'Sí' : 'No' }}
             </span>
           </td>
           <td>{{ getStatusDescription(order.serviceStatusId) }}</td>

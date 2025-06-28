@@ -5,7 +5,7 @@ import { Vehicle } from "./vehicle";
 export interface ServiceOrder {
   id: number;
   description: string;
-  clientApproved: boolean;
+  approvedByClient: boolean;
   serialNumber: string; 
   serviceTypeId: number; 
   userMemberId: number; 

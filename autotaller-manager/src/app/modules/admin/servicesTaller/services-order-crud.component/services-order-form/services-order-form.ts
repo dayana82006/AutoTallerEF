@@ -25,7 +25,7 @@ export class ServiceOrderFormComponent implements OnInit {
   serviceOrder: ServiceOrder = {
     id: 0,
     description: '',
-    clientApproved: false,
+    approvedByClient: false,
     serialNumber: '',
     serviceStatusId: null!,
     serviceTypeId: null!,
