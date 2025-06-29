@@ -17,8 +17,14 @@ namespace TallerApi.Profiles
             CreateMap<Brand, BrandDto>().ReverseMap();
             CreateMap<Client, ClientDto>().ReverseMap();
             CreateMap<FuelType, FuelTypeDto>().ReverseMap();
-            CreateMap<Invoice, InvoiceDto>().ReverseMap();
+
+            CreateMap<Invoice, InvoiceDto>()
+                .ForMember(dest => dest.InvoiceDetails, opt => opt.MapFrom(src => src.InvoiceDetails));
+            CreateMap<InvoiceDto, Invoice>()
+                .ForMember(dest => dest.InvoiceDetails, opt => opt.MapFrom(src => src.InvoiceDetails));
+
             CreateMap<InvoiceDetail, InvoiceDetailDto>().ReverseMap();
+
             CreateMap<OrderDetail, OrderDetailDto>().ReverseMap();
 
             CreateMap<ServiceOrder, ServiceOrderDto>()

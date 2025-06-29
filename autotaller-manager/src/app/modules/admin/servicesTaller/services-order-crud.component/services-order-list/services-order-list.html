@@ -75,7 +75,6 @@
             
             <button
               class="btn btn-sm btn-outline-success"
-              *ngIf="authService.currentUser?.role === 'Admin' || authService.currentUser?.role === 'Mecanico'"
               (click)="viewInvoice(order.id)"
             >
               Ver Factura

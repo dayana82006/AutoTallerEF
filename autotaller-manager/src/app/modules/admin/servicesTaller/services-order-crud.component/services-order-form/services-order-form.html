@@ -79,22 +79,6 @@
       </div>
     </div>
 
-    <!-- Factura -->
-    <div class="mb-3">
-      <label class="form-label text-white">Factura *</label>
-      <select class="form-select" [(ngModel)]="serviceOrder.invoiceId" name="invoiceId"
-        required #invoiceId="ngModel"
-        [class.is-invalid]="invoiceId.invalid && invoiceId.touched">
-        <option [ngValue]="null" disabled>Seleccione una factura</option>
-        <option *ngFor="let invoice of invoices" [value]="invoice.id">
-          Factura #{{ invoice.id }} - Total: ${{ invoice.finalAmount }}
-        </option>
-      </select>
-      <div class="invalid-feedback" *ngIf="invoiceId.invalid && invoiceId.touched">
-        La factura es requerida
-      </div>
-    </div>
-
     <!-- Precio -->
     <div class="mb-3">
       <label class="form-label text-white">Precio Unitario *</label>
