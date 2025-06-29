@@ -10,7 +10,7 @@ using Application.DTOs;
 
 namespace TallerApi.Profiles
 {
-    public class MappingProfiles: Profile
+    public class MappingProfiles : Profile
     {
         public MappingProfiles()
         {
@@ -20,7 +20,12 @@ namespace TallerApi.Profiles
             CreateMap<Invoice, InvoiceDto>().ReverseMap();
             CreateMap<InvoiceDetail, InvoiceDetailDto>().ReverseMap();
             CreateMap<OrderDetail, OrderDetailDto>().ReverseMap();
-            CreateMap<ServiceOrder, ServiceOrderDto>().ReverseMap();
+
+            CreateMap<ServiceOrder, ServiceOrderDto>()
+                .ForMember(dest => dest.SerialNumber, opt => opt.MapFrom(src => src.VehicleSerialNumber));
+            CreateMap<ServiceOrderDto, ServiceOrder>()
+                .ForMember(dest => dest.VehicleSerialNumber, opt => opt.MapFrom(src => src.SerialNumber));
+
             CreateMap<ServiceStatus, ServiceStatusDto>().ReverseMap();
             CreateMap<ServiceType, ServiceTypeDto>().ReverseMap();
             CreateMap<Spare, SpareDto>().ReverseMap();
@@ -31,12 +36,23 @@ namespace TallerApi.Profiles
             CreateMap<VehicleModel, VehicleModelDto>().ReverseMap();
             CreateMap<VehicleType, VehicleTypeDto>().ReverseMap();
             CreateMap<UserSpecialty, UserSpecialtyDto>().ReverseMap();
-            CreateMap<UserMember, UserMemberDto>().ReverseMap();
-            CreateMap<UserMemberDto, UserMember>()
-    .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
-            
-            
+            CreateMap<UserMember, UserMemberDto>()
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src =>
+                    src.UserRoles != null && src.UserRoles.Any()
+                        ? src.UserRoles.First().Role.Name
+                        : null
+                ))
+                .ForMember(dest => dest.Specialties, opt => opt.MapFrom(src =>
+                    src.UserSpecialties != null
+                        ? src.UserSpecialties.Select(us => us.Specialty.Name).ToList()
+                        : new List<string>()
+                ));
+
+            CreateMap<UserMemberDto, UserMember>()
+                .ForMember(dest => dest.UserRoles, opt => opt.Ignore())
+                .ForMember(dest => dest.UserSpecialties, opt => opt.Ignore())
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }
 }

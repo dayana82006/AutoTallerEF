@@ -1,34 +1,38 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { Invoice, InvoiceDetail } from '../models/invoice';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Invoice } from '../models/invoice';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MockInvoiceService {
-  private invoices: Invoice[] = [
-    {
-      id: 1,
-      totalSpares: 50000,
-      totalServices: 70000,
-      finalAmount: 120000,
-      clientId: 1,
-      createdAt: new Date(),
-      invoiceDetails: [
-        {
-          id: 1,
-          invoiceId: 1,
-          serviceOrderId: 1,
-          createdAt: new Date()
-        }
-      ]
-    }
-  ];
+  private readonly API_URL = 'http://localhost:5005/api/Invoice'; // Asegúrate que esta ruta coincida con tu backend
 
-  getInvoiceByServiceOrderId(serviceOrderId: number): Observable<Invoice | undefined> {
-    const invoice = this.invoices.find(inv =>
-      inv.invoiceDetails.some(detail => detail.serviceOrderId === serviceOrderId)
-    );
-    return of(invoice);
+  constructor(private http: HttpClient) {}
+
+  getInvoices(): Observable<Invoice[]> {
+    return this.http.get<Invoice[]>(this.API_URL);
+  }
+
+  getInvoiceById(id: number): Observable<Invoice> {
+    return this.http.get<Invoice>(`${this.API_URL}/${id}`);
+  }
+
+  getInvoiceByServiceOrderId(serviceOrderId: number): Observable<Invoice> {
+    return this.http.get<Invoice>(`${this.API_URL}/ByServiceOrder/${serviceOrderId}`);
+    // Cambia la URL si tu backend usa una ruta diferente
+  }
+
+  createInvoice(invoice: Omit<Invoice, 'id' | 'createdAt'>): Observable<Invoice> {
+    return this.http.post<Invoice>(this.API_URL, invoice);
+  }
+
+  updateInvoice(id: number, updatedInvoice: Invoice): Observable<Invoice> {
+    return this.http.put<Invoice>(`${this.API_URL}/${id}`, updatedInvoice);
+  }
+
+  deleteInvoice(id: number): Observable<boolean> {
+    return this.http.delete<boolean>(`${this.API_URL}/${id}`);
   }
 }

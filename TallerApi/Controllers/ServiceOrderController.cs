@@ -43,20 +43,43 @@ namespace TallerApi.Controllers
             return Ok(_mapper.Map<ServiceOrderDto>(order));
         }
 
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<ServiceOrderDto>> Post(ServiceOrderDto orderDto)
-        {
-            if (orderDto == null)
-                return BadRequest(new ApiResponse(400));
+public async Task<ActionResult<ServiceOrderDto>> Post(ServiceOrderDto orderDto)
+{
+    if (orderDto == null)
+        return BadRequest(new ApiResponse(400));
 
-            var order = _mapper.Map<ServiceOrder>(orderDto);
-            _unitOfWork.ServiceOrder.Add(order);
-            await _unitOfWork.SaveAsync();
+    // Validar que el vehículo exista
+    var vehicle = await _unitOfWork.Vehicle.GetByIdAsync(orderDto.SerialNumber);
+    if (vehicle == null)
+        return BadRequest(new ApiResponse(400, "El vehículo especificado no existe."));
 
-            return CreatedAtAction(nameof(Post), new { id = orderDto.Id }, orderDto);
-        }
+    // Validar que la factura exista
+    var invoice = await _unitOfWork.Invoice.GetByIdAsync(orderDto.InvoiceId);
+    if (invoice == null)
+        return BadRequest(new ApiResponse(400, "La factura especificada no existe."));
+
+    // Crear la orden de servicio
+    var order = _mapper.Map<ServiceOrder>(orderDto);
+    order.VehicleSerialNumber = vehicle.SerialNumber;
+
+    _unitOfWork.ServiceOrder.Add(order);
+    await _unitOfWork.SaveAsync(); // Aquí se genera el ID de ServiceOrder
+
+    // Crear el detalle de factura
+    var invoiceDetail = new InvoiceDetail
+    {
+        InvoiceId = invoice.Id,
+        ServiceOrderId = order.Id,
+        CreatedAt = DateTime.UtcNow,
+        UpdatedAt = DateTime.UtcNow
+    };
+
+    _unitOfWork.InvoiceDetail.Add(invoiceDetail);
+    await _unitOfWork.SaveAsync();
+
+    var resultDto = _mapper.Map<ServiceOrderDto>(order);
+    return CreatedAtAction(nameof(Get), new { id = order.Id }, resultDto);
+}
 
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -64,17 +87,17 @@ namespace TallerApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Put(int id, [FromBody] ServiceOrderDto orderDto)
         {
-            if (orderDto == null)
-                return BadRequest(new ApiResponse(400, "Datos inválidos."));
+            if (orderDto == null || id != orderDto.Id)
+                return BadRequest(new ApiResponse(400, "Datos inválidos o ID inconsistente."));
 
             var existingOrder = await _unitOfWork.ServiceOrder.GetByIdAsync(id);
             if (existingOrder == null)
                 return NotFound(new ApiResponse(404, "La orden de servicio solicitada no existe."));
 
-            var order = _mapper.Map<ServiceOrder>(orderDto);
-            _unitOfWork.ServiceOrder.Update(order);
-            await _unitOfWork.SaveAsync();
+            // Mapear sobre la entidad existente ya rastreada
+            _mapper.Map(orderDto, existingOrder);
 
+            await _unitOfWork.SaveAsync();
             return Ok(orderDto);
         }
 

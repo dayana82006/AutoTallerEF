@@ -4,7 +4,6 @@ import { FuelType } from './fuel-type';
 import { VehicleType } from './vehicle-type';
 
 export interface Vehicle {
-  id: number;
   serialNumber: string;
   releaseYear: number;
   km: number;

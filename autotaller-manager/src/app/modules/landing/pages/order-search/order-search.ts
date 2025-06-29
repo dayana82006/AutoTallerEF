@@ -17,35 +17,45 @@ export class OrderSearch implements OnInit {
   found = false;
   searched = false;
 
+  // Lista de estados
+  statuses = [
+    { id: 1, description: 'Pendiente' },
+    { id: 2, description: 'En proceso' },
+    { id: 3, description: 'Finalizado' },
+  ];
+
   constructor(private serviceOrderService: MockServiceOrderService) {}
 
   ngOnInit(): void {}
 
-searchOrders(): void {
-  this.searched = true;
+  searchOrders(): void {
+    this.searched = true;
+    const serialCleaned = this.serial.trim().toLowerCase();
 
-  const serialCleaned = this.serial.trim().toLowerCase();
+    if (!serialCleaned) return;
 
-  if (!serialCleaned) return;
+    this.serviceOrderService.getServiceOrders().subscribe((allOrders) => {
+      this.orders = allOrders.filter(
+        (order) => order.serialNumber.trim().toLowerCase() === serialCleaned
+      );
 
-  this.serviceOrderService.getServiceOrders().subscribe((allOrders) => {
-    this.orders = allOrders.filter((order) =>
-      order.serialNumber.serialNumber.trim().toLowerCase() === serialCleaned
-    );
+      this.found = this.orders.length > 0;
 
-    this.found = this.orders.length > 0;
+      if (!this.found) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Sin coincidencias',
+          text: 'No se encontraron órdenes con esa serial.',
+          confirmButtonColor: '#3085d6',
+          background: '#212529',
+          color: '#fff',
+        });
+      }
+    });
+  }
 
-    if (!this.found) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Sin coincidencias',
-        text: 'No se encontraron órdenes con esa serial.',
-        confirmButtonColor: '#3085d6',
-        background: '#212529',
-        color: '#fff', 
-        
-      });
-    }
-  });
-}
+  // Método para obtener descripción del estado
+  getStatusDescription(statusId: number): string {
+    return this.statuses.find((s) => s.id === statusId)?.description ?? 'Desconocido';
+  }
 }

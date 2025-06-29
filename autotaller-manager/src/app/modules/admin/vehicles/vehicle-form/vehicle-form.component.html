@@ -3,28 +3,28 @@
     {{ editMode ? "Editar Vehículo" : "Nuevo Vehículo" }}
   </h2>
 
-  <form #vehicleForm="ngForm" (ngSubmit)="save()">
-    <div class="mb-3">
-      <label class="form-label text-white">Número de Serie *</label>
-      <input
-        type="text"
-        class="form-control"
-        [(ngModel)]="vehicle.serialNumber"
-        name="serialNumber"
-        #serialNumber="ngModel"
-        required
-        [class.is-invalid]="serialNumber.invalid && serialNumber.touched"
-        [disabled]="editMode"
-      />
-      <div
-        class="invalid-feedback"
-        *ngIf="serialNumber.invalid && serialNumber.touched"
-      >
-        <div *ngIf="serialNumber.errors?.['required']">
-          Este campo es obligatorio
-        </div>
+<form #vehicleForm="ngForm" name="vehicleForm" (ngSubmit)="save()">
+  <div class="mb-3">
+    <label class="form-label text-white">Número de Serie *</label>
+    <input
+      type="text"
+      class="form-control"
+      [(ngModel)]="vehicle.serialNumber"
+      name="serialNumber"
+      #serialNumber="ngModel"
+      required
+      [class.is-invalid]="serialNumber.invalid && serialNumber.touched"
+      [disabled]="editMode"
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="serialNumber.invalid && serialNumber.touched"
+    >
+      <div *ngIf="serialNumber.errors?.['required']">
+        Este campo es obligatorio
       </div>
     </div>
+  </div>
 
     <div class="mb-3">
       <label class="form-label text-white">Año de Fabricación *</label>

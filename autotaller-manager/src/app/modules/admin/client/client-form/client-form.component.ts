@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Client } from '../../models/client';
 import { MockClientService } from '../../services/mock-client';
+import { SwalService } from '../../../../shared/swal.service';
 
 @Component({
   selector: 'app-client-form',
@@ -15,7 +16,7 @@ export class ClientFormComponent implements OnInit {
   @Output() formSubmitted = new EventEmitter<void>();
   @Output() cancelForm = new EventEmitter<void>();
 
-    client: Client = {
+  client: Client = {
     id: 0,
     name: '',
     lastname: '',
@@ -24,9 +25,13 @@ export class ClientFormComponent implements OnInit {
     createdAt: new Date(),
     updatedAt: new Date()
   };
+
   editMode = false;
 
-  constructor(private clientService: MockClientService) {}
+  constructor(
+    private clientService: MockClientService,
+    private swalService: SwalService
+  ) {}
 
   ngOnInit(): void {
     if (this.clientToEdit) {
@@ -35,21 +40,43 @@ export class ClientFormComponent implements OnInit {
     }
   }
 
- save(): void {
+  save(): void {
     const now = new Date();
 
-    if (this.editMode) {
-      this.client.updatedAt = now;
-      this.clientService.update(this.client.id, this.client).subscribe(() => {
-        this.formSubmitted.emit();
-      });
-  } else {
-    this.client.createdAt = new Date();
-    delete this.client.updatedAt;
-    this.clientService.create(this.client).subscribe(() => {
-      this.formSubmitted.emit();
+    this.clientService.getAll().subscribe(existingClients => {
+      const emailExists = existingClients.some(c =>
+        c.email.toLowerCase() === this.client.email.toLowerCase() &&
+        (!this.editMode || c.id !== this.client.id)
+      );
+
+      const phoneExists = existingClients.some(c =>
+        c.telephone === this.client.telephone &&
+        (!this.editMode || c.id !== this.client.id)
+      );
+
+      if (emailExists) {
+        this.swalService.error('Ya existe un cliente con este correo electrónico.');
+        return;
+      }
+
+      if (phoneExists) {
+        this.swalService.error('Ya existe un cliente con este número de teléfono.');
+        return;
+      }
+
+      if (this.editMode) {
+        this.client.updatedAt = now;
+        this.clientService.update(this.client.id, this.client).subscribe(() => {
+          this.formSubmitted.emit();
+        });
+      } else {
+        this.client.createdAt = now;
+        delete this.client.updatedAt;
+        this.clientService.create(this.client).subscribe(() => {
+          this.formSubmitted.emit();
+        });
+      }
     });
-  }
   }
 
   cancel(): void {

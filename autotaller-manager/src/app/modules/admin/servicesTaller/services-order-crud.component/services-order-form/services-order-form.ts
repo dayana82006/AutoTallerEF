@@ -1,13 +1,18 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 
 import { ServiceOrder } from '../../../models/service-order';
 import { Vehicle } from '../../../models/vehicle';
 import { ServiceType } from '../../../models/service-type';
 import { UserMember } from '../../../models/user-member';
+import { Invoice } from '../../../models/invoice';
+
 import { SwalService } from '../../../../../shared/swal.service';
+import { MockVehicleService } from '../../../services/mock-vehicle';
+import { MockServiceTypeService } from '../../../services/mock-service-type';
+import { MockUserService } from '../../../services/mock-user';
+import { MockInvoiceService } from '../../../services/mock-invoice';
 
 @Component({
   selector: 'app-service-order-form',
@@ -19,21 +24,26 @@ export class ServiceOrderFormComponent implements OnInit {
   @Input() serviceOrderToEdit?: ServiceOrder | null;
   @Output() formSubmitted = new EventEmitter<ServiceOrder>();
   @Output() cancelForm = new EventEmitter<void>();
+  @Output() invoiceSelected = new EventEmitter<{ orderId: number; invoiceId: number }>();
+
 
   serviceOrder: ServiceOrder = {
     id: 0,
     description: '',
-    clientApproved: false,
-    serialNumber: null!,
-    serviceType: null!,
-    UserMember: null!,
+    approvedByClient: false,
+    serialNumber: '',
+    serviceStatusId: null!,
+    serviceTypeId: null!,
+    userMemberId: null!,
     unitPrice: 0,
-    status: null!
+    invoiceId: null!
   };
 
   vehicles: Vehicle[] = [];
   serviceTypes: ServiceType[] = [];
   users: UserMember[] = [];
+  invoices: Invoice[] = [];
+
   statuses = [
     { id: 1, description: 'Pendiente' },
     { id: 2, description: 'En proceso' },
@@ -43,31 +53,36 @@ export class ServiceOrderFormComponent implements OnInit {
   editMode = false;
 
   constructor(
-    private router: Router,
+    private vehicleService: MockVehicleService,
+    private serviceTypeService: MockServiceTypeService,
+    private userService: MockUserService,
+    private invoiceService: MockInvoiceService,
     private swalService: SwalService
   ) {}
 
   ngOnInit(): void {
-    this.vehicles = [
-      { id: 1, serialNumber: 'ABC123', releaseYear: 2020, km: 10000, vehicleModelId: 1, clientId: 1, fuelTypeId: 1, vehicleTypeId: 1 },
-      { id: 2, serialNumber: 'XYZ789', releaseYear: 2019, km: 20000, vehicleModelId: 2, clientId: 2, fuelTypeId: 2, vehicleTypeId: 2 }
-    ];
+    this.vehicleService.getVehicles().subscribe({
+      next: data => this.vehicles = data,
+      error: () => this.swalService.error('Error al cargar los vehículos')
+    });
 
-    this.serviceTypes = [
-      { id: 1, description: 'Cambio de aceite' },
-      { id: 2, description: 'Mantenimiento general' }
-    ];
+    this.serviceTypeService.getAll().subscribe({
+      next: data => this.serviceTypes = data,
+      error: () => this.swalService.error('Error al cargar tipos de servicio')
+    });
 
-    this.users = [
-      {
-        id: 1, name: 'Carlos', lastname: 'Ramírez', email: 'carlos@taller.com', role: 'Operario', specialties: [],
-        username: ''
-      },
-      {
-        id: 2, name: 'Laura', lastname: 'López', email: 'laura@taller.com', role: 'Operario', specialties: [],
-        username: ''
-      }
-    ];
+    this.userService.getAll().subscribe({
+      next: data =>
+        this.users = data.filter(user =>
+          user.role?.toLowerCase() === 'mecánico'
+        ),
+      error: () => this.swalService.error('Error al cargar técnicos')
+    });
+
+    this.invoiceService.getInvoices().subscribe({
+      next: data => this.invoices = data,
+      error: () => this.swalService.error('Error al cargar facturas')
+    });
 
     if (this.serviceOrderToEdit) {
       this.serviceOrder = { ...this.serviceOrderToEdit };
@@ -75,28 +90,28 @@ export class ServiceOrderFormComponent implements OnInit {
     }
   }
 
-  save(): void {
-    if (
-      !this.serviceOrder.description.trim() ||
-      !this.serviceOrder.serialNumber ||
-      !this.serviceOrder.serviceType ||
-      !this.serviceOrder.UserMember ||
-      !this.serviceOrder.status ||
-      this.serviceOrder.unitPrice < 0
-    ) {
-      this.swalService.error('Por favor completa todos los campos obligatorios');
-      return;
-    }
+save(): void {
+  const s = this.serviceOrder;
 
-    this.swalService.success(this.editMode ? 'Orden actualizada' : 'Orden creada');
-    this.formSubmitted.emit(this.serviceOrder);
+  if (
+    !s.description?.trim() ||
+    !s.serialNumber ||
+    !s.serviceStatusId ||
+    !s.serviceTypeId ||
+    !s.userMemberId ||
+    !this.serviceOrder.invoiceId || // Asegúrate que se seleccionó
+    s.unitPrice < 0
+  ) {
+    this.swalService.error('Por favor completa todos los campos obligatorios');
+    return;
   }
+
+  // Emitir solo la orden primero
+  this.formSubmitted.emit(s);
+}
+
 
   cancel(): void {
     this.cancelForm.emit();
-  }
-
-  trackById(index: number, item: { id: number }) {
-    return item.id;
   }
 }

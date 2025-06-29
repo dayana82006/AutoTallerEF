@@ -7,6 +7,7 @@ using Application.DTOs.Auth;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebAPI.Controllers
 {
@@ -16,11 +17,13 @@ namespace WebAPI.Controllers
     {
         private readonly IConfiguration _config;
         private readonly PublicDbContext _context;
+        private readonly PasswordHasher<UserMember> _passwordHasher;
 
         public AuthController(IConfiguration config, PublicDbContext context)
         {
             _config = config;
             _context = context;
+            _passwordHasher = new PasswordHasher<UserMember>();
         }
 
         [HttpPost("login")]
@@ -29,23 +32,39 @@ namespace WebAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            // Buscar por Email
             var user = await _context.UserMembers
-                .Include(u => u.UserRoles) // asegúrate que los roles estén relacionados
-                .FirstOrDefaultAsync(u => u.Username == request.Username && u.Password == request.Password);
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Email == request.Email);
 
             if (user == null)
             {
                 return Unauthorized(new DataUserDto
                 {
                     Codeb = "401",
-                    Mensaje = "Usuario o contraseña incorrectos.",
+                    Mensaje = "El usuario no existe.",
                     EstaAutenticado = false
                 });
             }
-            var roles = user.UserRoles.Select(ur => ur.Role.Name).ToList();
 
+            // Validar contraseña hasheada
+            var result = _passwordHasher.VerifyHashedPassword(user, user.Password, request.Password);
+            if (result == PasswordVerificationResult.Failed)
+            {
+                return Unauthorized(new DataUserDto
+                {
+                    Codeb = "401",
+                    Mensaje = "Contraseña incorrecta.",
+                    EstaAutenticado = false
+                });
+            }
+
+            // Obtener roles y generar token
+            var roles = user.UserRoles.Select(ur => ur.Role.Name).ToList();
             var token = GenerateJwtToken(user, roles);
 
+            // Devolver respuesta
             var response = new DataUserDto
             {
                 Codeb = "200",
@@ -68,7 +87,7 @@ namespace WebAPI.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username ?? "")
+                new Claim(ClaimTypes.Name, user.Email ?? "")
             };
 
             foreach (var role in roles)
