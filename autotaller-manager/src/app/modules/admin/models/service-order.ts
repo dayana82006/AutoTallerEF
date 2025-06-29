@@ -13,4 +13,5 @@ export interface ServiceOrder {
   serviceStatusId: number; 
   createdAt?: Date;
   updatedAt?: Date;
+  invoiceId: number;
 }

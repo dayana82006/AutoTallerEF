@@ -4,6 +4,7 @@
   </h2>
 
   <form #serviceOrderForm="ngForm" (ngSubmit)="save()">
+    <!-- Descripción -->
     <div class="mb-3">
       <label class="form-label text-white">Descripción *</label>
       <input type="text" class="form-control" [(ngModel)]="serviceOrder.description"
@@ -14,6 +15,7 @@
       </div>
     </div>
 
+    <!-- Vehículo -->
     <div class="mb-3">
       <label class="form-label text-white">Vehículo *</label>
       <select class="form-select" [(ngModel)]="serviceOrder.serialNumber" name="serialNumber"
@@ -29,6 +31,7 @@
       </div>
     </div>
 
+    <!-- Tipo de Servicio -->
     <div class="mb-3">
       <label class="form-label text-white">Tipo de Servicio *</label>
       <select class="form-select" [(ngModel)]="serviceOrder.serviceTypeId" name="serviceTypeId"
@@ -44,6 +47,7 @@
       </div>
     </div>
 
+    <!-- Técnico -->
     <div class="mb-3">
       <label class="form-label text-white">Técnico *</label>
       <select class="form-select" [(ngModel)]="serviceOrder.userMemberId" name="userMemberId"
@@ -59,6 +63,7 @@
       </div>
     </div>
 
+    <!-- Estado -->
     <div class="mb-3">
       <label class="form-label text-white">Estado *</label>
       <select class="form-select" [(ngModel)]="serviceOrder.serviceStatusId" name="id_status"
@@ -74,6 +79,23 @@
       </div>
     </div>
 
+    <!-- Factura -->
+    <div class="mb-3">
+      <label class="form-label text-white">Factura *</label>
+      <select class="form-select" [(ngModel)]="serviceOrder.invoiceId" name="invoiceId"
+        required #invoiceId="ngModel"
+        [class.is-invalid]="invoiceId.invalid && invoiceId.touched">
+        <option [ngValue]="null" disabled>Seleccione una factura</option>
+        <option *ngFor="let invoice of invoices" [value]="invoice.id">
+          Factura #{{ invoice.id }} - Total: ${{ invoice.finalAmount }}
+        </option>
+      </select>
+      <div class="invalid-feedback" *ngIf="invoiceId.invalid && invoiceId.touched">
+        La factura es requerida
+      </div>
+    </div>
+
+    <!-- Precio -->
     <div class="mb-3">
       <label class="form-label text-white">Precio Unitario *</label>
       <input type="number" class="form-control" [(ngModel)]="serviceOrder.unitPrice"
@@ -84,6 +106,7 @@
       </div>
     </div>
 
+    <!-- Aprobado -->
     <div class="form-check mb-4">
       <input class="form-check-input" type="checkbox" [(ngModel)]="serviceOrder.approvedByClient"
         name="approvedByClient" id="approvedByClient" />
@@ -92,6 +115,7 @@
       </label>
     </div>
 
+    <!-- Botones -->
     <div class="d-flex justify-content-between mt-4">
       <button type="submit" class="btn btn-primary" [disabled]="serviceOrderForm.invalid">
         {{ editMode ? 'Actualizar' : 'Crear' }} Orden

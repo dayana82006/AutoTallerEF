@@ -6,10 +6,13 @@ import { ServiceOrder } from '../../../models/service-order';
 import { Vehicle } from '../../../models/vehicle';
 import { ServiceType } from '../../../models/service-type';
 import { UserMember } from '../../../models/user-member';
+import { Invoice } from '../../../models/invoice';
+
 import { SwalService } from '../../../../../shared/swal.service';
 import { MockVehicleService } from '../../../services/mock-vehicle';
 import { MockServiceTypeService } from '../../../services/mock-service-type';
 import { MockUserService } from '../../../services/mock-user';
+import { MockInvoiceService } from '../../../services/mock-invoice';
 
 @Component({
   selector: 'app-service-order-form',
@@ -30,12 +33,14 @@ export class ServiceOrderFormComponent implements OnInit {
     serviceStatusId: null!,
     serviceTypeId: null!,
     userMemberId: null!,
-    unitPrice: 0
+    unitPrice: 0,
+    invoiceId: null!
   };
 
   vehicles: Vehicle[] = [];
   serviceTypes: ServiceType[] = [];
   users: UserMember[] = [];
+  invoices: Invoice[] = [];
 
   statuses = [
     { id: 1, description: 'Pendiente' },
@@ -49,48 +54,56 @@ export class ServiceOrderFormComponent implements OnInit {
     private vehicleService: MockVehicleService,
     private serviceTypeService: MockServiceTypeService,
     private userService: MockUserService,
+    private invoiceService: MockInvoiceService,
     private swalService: SwalService
   ) {}
 
-ngOnInit(): void {
-  this.vehicleService.getVehicles().subscribe({
-    next: (data) => this.vehicles = data,
-    error: () => this.swalService.error('Error al cargar los vehículos')
-  });
+  ngOnInit(): void {
+    this.vehicleService.getVehicles().subscribe({
+      next: data => this.vehicles = data,
+      error: () => this.swalService.error('Error al cargar los vehículos')
+    });
 
-  this.serviceTypeService.getAll().subscribe({
-    next: (data) => this.serviceTypes = data,
-    error: () => this.swalService.error('Error al cargar tipos de servicio')
-  });
+    this.serviceTypeService.getAll().subscribe({
+      next: data => this.serviceTypes = data,
+      error: () => this.swalService.error('Error al cargar tipos de servicio')
+    });
 
-  this.userService.getAll().subscribe({
-    next: (data) =>
-      this.users = data.filter(user =>
-        user.role && user.role.toLowerCase() === 'mecánico'
-      ),
-    error: () => this.swalService.error('Error al cargar los técnicos')
-  });
+    this.userService.getAll().subscribe({
+      next: data =>
+        this.users = data.filter(user =>
+          user.role?.toLowerCase() === 'mecánico'
+        ),
+      error: () => this.swalService.error('Error al cargar técnicos')
+    });
 
-  if (this.serviceOrderToEdit) {
-    this.serviceOrder = { ...this.serviceOrderToEdit };
-    this.editMode = true;
+    this.invoiceService.getInvoices().subscribe({
+      next: data => this.invoices = data,
+      error: () => this.swalService.error('Error al cargar facturas')
+    });
+
+    if (this.serviceOrderToEdit) {
+      this.serviceOrder = { ...this.serviceOrderToEdit };
+      this.editMode = true;
+    }
   }
-}
-
 
   save(): void {
-    if (!this.serviceOrder.description.trim()
-      || !this.serviceOrder.serialNumber
-      || !this.serviceOrder.serviceStatusId
-      || !this.serviceOrder.serviceTypeId
-      || !this.serviceOrder.userMemberId
-      || this.serviceOrder.unitPrice < 0
+    const s = this.serviceOrder;
+    if (
+      !s.description.trim() ||
+      !s.serialNumber ||
+      !s.serviceStatusId ||
+      !s.serviceTypeId ||
+      !s.userMemberId ||
+      !s.invoiceId ||
+      s.unitPrice < 0
     ) {
       this.swalService.error('Por favor completa todos los campos obligatorios');
       return;
     }
 
-    this.formSubmitted.emit(this.serviceOrder);
+    this.formSubmitted.emit(s);
   }
 
   cancel(): void {
