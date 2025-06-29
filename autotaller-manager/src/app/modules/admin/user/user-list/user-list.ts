@@ -48,7 +48,7 @@ export class UserListComponent implements OnInit {
       user.name.toLowerCase().includes(searchLower) ||
       user.lastname.toLowerCase().includes(searchLower) ||
       user.email.toLowerCase().includes(searchLower) ||
-      user.role.toLowerCase().includes(searchLower)
+     (user.role[0] || '').toLowerCase()
     );
 
     this.total = this.filteredUsers.length;

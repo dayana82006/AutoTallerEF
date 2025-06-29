@@ -17,6 +17,9 @@ import { AuthService } from '../../../auth/services/auth';
   imports: [CommonModule, FormsModule]
 })
 export class VehicleAnormalityCrudComponent implements OnInit {
+deleteAnormality(arg0: number) {
+throw new Error('Method not implemented.');
+}
   anormalities: VehicleAnormality[] = [];
   allAnormalities: VehicleAnormality[] = [];
   details: VehicleAnormalityDetail[] = [];

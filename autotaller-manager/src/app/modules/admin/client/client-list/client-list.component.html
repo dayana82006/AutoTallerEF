@@ -1,15 +1,11 @@
-<app-client-form
-  *ngIf="showForm"
-  [clientToEdit]="selectedClient || undefined"
-  (formSubmitted)="onFormSubmit()"
-  (cancelForm)="cancelForm()"
-></app-client-form>
+<app-client-form *ngIf="showForm" [clientToEdit]="selectedClient || undefined" (formSubmitted)="onFormSubmit()"
+  (cancelForm)="cancelForm()"></app-client-form>
 
 <div *ngIf="!showForm" class="container py-4" style="margin-top: 70px">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="text-white title">Gestión de Clientes</h2>
 
-  <!--<p class="text-warning text-center"> 
+    <!--<p class="text-warning text-center"> 
     Usuario actual: {{ authService.currentUser?.role }}
   </p>-->
     <button class="btn btn-primary subtitle" (click)="newClient()">Añadir Cliente</button>
@@ -19,13 +15,8 @@
     <span class="input-group-text bg-dark border-secondary text-white">
       <i class="bi bi-search"></i>
     </span>
-    <input
-      type="text"
-      class="form-control bg-dark text-white border-secondary"
-      [(ngModel)]="search"
-      (input)="onSearchChange()"
-      placeholder="Buscar"
-    />
+    <input type="text" class="form-control bg-dark text-white border-secondary" [(ngModel)]="search"
+      (input)="onSearchChange()" placeholder="Buscar" />
   </div>
 
   <div class="table-responsive">
@@ -36,8 +27,8 @@
           <th>Nombre</th>
           <th>Teléfono</th>
           <th>Email</th>
-          <th *ngIf="authService.currentUser?.role === 'Admin'">Creado</th>
-          <th *ngIf="authService.currentUser?.role === 'Admin'">Actualizado</th>
+          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Creado</th>
+          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Actualizado</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -47,16 +38,18 @@
           <td>{{ client.name }} {{ client.lastname }}</td>
           <td>{{ client.telephone }}</td>
           <td>{{ client.email }}</td>
-        <td *ngIf="authService.currentUser?.role === 'Admin'">
-          {{ client.createdAt | date: 'short' }}
-        </td>
-        <td *ngIf="authService.currentUser?.role === 'Admin'">
-          {{ client.updatedAt | date: 'short' }}
-        </td>
+          <td *ngIf="authService.currentUser?.role?.includes('Admin')">
+            {{ client.createdAt | date: 'short' }}
+          </td>
+          <td *ngIf="authService.currentUser?.role?.includes('Admin')">
+            {{ client.updatedAt | date: 'short' }}
+          </td>
           <td>
             <button class="btn btn-sm btn-outline-light me-2" (click)="edit(client)">Editar</button>
-            <button *ngIf="authService.currentUser?.role === 'Admin'" class="btn btn-sm btn-outline-danger" (click)="delete(client.id)">Eliminar</button>
+            <button *ngIf="authService.currentUser?.role?.includes('Admin')" class="btn btn-sm btn-outline-danger"
+              (click)="delete(client.id)">Eliminar</button>
           </td>
+
         </tr>
       </tbody>
     </table>
@@ -64,6 +57,7 @@
 
   <div class="d-flex justify-content-between mt-3">
     <button class="btn btn-outline-light" [disabled]="page === 1" (click)="onPageChange(page - 1)">Anterior</button>
-    <button class="btn btn-outline-light" [disabled]="(page * pageSize) >= total" (click)="onPageChange(page + 1)">Siguiente</button>
+    <button class="btn btn-outline-light" [disabled]="(page * pageSize) >= total"
+      (click)="onPageChange(page + 1)">Siguiente</button>
   </div>
 </div>

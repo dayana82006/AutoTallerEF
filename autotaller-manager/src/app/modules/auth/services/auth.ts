@@ -8,12 +8,14 @@ import { Router } from '@angular/router';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private apiUrl = 'http://localhost:5005/api/Auth/login';
+hasRole: any;
 
   constructor(private http: HttpClient, private router: Router) {}
 
   login(credentials: AuthRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(this.apiUrl, credentials).pipe(
       tap(response => {
+        
         if (response.estaAutenticado && response.token) {
           sessionStorage.setItem('token', response.token);
           sessionStorage.setItem('user', JSON.stringify(response));
@@ -38,7 +40,7 @@ export class AuthService {
 
   getRole(): string {
     const user = this.getUser();
-    return user?.role?.[0] || ''; 
+    return user?.rols?.[0] || ''; 
   }
   
     get currentUser(): AuthResponse | null {

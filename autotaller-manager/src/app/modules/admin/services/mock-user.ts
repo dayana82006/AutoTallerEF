@@ -24,7 +24,7 @@ export class MockUserService {
       'Mechanic': 'Mecánico'
     };
 
-    const normalizedRole = roleAliasMap[user.role] ?? user.role;
+    const normalizedRole = roleAliasMap[user.role[0]] ?? user.role;
 
     const payload = {
       ...user,
@@ -42,7 +42,7 @@ export class MockUserService {
       'Mechanic': 'Mecánico'
     };
 
-    const normalizedRole = roleAliasMap[user.role] ?? user.role;
+    const normalizedRole = roleAliasMap[user.role[0]] ?? user.role;
 
     const payload = {
       ...user,

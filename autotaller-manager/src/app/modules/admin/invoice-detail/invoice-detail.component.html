@@ -25,18 +25,17 @@
     <p><strong>Mano de Obra:</strong> {{ invoice.totalServices | currency:'COP' }}</p>
     <p><strong>Total Final:</strong> {{ invoice.finalAmount | currency:'COP' }}</p>
     <p><strong>Fecha:</strong> {{ invoice.createdAt | date:'short' }}</p>
-  </div>
-
-<a *ngIf="authService.currentUser?.role === 'Admin'"
+  </div><a *ngIf="authService.currentUser?.rols?.includes('Admin')"
    href="/admin/servicios/ordenes"
    class="btn btn-outline-light">
   Volver a Órdenes (Admin)
 </a>
 
-<a *ngIf="authService.currentUser?.role === 'Mecanico'"
+<a *ngIf="authService.currentUser?.rols?.includes('Mecanico')"
    href="/mecanico/ordenes"
    class="btn btn-outline-light">
   Volver a Órdenes (Mecánico)
 </a>
+
 
 

@@ -38,8 +38,8 @@
           <th>Aprobado</th>
           <th>Estado</th>
           <th>Precio</th>
-          <th *ngIf="authService.currentUser?.role === 'Admin'">Creado</th>
-          <th *ngIf="authService.currentUser?.role === 'Admin'">Actualizado</th>
+          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Creado</th>
+          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Actualizado</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -59,11 +59,11 @@
           </td>
           <td>{{ getStatusDescription(order.serviceStatusId) }}</td>
           <td>{{ order.unitPrice | currency:'COP':'symbol':'1.0-0' }}</td>
-          <td *ngIf="authService.currentUser?.role === 'Admin'">
+          <td *ngIf="authService.currentUser?.role?.includes('Admin')">
             {{ order.createdAt | date: 'short' }}
           </td>
-          <td *ngIf="authService.currentUser?.role === 'Admin'">
-            {{ order.updatedAt ? (order.updatedAt | date: 'short') : '—' }}
+          <td *ngIf="authService.currentUser?.role?.includes('Admin')">
+            {{ order.updatedAt | date: 'short' }}
           </td>
           <td>
             <button class="btn btn-sm btn-outline-light me-2" (click)="edit(order)">Editar</button>
@@ -75,7 +75,7 @@
 
         <tr *ngIf="serviceOrders.length === 0">
           <td
-            [attr.colspan]="authService.currentUser?.role === 'Admin' ? 11 : 9"
+           [attr.colspan]="authService.currentUser?.role?.includes('Admin') ? 11 : 9"
             class="text-center text-secondary"
           >
             No se encontraron órdenes.

@@ -6,13 +6,8 @@
       <span class="input-group-text bg-dark border-secondary text-white">
         <i class="bi bi-search"></i>
       </span>
-      <input
-        type="text"
-        class="form-control bg-dark text-white border-secondary"
-        [(ngModel)]="search"
-        (input)="onSearchChange()"
-        placeholder="Search"
-      />
+      <input type="text" class="form-control bg-dark text-white border-secondary" [(ngModel)]="search"
+        (input)="onSearchChange()" placeholder="Search" />
     </div>
   </div>
 
@@ -24,8 +19,9 @@
           <th>Nombre</th>
           <th>Fecha de Ingreso</th>
           <th>Vehículos</th>
-          <th *ngIf="authService.currentUser?.role === 'Admin'">Creado</th>
-          <th *ngIf="authService.currentUser?.role === 'Admin'">Actualizado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('rol')">Creado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('rol')">Actualizado</th>
+
           <th>Acciones</th>
         </tr>
       </thead>
@@ -33,8 +29,7 @@
         <tr *ngFor="let a of anormalities">
           <td>{{ a.id }}</td>
           <td>{{ a.name }}</td>
-          <td>{{ a.entryDate | date : "yyyy-MM-dd" }}</td>
-
+          <td>{{ a.entryDate | date: 'yyyy-MM-dd' }}</td>
           <td>
             <ul class="mb-0 ps-3">
               <li *ngFor="let d of getDetailsByAnormalityId(a.id)">
@@ -42,52 +37,23 @@
               </li>
             </ul>
           </td>
-
-          <td *ngIf="authService.currentUser?.role === 'Admin'">
-            {{
-              getDetailsByAnormalityId(a.id).length > 0
-                ? (getDetailsByAnormalityId(a.id)[0].createdAt
-                  | date : "yyyy-MM-dd HH:mm")
-                : "---"
-            }}
-          </td>
-          <td *ngIf="authService.currentUser?.role === 'Admin'">
-            {{
-              getDetailsByAnormalityId(a.id).length > 0
-                ? (getDetailsByAnormalityId(a.id)[0].updatedAt
-                  | date : "yyyy-MM-dd HH:mm")
-                : "---"
-            }}
-          </td>
-
           <td>
-            <button class="btn btn-sm btn-outline-light me-2" (click)="edit(a)">
+            <button *ngIf="authService.hasRole('admin') || authService.hasRole('tecnico')"
+              class="btn btn-sm btn-primary me-1" (click)="edit(a)">
               Editar
             </button>
-            <button
-              class="btn btn-sm btn-outline-danger"
-              (click)="delete(a.id)"
-            >
+
+
+            <button *ngIf="authService.hasRole('admin')" class="btn btn-sm btn-danger" (click)="deleteAnormality(a.id)">
               Eliminar
             </button>
-          </td>
-        </tr>
-        <tr *ngIf="anormalities.length === 0">
-          <td
-            [attr.colspan]="authService.currentUser?.role === 'Admin' ? 7 : 5"
-            class="text-center text-secondary"
-          >
-            No hay registros
           </td>
         </tr>
       </tbody>
     </table>
   </div>
   <div #formSection class="d-flex justify-content-center">
-    <div
-      class="card bg-dark text-white p-4"
-      style="width: 100%; max-width: 500px"
-    >
+    <div class="card bg-dark text-white p-4" style="width: 100%; max-width: 500px">
       <h4 class="title mb-4">
         {{ editMode ? "Editar" : "Nueva" }} Anormalidad
       </h4>
@@ -95,33 +61,17 @@
       <form (ngSubmit)="save()">
         <div class="mb-3">
           <label class="form-label">Nombre *</label>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="newAnormality.name"
-            name="name"
-            required
-          />
+          <input type="text" class="form-control" [(ngModel)]="newAnormality.name" name="name" required />
         </div>
 
         <div class="mb-3">
           <label class="form-label">Fecha de Ingreso</label>
-          <input
-            type="date"
-            class="form-control"
-            [(ngModel)]="newAnormality.entryDate"
-            name="entryDate"
-          />
+          <input type="date" class="form-control" [(ngModel)]="newAnormality.entryDate" name="entryDate" />
         </div>
 
         <div class="mb-3">
           <label class="form-label">Vehículos asociados</label>
-          <select
-            class="form-control"
-            multiple
-            [(ngModel)]="selectedSerials"
-            name="serials"
-          >
+          <select class="form-control" multiple [(ngModel)]="selectedSerials" name="serials">
             <option *ngFor="let v of vehicles" [value]="v.serialNumber">
               {{ v.serialNumber }}
             </option>

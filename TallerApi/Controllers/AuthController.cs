@@ -7,7 +7,6 @@ using Application.DTOs.Auth;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Data;
-using Microsoft.AspNetCore.Identity;
 
 namespace WebAPI.Controllers
 {
@@ -17,13 +16,11 @@ namespace WebAPI.Controllers
     {
         private readonly IConfiguration _config;
         private readonly PublicDbContext _context;
-        private readonly PasswordHasher<UserMember> _passwordHasher;
 
         public AuthController(IConfiguration config, PublicDbContext context)
         {
             _config = config;
             _context = context;
-            _passwordHasher = new PasswordHasher<UserMember>();
         }
 
         [HttpPost("login")]
@@ -32,10 +29,10 @@ namespace WebAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Buscar por Email
+            // Buscar usuario por email
             var user = await _context.UserMembers
                 .Include(u => u.UserRoles)
-                    .ThenInclude(ur => ur.Role)
+                .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync(u => u.Email == request.Email);
 
             if (user == null)
@@ -48,9 +45,8 @@ namespace WebAPI.Controllers
                 });
             }
 
-            // Validar contraseña hasheada
-            var result = _passwordHasher.VerifyHashedPassword(user, user.Password, request.Password);
-            if (result == PasswordVerificationResult.Failed)
+            // Comparar contraseñas directamente (sin hash)
+            if (user.Password != request.Password)
             {
                 return Unauthorized(new DataUserDto
                 {
@@ -60,20 +56,22 @@ namespace WebAPI.Controllers
                 });
             }
 
-            // Obtener roles y generar token
+            // Obtener roles
             var roles = user.UserRoles.Select(ur => ur.Role.Name).ToList();
+
+            // Generar token JWT
             var token = GenerateJwtToken(user, roles);
 
-            // Devolver respuesta
+            // Preparar respuesta
             var response = new DataUserDto
             {
                 Codeb = "200",
                 Mensaje = "Autenticación exitosa.",
                 EstaAutenticado = true,
-                UserName = user.Username,
+                Email = user.Email,
                 Name = user.Name,
                 Lastname = user.Lastname,
-                Email = user.Email,
+                UserName = user.Username,
                 Rols = roles,
                 Token = token,
                 RefreshTokenExpiration = DateTime.UtcNow.AddMinutes(30)
