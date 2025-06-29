@@ -1,0 +1,85 @@
+<div class="container py-4" style="margin-top: 70px">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="text-white title">Gestión de Usuarios</h2>
+    
+    <a class="btn btn-primary subtitle" href="/admin/usuarios/new">Añadir usuario</a>
+  </div>
+
+  <div class="input-group mb-3">
+    <span class="input-group-text bg-dark border-secondary text-white">
+      <i class="bi bi-search"></i>
+    </span>
+    <input
+      type="text"
+      class="form-control bg-dark text-white border-secondary"
+      [(ngModel)]="search"
+      (input)="onSearchChange()"
+      placeholder="Search"
+    />
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-dark table-hover align-middle">
+      <thead class="table-borderless subtitle">
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Especialidades</th>
+          <th>Creado</th>
+          <th>Actualizado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead><tbody>
+  <tr *ngFor="let user of pagedUsers"> 
+    <td>{{ user.name }} {{ user.lastname }}</td>
+    <td>{{ user.email }}</td>
+    <td>
+      <span class="badge bg-secondary">{{ user.role }}</span>
+    </td>
+    <td>
+      <ng-container *ngIf="user.specialties.length; else noSpec">
+        <span
+          *ngFor="let spec of user.specialties"
+          class="badge bg-secondary"
+        >
+          {{ spec }}
+        </span>
+      </ng-container>
+      <ng-template #noSpec>
+        <span class="text-muted">N/A</span>
+      </ng-template>
+    </td>
+    <td>
+      {{ user.createdAt | date:'short' }}
+    </td>
+    <td>
+      {{ user.updatedAt | date:'short' }}
+    </td>
+    <td>
+      <a class="btn btn-sm btn-outline-light me-2" [attr.href]="'/admin/usuarios/edit/' + user.id">Edit</a>
+      <button class="btn btn-sm btn-outline-danger" (click)="deleteUser(user.id)">Delete</button>
+    </td>
+  </tr>
+</tbody>
+
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-between mt-3">
+    <button
+      class="btn btn-outline-light"
+      [disabled]="page === 1"
+      (click)="onPageChange(page - 1)"
+    >
+      Anterior
+    </button>
+    <button
+      class="btn btn-outline-light"
+      [disabled]="(page * pageSize) >= total"
+      (click)="onPageChange(page + 1)"
+    >
+      Siguiente
+    </button>
+  </div>
+</div>

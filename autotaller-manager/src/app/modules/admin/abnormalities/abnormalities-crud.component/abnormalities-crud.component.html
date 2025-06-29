@@ -1,0 +1,92 @@
+<div class="container py-4">
+  <h2 class="mb-3 text-center title">Gestión de Anormalidades</h2>
+
+  <div class="container mt-5">
+    <div class="input-group mb-3">
+      <span class="input-group-text bg-dark border-secondary text-white">
+        <i class="bi bi-search"></i>
+      </span>
+      <input type="text" class="form-control bg-dark text-white border-secondary" [(ngModel)]="search"
+        (input)="onSearchChange()" placeholder="Search" />
+    </div>
+  </div>
+
+  <div class="table-responsive mb-5">
+    <table class="table table-dark table-striped table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Fecha de Ingreso</th>
+          <th>Vehículos</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('rol')">Creado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('rol')">Actualizado</th>
+
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of anormalities">
+          <td>{{ a.id }}</td>
+          <td>{{ a.name }}</td>
+          <td>{{ a.entryDate | date: 'yyyy-MM-dd' }}</td>
+          <td>
+            <ul class="mb-0 ps-3">
+              <li *ngFor="let d of getDetailsByAnormalityId(a.id)">
+                {{ d.serialNumber }}
+              </li>
+            </ul>
+          </td>
+          <td>
+            <button *ngIf="authService.hasRole('admin') || authService.hasRole('tecnico')"
+              class="btn btn-sm btn-primary me-1" (click)="edit(a)">
+              Editar
+            </button>
+
+
+            <button *ngIf="authService.hasRole('admin')" class="btn btn-sm btn-danger" (click)="deleteAnormality(a.id)">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div #formSection class="d-flex justify-content-center">
+    <div class="card bg-dark text-white p-4" style="width: 100%; max-width: 500px">
+      <h4 class="title mb-4">
+        {{ editMode ? "Editar" : "Nueva" }} Anormalidad
+      </h4>
+
+      <form (ngSubmit)="save()">
+        <div class="mb-3">
+          <label class="form-label">Nombre *</label>
+          <input type="text" class="form-control" [(ngModel)]="newAnormality.name" name="name" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Fecha de Ingreso</label>
+          <input type="date" class="form-control" [(ngModel)]="newAnormality.entryDate" name="entryDate" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Vehículos asociados</label>
+          <select class="form-control" multiple [(ngModel)]="selectedSerials" name="serials">
+            <option *ngFor="let v of vehicles" [value]="v.serialNumber">
+              {{ v.serialNumber }}
+            </option>
+          </select>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <button type="submit" class="btn btn-primary">
+            {{ editMode ? "Actualizar" : "Crear" }}
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancel()">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

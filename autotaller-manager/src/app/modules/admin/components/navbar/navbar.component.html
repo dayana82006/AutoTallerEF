@@ -1,0 +1,134 @@
+<nav
+  class="navbar navbar-expand-lg navbar-dark fixed-top"
+  style="background-color: #121417"
+>
+  <div class="container">
+    <a class="navbar-brand" href="/admin/">
+      <i class="bi bi-house-door subtitle"></i> AutoManager
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle subtitle"
+            href="#"
+            id="usuariosDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Usuarios
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="usuariosDropdown">
+            <li>
+              <a class="dropdown-item" href="/admin/usuarios"
+                >Gestionar Usuarios</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="/admin/usuarios/especialidades"
+                >Gestionar Especialidades</a
+              >
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle subtitle"
+            href="#"
+            id="inventarioDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Clientes
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="inventarioDropdown">
+            <li>
+              <a class="dropdown-item" href="/admin/clientes"
+                >Gestión de clientes</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle subtitle"
+            href="#"
+            id="vehiculosDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Vehículos
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="vehiculosDropdown">
+            <li>
+              <a class="dropdown-item" href="/admin/vehiculos"
+                >Gestión de Vehículos</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="/admin/vehiculos/anormalidades"
+                >Gestión de Anormalidades</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="/admin/vehiculos/repuestos"
+                >Repuestos</a
+              >
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle subtitle"
+            href="#"
+            id="serviciosDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Servicios
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="serviciosDropdown">
+            <li>
+              <a class="dropdown-item" href="/admin/servicios/tipos">Tipo</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="/admin/servicios/ordenes">Órdenes</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="/admin/servicios/invoices">Recibos</a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item d-flex align-items-center ms-3">
+          <a
+            class="nav-link subtitle text-white"
+            href="#"
+            (click)="logout($event)"
+            >Cerrar sesión</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

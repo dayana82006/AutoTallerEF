@@ -1,0 +1,36 @@
+<div class="container py-5" style="margin-top: 70px;">
+  <h2 class="text-center text-white mb-4 title">¿Tu carro está en el taller? Revisa aquí</h2>
+    <p class="subtitle text-center">Ingresa el número de serie y revisa el estado de la orden</p>
+  <form (ngSubmit)="searchOrders()" class="mb-4 d-flex justify-content-center">
+    <input
+      [(ngModel)]="serial"
+      name="serial"
+      class="form-control w-50 me-2 bg-dark text-white border-secondary"
+      placeholder="Ingresa el serial del vehículo"
+      required
+    />
+    <button type="submit" class="btn btn-primary">Buscar</button>
+  </form>
+
+  <div *ngIf="found">
+    <table class="table table-dark table-hover text-center">
+      <thead class="subtitle">
+        <tr>
+          <th># Orden</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+          <th>Fecha de ingreso</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of orders">
+          <td>{{ order.id }}</td>
+          <td>{{ order.description }}</td>
+          <td>{{ getStatusDescription(order.serviceStatusId) }}</td> 
+          <td>{{ order.createdAt | date: 'shortDate' }}</td>
+
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

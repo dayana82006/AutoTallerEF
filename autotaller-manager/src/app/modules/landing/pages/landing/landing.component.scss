@@ -1,0 +1,161 @@
+.animated-photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 1000px;
+  margin: auto;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+  
+  img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.4s ease, filter 0.4s ease;
+    display: block;
+  }
+
+  .overlay-text {
+    position: absolute;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: all 0.4s ease;
+  }
+
+  &:hover {
+    img {
+      transform: scale(1.1);
+      filter: brightness(1.1);
+    }
+
+    .overlay-text {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+/* Navbar */
+.navbar-darker {
+  background-color: #0a0a0a !important; 
+}
+/* Estilos base */
+body {
+    background-color: #0a0a0a;
+    margin: 0;
+    padding: 0;
+}
+
+/* Sección de servicios */
+#servicios {
+    background-color: #0a0a0a;
+    min-height: 100vh;
+}
+
+/* Contenedor principal de servicios */
+.services-container {
+    background-color: #1a1a1a;
+    border-radius: 20px;
+    padding: 50px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.services-container:hover {
+    transform: translateY(-5px);
+}
+
+/* Tarjetas de servicio */
+.service-card {
+    background-color: #1a1a1a !important;
+    border: 1px solid #333 !important;
+    border-radius: 15px !important;
+    overflow: hidden !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    height: 100% !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+}
+
+.service-card:hover {
+    transform: translateY(-8px) !important;
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1) !important;
+    border-color: #555 !important;
+}
+
+.service-card .card-img-top {
+    height: 200px !important;
+    object-fit: cover !important;
+    background-color: #2a2a2a !important;
+    border-radius: 15px !important;
+}
+
+.service-card .card-content {
+    background-color: #1a1a1a !important;
+    padding: 30px 25px !important;
+    border-top: 1px solid #333 !important;
+    margin-top: 15px;
+}
+
+.service-card .card-title {
+    font-family: "Space Grotesk", sans-serif !important;
+    font-weight: 700 !important;
+    color: #FFFFFF !important;
+    margin-bottom: 15px !important;
+    margin-top: 5px !important;
+    font-size: 1.4rem;
+}
+
+.service-card .card-text {
+    font-family: "Lexend", sans-serif !important;
+    color: #E0E0E0 !important;
+    font-weight: 300 !important;
+    line-height: 1.6 !important;
+    margin-bottom: 0;
+    font-size: 1rem;
+}
+
+/* Override para elementos con fondo oscuro */
+.card,
+.card *,
+.service-card,
+.service-card *,
+#servicios .card,
+#servicios .card *,
+#servicios .card-body,
+#servicios .card-body * {
+    background-color: #1a1a1a !important;
+    color: #FFFFFF !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .services-container {
+        padding: 30px 20px;
+    }
+}
+}
+
+.animation {
+    animation-name: ZoomIn;
+    animation-timeline: view();
+    animation-duration: 1s;
+}
+
+@keyframes ZoomIn {
+    from {
+        transform: scale(0.50);
+        filter: brightness(0.5);
+        opacity: 0.5;
+    }
+    to {
+        transform: scale(1);
+        filter: brightness(1);
+        opacity: 1;
+    }
+}

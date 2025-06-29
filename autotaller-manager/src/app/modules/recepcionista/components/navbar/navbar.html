@@ -1,0 +1,43 @@
+<nav
+  class="navbar navbar-expand-lg navbar-dark fixed-top"
+  style="background-color: #121417"
+>
+  <div class="container">
+    <a class="navbar-brand" href="/recepcionista">
+      <i class="bi bi-house-door subtitle"></i> AutoManager
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link subtitle" href="/recepcionista/clientes"
+            >Clientes</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link subtitle" href="/recepcionista/vehiculos"
+            >Vehículos</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link subtitle" href="/recepcionista/ordenes">Órdenes</a>
+        </li>
+      <li class="nav-item d-flex align-items-center ms-3">
+        <a class="nav-link subtitle text-white" href="#" (click)="logout($event)">Cerrar sesión</a>
+      </li>
+      </ul>
+    </div>
+  </div>
+</nav>

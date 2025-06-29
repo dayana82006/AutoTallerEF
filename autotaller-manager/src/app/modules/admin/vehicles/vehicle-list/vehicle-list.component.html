@@ -1,0 +1,99 @@
+<app-vehicle-form
+  *ngIf="showForm"
+  [vehicleToEdit]="selectedVehicle"
+  (formSubmitted)="onFormSubmit()"
+  (cancelForm)="cancelForm()"
+></app-vehicle-form>
+
+<div *ngIf="!showForm" class="container py-4" style="margin-top: 70px">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="text-white title">Gestión de Vehículos</h2>
+    <button class="btn btn-primary subtitle" (click)="newVehicle()">
+      Añadir Vehículo
+    </button>
+    
+  </div>
+
+  <div class="input-group mb-3">
+    <span class="input-group-text bg-dark border-secondary text-white">
+      <i class="bi bi-search"></i>
+    </span>
+    <input
+      type="text"
+      class="form-control bg-dark text-white border-secondary"
+      [(ngModel)]="search"
+      (input)="onSearchChange()"
+      placeholder="Buscar por número de serie"
+    />
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-dark table-hover align-middle">
+      <thead class="table-borderless subtitle">
+        <tr>
+          <th>Serial</th>
+          <th>Año</th>
+          <th>Kilometraje</th>
+          <th>Modelo</th>
+          <th>Cliente</th>
+          <th>Combustible</th>
+          <th>Tipo</th>
+          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Creado</th>
+          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Actualizado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let vehicle of vehicles">
+          <td >{{ vehicle.serialNumber }}</td>
+          <td>{{ vehicle.releaseYear }}</td>
+          <td>{{ vehicle.km | number }} km</td>
+          <td>{{ getModelName(vehicle.vehicleModelId) }}</td>
+          <td>{{ getClientName(vehicle.clientId) }}</td>
+          <td>{{ getFuelTypeName(vehicle.fuelTypeId) }}</td>
+          <td>{{ getVehicleTypeName(vehicle.vehicleTypeId) }}</td>
+          <td *ngIf="authService.currentUser?.role?.includes('Admin')">{{ vehicle.createdAt | date: 'short' }}</td>
+          <td *ngIf="authService.currentUser?.role?.includes('Admin')">{{ vehicle.updatedAt ? (vehicle.updatedAt | date: 'short') : '—' }}</td>
+          <td>
+            <button
+              class="btn btn-sm btn-outline-light me-2"
+              (click)="edit(vehicle)"
+            >
+              Editar
+            </button>
+            <button
+              class="btn btn-sm btn-outline-danger"
+              (click)="delete(vehicle.serialNumber)"
+              *ngIf="authService.currentUser?.role?.includes('Admin')"
+            >
+              Eliminar
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="vehicles.length === 0">
+          <td [attr.colspan]="authService.currentUser?.role?.includes('Admin') ? 11 : 9"
+            class="text-center text-secondary">
+            No se encontraron vehículos.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-between mt-3">
+    <button
+      class="btn btn-outline-light"
+      [disabled]="page === 1"
+      (click)="onPageChange(page - 1)"
+    >
+      Anterior
+    </button>
+    <button
+      class="btn btn-outline-light"
+      [disabled]="page * pageSize >= total"
+      (click)="onPageChange(page + 1)"
+    >
+      Siguiente
+    </button>
+  </div>
+</div>

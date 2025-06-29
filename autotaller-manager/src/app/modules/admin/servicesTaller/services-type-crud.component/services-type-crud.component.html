@@ -1,0 +1,83 @@
+<div class="container py-4">
+  <h2 class="mb-3 text-center title">Gestión de Tipos de Servicio</h2>
+
+  <div class="container mt-4">
+    <div class="row g-2 align-items-center">
+      <div class="col-md-12">
+        <div class="input-group">
+          <span class="input-group-text bg-dark border-secondary text-white">
+            <i class="bi bi-search"></i>
+          </span>
+<input
+  type="text"
+  class="form-control bg-dark text-white border-secondary"
+  [(ngModel)]="search"
+  (input)="applySearch()"
+  placeholder="Buscar descripción"
+/>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-responsive my-5">
+    <table class="table table-dark table-striped table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Descripción</th>
+          <th style="width: 20%; white-space: nowrap;">Creado</th>
+          <th style="width: 20%; white-space: nowrap;">Actualizado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let t of filteredServiceTypes">
+          <td>{{ t.id }}</td>
+          <td>{{ t.description }}</td>
+          <td>{{ t.createdAt | date:'short' }}</td>
+          <td>{{ t.updatedAt ? (t.updatedAt | date:'short') : '—' }}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-light me-2" (click)="edit(t)">Editar</button>
+            <button class="btn btn-sm btn-outline-danger" (click)="delete(t.id)">Eliminar</button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredServiceTypes.length === 0">
+          <td colspan="5" class="text-center text-secondary">No hay tipos de servicio</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div #formSection class="d-flex justify-content-center">
+    <div class="card bg-dark text-white p-4" style="width: 100%; max-width: 500px">
+      <h4 class="title mb-4">{{ editMode ? 'Editar' : 'Nuevo' }} Tipo de Servicio</h4>
+
+      <form #typeForm="ngForm" (ngSubmit)="save()" novalidate>
+        <div class="mb-3">
+          <label class="form-label">Descripción *</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="newType.description"
+            name="description"
+            required
+            #desc="ngModel"
+            [ngClass]="{ 'is-invalid': desc.invalid && desc.touched }"
+          />
+          <div *ngIf="desc.invalid && desc.touched" class="invalid-feedback">
+            La descripción es obligatoria
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <button type="submit" class="btn btn-primary" [disabled]="typeForm.invalid">
+            {{ editMode ? 'Actualizar' : 'Crear' }}
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancel()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
