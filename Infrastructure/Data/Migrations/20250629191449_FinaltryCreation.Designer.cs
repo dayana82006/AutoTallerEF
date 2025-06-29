@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(PublicDbContext))]
-    [Migration("20250629151719_FinalCreate")]
-    partial class FinalCreate
+    [Migration("20250629191449_FinaltryCreation")]
+    partial class FinaltryCreation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
