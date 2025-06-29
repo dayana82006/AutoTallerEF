@@ -114,7 +114,7 @@ public async Task<UserMember> CreateUserFromDtoAsync(UserMemberDto dto)
 
     public async Task<DataUserDto> GetTokenAsync(LoginDto model)
     {
-        var user = await _unitOfWork.UserMember.GetByUsernameAsync(model.Username);
+        var user = await _unitOfWork.UserMember.GetByUsernameAsync(model.Email);
         var resultDto = new DataUserDto();
 
         if (user == null || _passwordHasher.VerifyHashedPassword(user, user.Password!, model.Password) != PasswordVerificationResult.Success)
