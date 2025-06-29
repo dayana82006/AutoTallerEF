@@ -16,6 +16,8 @@ import { SparesCrudComponent } from './spares/spares-crud.component/spares-crud.
 import { ServiceTypesCrudComponent } from './servicesTaller/services-type-crud.component/services-type-crud.component';
 import { ServiceOrderFormComponent } from './servicesTaller/services-order-crud.component/services-order-form/services-order-form';
 import { ServiceOrderListComponent } from './servicesTaller/services-order-crud.component/services-order-list/services-order-list';
+import { InvoicePageComponent } from './invoice-detail/invoice-detail.component';
+import { InvoicesCrudComponent } from './invoice/invoices-crud.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +37,9 @@ import { ServiceOrderListComponent } from './servicesTaller/services-order-crud.
     ServiceTypesCrudComponent,
     ServiceOrderFormComponent,
     ServiceOrderListComponent,
-      HttpClientModule
+      HttpClientModule,
+      InvoicePageComponent,
+      InvoicesCrudComponent
 
   ]
 })

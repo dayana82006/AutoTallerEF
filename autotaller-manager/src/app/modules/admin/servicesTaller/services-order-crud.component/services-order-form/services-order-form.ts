@@ -52,27 +52,31 @@ export class ServiceOrderFormComponent implements OnInit {
     private swalService: SwalService
   ) {}
 
-  ngOnInit(): void {
-    this.vehicleService.getVehicles().subscribe({
-      next: (data) => this.vehicles = data,
-      error: () => this.swalService.error('Error al cargar los vehículos')
-    });
+ngOnInit(): void {
+  this.vehicleService.getVehicles().subscribe({
+    next: (data) => this.vehicles = data,
+    error: () => this.swalService.error('Error al cargar los vehículos')
+  });
 
-    this.serviceTypeService.getAll().subscribe({
-      next: (data) => this.serviceTypes = data,
-      error: () => this.swalService.error('Error al cargar tipos de servicio')
-    });
+  this.serviceTypeService.getAll().subscribe({
+    next: (data) => this.serviceTypes = data,
+    error: () => this.swalService.error('Error al cargar tipos de servicio')
+  });
 
-    this.userService.getAll().subscribe({
-      next: (data) => this.users = data.filter(user => user.role.toLowerCase() === 'mecánico'),
-      error: () => this.swalService.error('Error al cargar los técnicos')
-    });
+  this.userService.getAll().subscribe({
+    next: (data) =>
+      this.users = data.filter(user =>
+        user.role && user.role.toLowerCase() === 'mecánico'
+      ),
+    error: () => this.swalService.error('Error al cargar los técnicos')
+  });
 
-    if (this.serviceOrderToEdit) {
-      this.serviceOrder = { ...this.serviceOrderToEdit };
-      this.editMode = true;
-    }
+  if (this.serviceOrderToEdit) {
+    this.serviceOrder = { ...this.serviceOrderToEdit };
+    this.editMode = true;
   }
+}
+
 
   save(): void {
     if (!this.serviceOrder.description.trim()
