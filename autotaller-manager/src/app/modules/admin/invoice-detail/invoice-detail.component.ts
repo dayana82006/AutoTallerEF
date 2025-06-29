@@ -32,9 +32,10 @@ export class InvoicePageComponent implements OnInit {
     private clientService: MockClientService,
     public authService: AuthService
   ) {}
-    get userRole(): string {
-      return this.authService.currentUser?.role ?? '';
-    }
+   get userRole(): string {
+  return this.authService.currentUser?.role?.[0] ?? '';
+}
+
 
   ngOnInit(): void {
     const orderId = Number(this.route.snapshot.paramMap.get('id'));

@@ -8,13 +8,8 @@
           <span class="input-group-text bg-dark border-secondary text-white">
             <i class="bi bi-search"></i>
           </span>
-          <input
-            type="text"
-            class="form-control bg-dark text-white border-secondary"
-            [(ngModel)]="search"
-            (ngModelChange)="onSearchChange()"
-            placeholder="Buscar por cliente o monto"
-          />
+          <input type="text" class="form-control bg-dark text-white border-secondary" [(ngModel)]="search"
+            (ngModelChange)="onSearchChange()" placeholder="Buscar por cliente o monto" />
         </div>
       </div>
     </div>
@@ -28,8 +23,8 @@
           <th>Cliente</th>
           <th>Repuestos</th>
           <th>Servicios</th>
-          <th>Total</th>
-          <th *ngIf="authService.currentUser?.role === 'Admin'">Creado</th>
+          <th>Total</th><th *ngIf="authService.currentUser?.role?.includes('Admin')">Creado</th>
+
           <th>Acciones</th>
         </tr>
       </thead>
@@ -40,9 +35,10 @@
           <td>${{ inv.totalSpares | number: '1.0-0' }}</td>
           <td>${{ inv.totalServices | number: '1.0-0' }}</td>
           <td>${{ inv.finalAmount | number: '1.0-0' }}</td>
-          <td *ngIf="authService.currentUser?.role === 'Admin'">
+          <td *ngIf="authService.currentUser?.role?.includes('Admin')">
             {{ inv.createdAt | date: 'short' }}
           </td>
+
           <td>
             <button class="btn btn-sm btn-outline-danger" (click)="delete(inv.id)">
               Eliminar
@@ -50,9 +46,10 @@
           </td>
         </tr>
         <tr *ngIf="invoices.length === 0">
-          <td [attr.colspan]="authService.currentUser?.role === 'Admin' ? 7 : 6" class="text-center text-secondary">
+          <td [attr.colspan]="authService.hasRole('Admin') ? 7 : 6" class="text-center text-secondary">
             No hay facturas
           </td>
+
         </tr>
       </tbody>
     </table>
@@ -65,12 +62,7 @@
       <form #invoiceForm="ngForm" (ngSubmit)="save()" novalidate>
         <div class="mb-3">
           <label class="form-label">Cliente</label>
-          <select
-            class="form-select"
-            [(ngModel)]="newInvoice.clientId"
-            name="clientId"
-            required
-          >
+          <select class="form-select" [(ngModel)]="newInvoice.clientId" name="clientId" required>
             <option [ngValue]="0" disabled>Seleccione un cliente</option>
             <option *ngFor="let client of clients" [ngValue]="client.id">
               {{ client.name }} (ID: {{ client.id }})
@@ -80,38 +72,20 @@
 
         <div class="mb-3">
           <label class="form-label">Total Repuestos</label>
-          <input
-            type="number"
-            class="form-control"
-            [(ngModel)]="newInvoice.totalSpares"
-            name="totalSpares"
-            required
-            min="0"
-          />
+          <input type="number" class="form-control" [(ngModel)]="newInvoice.totalSpares" name="totalSpares" required
+            min="0" />
         </div>
 
         <div class="mb-3">
           <label class="form-label">Total Servicios</label>
-          <input
-            type="number"
-            class="form-control"
-            [(ngModel)]="newInvoice.totalServices"
-            name="totalServices"
-            required
-            min="0"
-          />
+          <input type="number" class="form-control" [(ngModel)]="newInvoice.totalServices" name="totalServices" required
+            min="0" />
         </div>
 
         <div class="mb-3">
           <label class="form-label">Monto Final</label>
-          <input
-            type="number"
-            class="form-control"
-            [(ngModel)]="newInvoice.finalAmount"
-            name="finalAmount"
-            required
-            min="0"
-          />
+          <input type="number" class="form-control" [(ngModel)]="newInvoice.finalAmount" name="finalAmount" required
+            min="0" />
         </div>
 
         <div class="d-flex justify-content-end">

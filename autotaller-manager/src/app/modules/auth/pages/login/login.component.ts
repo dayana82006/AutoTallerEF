@@ -14,7 +14,7 @@ import { SwalService } from '../../../../shared/swal.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
- email: string = '';
+  email: string = '';
   password: string = '';
 
   constructor(
@@ -25,8 +25,8 @@ export class LoginComponent {
 
   onSubmit(): void {
     const credentials: AuthRequest = {
-     email: this.email,
-      password: this.password
+      Email: this.email,
+      Password: this.password
     };
 
     this.authService.login(credentials).subscribe({

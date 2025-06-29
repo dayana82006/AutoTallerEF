@@ -47,38 +47,35 @@
           <th>Descripción</th>
           <th>Stock</th>
           <th>Precio Unitario</th>
-          <th *ngIf="authService.currentUser?.role === 'Admin'">Creado</th>
-          <th *ngIf="authService.currentUser?.role === 'Admin'">Actualizado</th>
+          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Creado</th>
+          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Actualizado</th>
           <th>Acciones</th>
         </tr>
       </thead>
-      <tbody>
+     <tbody>
         <tr *ngFor="let s of spares">
           <td>{{ s.code }}</td>
           <td>{{ s.description || "-" }}</td>
           <td>{{ s.stockQuantity }}</td>
           <td>${{ s.unitPrice | number : "1.0-0" }}</td>
-                  <td *ngIf="authService.currentUser?.role === 'Admin'">
-          {{ s.createdAt | date: 'short' }}
-        </td>
-        <td *ngIf="authService.currentUser?.role === 'Admin'">
-          {{ s.updatedAt | date: 'short' }}
-        </td>
+          <td *ngIf="authService.currentUser?.role?.includes('Admin')">
+            {{ s.createdAt | date: 'short' }}
+          </td>
+          <td *ngIf="authService.currentUser?.role?.includes('Admin')">
+            {{ s.updatedAt | date: 'short' }}
+          </td>
           <td>
             <button class="btn btn-sm btn-outline-light me-2" (click)="edit(s)">
               Editar
             </button>
-            <button
-              class="btn btn-sm btn-outline-danger"
-              (click)="delete(s.code)"
-            >
+            <button class="btn btn-sm btn-outline-danger" (click)="delete(s.code)">
               Eliminar
             </button>
           </td>
         </tr>
         <tr *ngIf="spares.length === 0">
-                    <td
-            [attr.colspan]="authService.currentUser?.role === 'Admin' ? 8 : 5"
+          <td
+            [attr.colspan]="authService.currentUser?.role?.includes('Admin') ? 8 : 5"
             class="text-center text-secondary"
           >
             No hay repuestos

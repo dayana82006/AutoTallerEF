@@ -22,6 +22,7 @@ namespace TallerApi.Controllers
             _mapper = mapper;
         }
 
+        // GET: api/serviceorder
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -31,6 +32,7 @@ namespace TallerApi.Controllers
             return Ok(_mapper.Map<List<ServiceOrderDto>>(orders));
         }
 
+        // GET: api/serviceorder/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -43,44 +45,45 @@ namespace TallerApi.Controllers
             return Ok(_mapper.Map<ServiceOrderDto>(order));
         }
 
-public async Task<ActionResult<ServiceOrderDto>> Post(ServiceOrderDto orderDto)
-{
-    if (orderDto == null)
-        return BadRequest(new ApiResponse(400));
+        // POST: api/serviceorder
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ServiceOrderDto>> Post([FromBody] ServiceOrderDto orderDto)
+        {
+            if (orderDto == null)
+                return BadRequest(new ApiResponse(400));
 
-    // Validar que el vehículo exista
-    var vehicle = await _unitOfWork.Vehicle.GetByIdAsync(orderDto.SerialNumber);
-    if (vehicle == null)
-        return BadRequest(new ApiResponse(400, "El vehículo especificado no existe."));
+            var vehicle = await _unitOfWork.Vehicle.GetByIdAsync(orderDto.SerialNumber);
+            if (vehicle == null)
+                return BadRequest(new ApiResponse(400, "El vehículo especificado no existe."));
 
-    // Validar que la factura exista
-    var invoice = await _unitOfWork.Invoice.GetByIdAsync(orderDto.InvoiceId);
-    if (invoice == null)
-        return BadRequest(new ApiResponse(400, "La factura especificada no existe."));
+            var invoice = await _unitOfWork.Invoice.GetByIdAsync(orderDto.InvoiceId);
+            if (invoice == null)
+                return BadRequest(new ApiResponse(400, "La factura especificada no existe."));
 
-    // Crear la orden de servicio
-    var order = _mapper.Map<ServiceOrder>(orderDto);
-    order.VehicleSerialNumber = vehicle.SerialNumber;
+            var order = _mapper.Map<ServiceOrder>(orderDto);
+            order.VehicleSerialNumber = vehicle.SerialNumber;
 
-    _unitOfWork.ServiceOrder.Add(order);
-    await _unitOfWork.SaveAsync(); // Aquí se genera el ID de ServiceOrder
+            _unitOfWork.ServiceOrder.Add(order);
+            await _unitOfWork.SaveAsync();
 
-    // Crear el detalle de factura
-    var invoiceDetail = new InvoiceDetail
-    {
-        InvoiceId = invoice.Id,
-        ServiceOrderId = order.Id,
-        CreatedAt = DateTime.UtcNow,
-        UpdatedAt = DateTime.UtcNow
-    };
+            var invoiceDetail = new InvoiceDetail
+            {
+                InvoiceId = invoice.Id,
+                ServiceOrderId = order.Id,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
 
-    _unitOfWork.InvoiceDetail.Add(invoiceDetail);
-    await _unitOfWork.SaveAsync();
+            _unitOfWork.InvoiceDetail.Add(invoiceDetail);
+            await _unitOfWork.SaveAsync();
 
-    var resultDto = _mapper.Map<ServiceOrderDto>(order);
-    return CreatedAtAction(nameof(Get), new { id = order.Id }, resultDto);
-}
+            var resultDto = _mapper.Map<ServiceOrderDto>(order);
+            return CreatedAtAction(nameof(Get), new { id = order.Id }, resultDto);
+        }
 
+        // PUT: api/serviceorder/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -94,13 +97,13 @@ public async Task<ActionResult<ServiceOrderDto>> Post(ServiceOrderDto orderDto)
             if (existingOrder == null)
                 return NotFound(new ApiResponse(404, "La orden de servicio solicitada no existe."));
 
-            // Mapear sobre la entidad existente ya rastreada
             _mapper.Map(orderDto, existingOrder);
 
             await _unitOfWork.SaveAsync();
             return Ok(orderDto);
         }
 
+        // DELETE: api/serviceorder/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

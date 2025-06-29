@@ -24,7 +24,7 @@ export class UserFormComponent implements OnInit {
     username: '',
     lastname: '',
     email: '',
-    role: 'Admin',
+    role: [''],  
     specialties: []
   };
 
@@ -68,8 +68,7 @@ export class UserFormComponent implements OnInit {
       username: '',
       lastname: '',
       email: '',
-      role: 'Admin',
-      password: '',
+      role: ['Admin'],
       specialties: []
     };
   }
@@ -83,7 +82,7 @@ export class UserFormComponent implements OnInit {
           username: u.username,
           lastname: u.lastname,
           email: u.email,
-          role: u.role,
+          role: Array.isArray(u.role) ? u.role : [u.role],
           specialties: [...(u.specialties || [])]
         };
       } else {
@@ -104,11 +103,10 @@ export class UserFormComponent implements OnInit {
   }
 
   private isFormValid(): boolean {
-    return !!(this.user.name.trim() &&
-              this.user.lastname.trim() &&
-              this.user.email.trim() &&
-              this.user.username.trim() &&
-              this.user.role);
+    return !!(this.user.name.trim() && 
+              this.user.lastname.trim() && 
+              this.user.email.trim() && 
+              this.user.role && this.user.role.length > 0);
   }
 
   saveUser(): void {
@@ -117,9 +115,12 @@ export class UserFormComponent implements OnInit {
       return;
     }
 
-    const trimmedEmail = this.user.email.trim().toLowerCase();
-    const trimmedUsername = this.user.username.trim().toLowerCase();
-    const trimmedPassword = this.user.password?.trim();
+  const trimmedName = this.user.name.trim();
+  const trimmedLastName = this.user.lastname.trim();
+  const trimmedEmail = this.user.email.trim();
+  const trimmedRole = this.user.role.map(r => r.trim());
+  const trimmedUsername = this.user.username.trim();
+  const trimmedPassword = this.user.password?.trim();
 
     const duplicateEmail = this.allUsers.some(u =>
       u.email.trim().toLowerCase() === trimmedEmail &&
@@ -152,7 +153,7 @@ export class UserFormComponent implements OnInit {
       lastname: this.user.lastname.trim(),
       email: trimmedEmail,
       username: trimmedUsername,
-      role: this.user.role.trim(),
+      role: this.user.role?.map(r => r.trim()) || [],
       specialties: this.user.specialties || []
     };
 
@@ -181,42 +182,35 @@ export class UserFormComponent implements OnInit {
         password: trimmedPassword!
       };
 
-      this.userService.createUser(newUser).subscribe({
-        next: () => {
-          this.swalService.success('Usuario creado correctamente');
-          this.router.navigate(['/admin/usuarios']);
-          this.resetForm();
-        },
-        error: (err) => {
-          console.error(err);
-          const errMsg = (err?.error || '').toString().toLowerCase();
-
-          if (errMsg.includes('email')) {
-            this.swalService.error('Ya existe un usuario con ese correo');
-          } else if (errMsg.includes('username')) {
-            this.swalService.error('Ya existe un usuario con ese nombre de usuario');
-          } else {
-            this.swalService.error('Error al crear el usuario');
-          }
-        }
-      });
-    }
+    this.userService.createUser(newUser).subscribe({
+      next: (createdUser) => {
+        console.log('Usuario creado con ID:', createdUser.id);
+        this.swalService.success('Usuario creado correctamente');
+        this.router.navigate(['/admin/usuarios']);
+        this.resetForm();
+      },
+      error: (error) => {
+        console.error('Error al crear usuario:', error);
+        this.swalService.error('Error al crear el usuario');
+      }
+    });
   }
+}
+resetForm(): void {
+  this.user = {
+    id: 0,
+    name: '',
+    lastname: '',
+    email: '',
+    role: [],
+    username: '',
+    password: '',
+    specialties: []
+  };
+  this.isEditMode = false;
+  this.editingId = null;
+}
 
-  resetForm(): void {
-    this.user = {
-      id: 0,
-      name: '',
-      lastname: '',
-      email: '',
-      role: '',
-      username: '',
-      password: '',
-      specialties: []
-    };
-    this.isEditMode = false;
-    this.editingId = null;
-  }
 
   cancel(): void {
     this.router.navigate(['/admin/usuarios']);

@@ -71,13 +71,15 @@ export class ServiceOrderFormComponent implements OnInit {
       error: () => this.swalService.error('Error al cargar tipos de servicio')
     });
 
-    this.userService.getAll().subscribe({
-      next: data =>
-        this.users = data.filter(user =>
-          user.role?.toLowerCase() === 'mecánico'
-        ),
-      error: () => this.swalService.error('Error al cargar técnicos')
-    });
+   this.userService.getAll().subscribe({
+  next: data =>
+    this.users = data.filter(user =>
+      Array.isArray(user.role) &&
+      user.role.some(r => r.toLowerCase() === 'mecánico')
+    ),
+  error: () => this.swalService.error('Error al cargar técnicos')
+});
+
 
     this.invoiceService.getInvoices().subscribe({
       next: data => this.invoices = data,
