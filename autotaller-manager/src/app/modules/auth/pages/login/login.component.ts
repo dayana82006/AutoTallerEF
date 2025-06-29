@@ -31,23 +31,23 @@ export class LoginComponent {
 
     this.authService.login(credentials).subscribe({
       next: (res) => {
-        console.log('Rol autenticado:', res.role[0]);
+        console.log('Rol autenticado:', res.rols[0]);
 
         sessionStorage.setItem('currentUser', JSON.stringify(res));
 
-        switch (res.role[0]) {
-          case 'Admin':
-            this.router.navigate(['/admin']);
-            break;
-          case 'Mecanico':
-            this.router.navigate(['/mecanico']);
-            break;
-          case 'Recepcionista':
-            this.router.navigate(['/recepcionista']);
-            break;
-          default:
-            this.swalService.error('Error', 'Rol no reconocido');
-        }
+switch (res.rols[0]) {
+  case 'Administrador':
+    this.router.navigate(['/admin']);
+    break;
+  case 'Mecánico':
+    this.router.navigate(['/mecanico']);
+    break;
+  case 'Recepcionista':
+    this.router.navigate(['/recepcionista']);
+    break;
+  default:
+    this.swalService.error('Error', 'Rol no reconocido');
+}
       },
       error: () => {
         this.swalService.error('Error', 'Credenciales inválidas');

@@ -16,7 +16,7 @@ import { Specialty } from '../../models/specialty';
   styleUrls: ['./user-form.scss']
 })
 export class UserFormComponent implements OnInit {
-  formSubmitted: boolean = false;
+  formSubmitted = false;
 
   user: UserMember = {
     id: 0,
@@ -24,13 +24,13 @@ export class UserFormComponent implements OnInit {
     username: '',
     lastname: '',
     email: '',
-    role: [''],  
+    role: 'Administrador',  // ✅ String, no array
     specialties: []
   };
 
   editingId: number | null = null;
   isEditMode = false;
-  availableRoles = ['Admin', 'Mecánico', 'Recepcionista'];
+  availableRoles = ['Administrador', 'Mecánico', 'Recepcionista'];
   availableSpecialties: Specialty[] = [];
   allUsers: UserMember[] = [];
 
@@ -47,7 +47,7 @@ export class UserFormComponent implements OnInit {
       this.availableSpecialties = data;
     });
 
-    this.userService.getUsers('', 1, 1000).subscribe(response => {
+    this.userService.getUsers(undefined, 1, 1000).subscribe(response => {
       this.allUsers = response.users;
     });
 
@@ -68,13 +68,13 @@ export class UserFormComponent implements OnInit {
       username: '',
       lastname: '',
       email: '',
-      role: ['Admin'],
+      role: 'Administrador',
       specialties: []
     };
   }
 
   private loadUserForEdit(id: number): void {
-    this.userService.getUserById(id).subscribe((u) => {
+    this.userService.getUserById(id).subscribe(u => {
       if (u) {
         this.user = {
           id: u.id,
@@ -82,7 +82,7 @@ export class UserFormComponent implements OnInit {
           username: u.username,
           lastname: u.lastname,
           email: u.email,
-          role: Array.isArray(u.role) ? u.role : [u.role],
+          role: typeof u.role === 'string' ? u.role : (Array.isArray(u.role) ? u.role[0] : ''),
           specialties: [...(u.specialties || [])]
         };
       } else {
@@ -103,24 +103,26 @@ export class UserFormComponent implements OnInit {
   }
 
   private isFormValid(): boolean {
-    return !!(this.user.name.trim() && 
-              this.user.lastname.trim() && 
-              this.user.email.trim() && 
-              this.user.role && this.user.role.length > 0);
+    return !!(this.user.name.trim() &&
+              this.user.lastname.trim() &&
+              this.user.email.trim() &&
+              this.user.role);
   }
 
   saveUser(): void {
+    this.formSubmitted = true;
+
     if (!this.isFormValid()) {
       this.swalService.error('Por favor completa todos los campos requeridos');
       return;
     }
 
-  const trimmedName = this.user.name.trim();
-  const trimmedLastName = this.user.lastname.trim();
-  const trimmedEmail = this.user.email.trim();
-  const trimmedRole = this.user.role.map(r => r.trim());
-  const trimmedUsername = this.user.username.trim();
-  const trimmedPassword = this.user.password?.trim();
+    const trimmedName = this.user.name.trim();
+    const trimmedLastName = this.user.lastname.trim();
+    const trimmedEmail = this.user.email.trim();
+    const trimmedUsername = this.user.username.trim();
+    const trimmedRole = this.user.role.trim();
+    const trimmedPassword = this.user.password?.trim();
 
     const duplicateEmail = this.allUsers.some(u =>
       u.email.trim().toLowerCase() === trimmedEmail &&
@@ -149,11 +151,11 @@ export class UserFormComponent implements OnInit {
 
     const userPayload: UserMember = {
       id: this.isEditMode ? this.user.id : 0,
-      name: this.user.name.trim(),
-      lastname: this.user.lastname.trim(),
+      name: trimmedName,
+      lastname: trimmedLastName,
       email: trimmedEmail,
       username: trimmedUsername,
-      role: this.user.role?.map(r => r.trim()) || [],
+      role: trimmedRole,
       specialties: this.user.specialties || []
     };
 
@@ -182,35 +184,36 @@ export class UserFormComponent implements OnInit {
         password: trimmedPassword!
       };
 
-    this.userService.createUser(newUser).subscribe({
-      next: (createdUser) => {
-        console.log('Usuario creado con ID:', createdUser.id);
-        this.swalService.success('Usuario creado correctamente');
-        this.router.navigate(['/admin/usuarios']);
-        this.resetForm();
-      },
-      error: (error) => {
-        console.error('Error al crear usuario:', error);
-        this.swalService.error('Error al crear el usuario');
-      }
-    });
+      this.userService.createUser(newUser).subscribe({
+        next: (createdUser) => {
+          console.log('Usuario creado con ID:', createdUser.id);
+          this.swalService.success('Usuario creado correctamente');
+          this.router.navigate(['/admin/usuarios']);
+          this.resetForm();
+        },
+        error: (error) => {
+          console.error('Error al crear usuario:', error);
+          this.swalService.error('Error al crear el usuario');
+        }
+      });
+    }
   }
-}
-resetForm(): void {
-  this.user = {
-    id: 0,
-    name: '',
-    lastname: '',
-    email: '',
-    role: [],
-    username: '',
-    password: '',
-    specialties: []
-  };
-  this.isEditMode = false;
-  this.editingId = null;
-}
 
+  resetForm(): void {
+    this.user = {
+      id: 0,
+      name: '',
+      lastname: '',
+      email: '',
+      role: 'Administrador',
+      username: '',
+      password: '',
+      specialties: []
+    };
+    this.isEditMode = false;
+    this.editingId = null;
+    this.formSubmitted = false;
+  }
 
   cancel(): void {
     this.router.navigate(['/admin/usuarios']);

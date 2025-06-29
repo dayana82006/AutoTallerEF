@@ -5,7 +5,7 @@ export interface UserMember {
   lastname: string;
   password?: string;
   email: string;
-  role: string[];
+  role: string;
   specialties: string[];
     
   createdAt?: Date;

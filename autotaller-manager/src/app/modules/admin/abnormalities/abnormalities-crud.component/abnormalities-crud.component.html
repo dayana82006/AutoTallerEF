@@ -19,8 +19,8 @@
           <th>Nombre</th>
           <th>Fecha de Ingreso</th>
           <th>Vehículos</th>
-          <th *ngIf="authService.currentUser?.role?.includes('rol')">Creado</th>
-          <th *ngIf="authService.currentUser?.role?.includes('rol')">Actualizado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('rol')">Creado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('rol')">Actualizado</th>
 
           <th>Acciones</th>
         </tr>

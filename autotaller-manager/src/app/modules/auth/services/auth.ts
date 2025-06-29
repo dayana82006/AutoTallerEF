@@ -15,6 +15,7 @@ hasRole: any;
   login(credentials: AuthRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(this.apiUrl, credentials).pipe(
       tap(response => {
+        
         if (response.estaAutenticado && response.token) {
           sessionStorage.setItem('token', response.token);
           sessionStorage.setItem('user', JSON.stringify(response));
@@ -39,7 +40,7 @@ hasRole: any;
 
   getRole(): string {
     const user = this.getUser();
-    return user?.role?.[0] || ''; 
+    return user?.rols?.[0] || ''; 
   }
   
     get currentUser(): AuthResponse | null {
