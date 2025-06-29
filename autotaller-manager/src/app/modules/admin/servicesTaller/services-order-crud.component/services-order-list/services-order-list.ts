@@ -120,22 +120,32 @@ export class ServiceOrderListComponent implements OnInit {
     this.router.navigate(['/admin/invoices', orderId]);
   }
 
-  onFormSubmit(order: ServiceOrder): void {
-    if (this.selectedServiceOrder) {
-      this.serviceOrderService.updateServiceOrder(order.id, order).subscribe(() => {
-        this.swalService.success('Orden actualizada');
-        this.refreshOrders();
-      });
-    } else {
-      this.serviceOrderService.createServiceOrder(order).subscribe(() => {
-        this.swalService.success('Orden creada');
-        this.refreshOrders();
-      });
-    }
+onFormSubmit(order: ServiceOrder): void {
+  if (this.selectedServiceOrder) {
+    this.serviceOrderService.updateServiceOrder(order.id, order).subscribe(() => {
+      this.swalService.success('Orden actualizada');
+      this.refreshOrders();
+    });
+  } else {
+    this.serviceOrderService.createServiceOrder(order).subscribe((createdOrder) => {
+      this.swalService.success('Orden creada');
 
-    this.selectedServiceOrder = null;
-    this.showForm = false;
+      // 🔗 Relación con factura
+      if (order.invoiceId) {
+        this.serviceOrderService.linkInvoice(createdOrder.id, order.invoiceId).subscribe({
+          next: () => this.swalService.success('Factura vinculada'),
+          error: () => this.swalService.error('Error al vincular la factura')
+        });
+      }
+
+      this.refreshOrders();
+    });
   }
+
+  this.selectedServiceOrder = null;
+  this.showForm = false;
+}
+
 
   cancelForm(): void {
     this.selectedServiceOrder = null;

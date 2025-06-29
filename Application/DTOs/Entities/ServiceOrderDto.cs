@@ -14,8 +14,9 @@ namespace Application.DTOs.Entities
         public int UnitPrice { get; set; }
         public int ServiceStatusId { get; set; }
         public int ServiceTypeId { get; set; }
-         public int UserMemberId { get; set; }
+        public int UserMemberId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
+         public int InvoiceId { get; set; }
     }
 }

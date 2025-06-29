@@ -30,4 +30,12 @@ export class MockServiceOrderService {
   deleteServiceOrder(id: number): Observable<boolean> {
     return this.http.delete<boolean>(`${this.API_URL}/${id}`);
   }
+
+  linkInvoice(orderId: number, invoiceId: number): Observable<void> {
+  return this.http.post<void>(
+    `http://localhost:5005/api/invoicedetail`, // o el endpoint que expongas
+    { serviceOrderId: orderId, invoiceId }
+  );
+}
+
 }

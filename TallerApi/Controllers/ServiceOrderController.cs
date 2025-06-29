@@ -43,25 +43,43 @@ namespace TallerApi.Controllers
             return Ok(_mapper.Map<ServiceOrderDto>(order));
         }
 
-        [HttpPost]
-        public async Task<ActionResult<ServiceOrderDto>> Post(ServiceOrderDto orderDto)
-        {
-            if (orderDto == null)
-                return BadRequest(new ApiResponse(400));
+public async Task<ActionResult<ServiceOrderDto>> Post(ServiceOrderDto orderDto)
+{
+    if (orderDto == null)
+        return BadRequest(new ApiResponse(400));
 
-            var vehicle = await _unitOfWork.Vehicle.GetByIdAsync(orderDto.SerialNumber);
-            if (vehicle == null)
-                return BadRequest(new ApiResponse(400, "El vehículo especificado no existe."));
+    // Validar que el vehículo exista
+    var vehicle = await _unitOfWork.Vehicle.GetByIdAsync(orderDto.SerialNumber);
+    if (vehicle == null)
+        return BadRequest(new ApiResponse(400, "El vehículo especificado no existe."));
 
-            var order = _mapper.Map<ServiceOrder>(orderDto);
-            order.VehicleSerialNumber = vehicle.SerialNumber;
+    // Validar que la factura exista
+    var invoice = await _unitOfWork.Invoice.GetByIdAsync(orderDto.InvoiceId);
+    if (invoice == null)
+        return BadRequest(new ApiResponse(400, "La factura especificada no existe."));
 
-            _unitOfWork.ServiceOrder.Add(order);
-            await _unitOfWork.SaveAsync();
+    // Crear la orden de servicio
+    var order = _mapper.Map<ServiceOrder>(orderDto);
+    order.VehicleSerialNumber = vehicle.SerialNumber;
 
-            var resultDto = _mapper.Map<ServiceOrderDto>(order);
-            return CreatedAtAction(nameof(Get), new { id = order.Id }, resultDto);
-        }
+    _unitOfWork.ServiceOrder.Add(order);
+    await _unitOfWork.SaveAsync(); // Aquí se genera el ID de ServiceOrder
+
+    // Crear el detalle de factura
+    var invoiceDetail = new InvoiceDetail
+    {
+        InvoiceId = invoice.Id,
+        ServiceOrderId = order.Id,
+        CreatedAt = DateTime.UtcNow,
+        UpdatedAt = DateTime.UtcNow
+    };
+
+    _unitOfWork.InvoiceDetail.Add(invoiceDetail);
+    await _unitOfWork.SaveAsync();
+
+    var resultDto = _mapper.Map<ServiceOrderDto>(order);
+    return CreatedAtAction(nameof(Get), new { id = order.Id }, resultDto);
+}
 
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

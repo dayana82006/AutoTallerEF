@@ -24,6 +24,8 @@ export class ServiceOrderFormComponent implements OnInit {
   @Input() serviceOrderToEdit?: ServiceOrder | null;
   @Output() formSubmitted = new EventEmitter<ServiceOrder>();
   @Output() cancelForm = new EventEmitter<void>();
+  @Output() invoiceSelected = new EventEmitter<{ orderId: number; invoiceId: number }>();
+
 
   serviceOrder: ServiceOrder = {
     id: 0,
@@ -88,23 +90,26 @@ export class ServiceOrderFormComponent implements OnInit {
     }
   }
 
-  save(): void {
-    const s = this.serviceOrder;
-    if (
-      !s.description.trim() ||
-      !s.serialNumber ||
-      !s.serviceStatusId ||
-      !s.serviceTypeId ||
-      !s.userMemberId ||
-      !s.invoiceId ||
-      s.unitPrice < 0
-    ) {
-      this.swalService.error('Por favor completa todos los campos obligatorios');
-      return;
-    }
+save(): void {
+  const s = this.serviceOrder;
 
-    this.formSubmitted.emit(s);
+  if (
+    !s.description?.trim() ||
+    !s.serialNumber ||
+    !s.serviceStatusId ||
+    !s.serviceTypeId ||
+    !s.userMemberId ||
+    !this.serviceOrder.invoiceId || // Asegúrate que se seleccionó
+    s.unitPrice < 0
+  ) {
+    this.swalService.error('Por favor completa todos los campos obligatorios');
+    return;
   }
+
+  // Emitir solo la orden primero
+  this.formSubmitted.emit(s);
+}
+
 
   cancel(): void {
     this.cancelForm.emit();
