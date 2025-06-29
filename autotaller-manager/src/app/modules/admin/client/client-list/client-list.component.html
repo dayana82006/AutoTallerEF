@@ -6,7 +6,7 @@
     <h2 class="text-white title">Gestión de Clientes</h2>
 
     <!--<p class="text-warning text-center"> 
-    Usuario actual: {{ authService.currentUser?.role }}
+    Usuario actual: {{ authService.currentUser?.rols }}
   </p>-->
     <button class="btn btn-primary subtitle" (click)="newClient()">Añadir Cliente</button>
   </div>
@@ -27,8 +27,8 @@
           <th>Nombre</th>
           <th>Teléfono</th>
           <th>Email</th>
-          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Creado</th>
-          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Actualizado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('Administrador')">Creado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('Administrador')">Actualizado</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -38,15 +38,15 @@
           <td>{{ client.name }} {{ client.lastname }}</td>
           <td>{{ client.telephone }}</td>
           <td>{{ client.email }}</td>
-          <td *ngIf="authService.currentUser?.role?.includes('Admin')">
+          <td *ngIf="authService.currentUser?.rols?.includes('Administrador')">
             {{ client.createdAt | date: 'short' }}
           </td>
-          <td *ngIf="authService.currentUser?.role?.includes('Admin')">
+          <td *ngIf="authService.currentUser?.rols?.includes('Administrador')">
             {{ client.updatedAt | date: 'short' }}
           </td>
           <td>
             <button class="btn btn-sm btn-outline-light me-2" (click)="edit(client)">Editar</button>
-            <button *ngIf="authService.currentUser?.role?.includes('Admin')" class="btn btn-sm btn-outline-danger"
+            <button *ngIf="authService.currentUser?.rols?.includes('Administrador')" class="btn btn-sm btn-outline-danger"
               (click)="delete(client.id)">Eliminar</button>
           </td>
 

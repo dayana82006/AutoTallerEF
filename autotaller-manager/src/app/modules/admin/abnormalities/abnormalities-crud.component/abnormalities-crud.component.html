@@ -19,8 +19,8 @@
           <th>Nombre</th>
           <th>Fecha de Ingreso</th>
           <th>Vehículos</th>
-          <th *ngIf="authService.currentUser?.rols?.includes('rol')">Creado</th>
-          <th *ngIf="authService.currentUser?.rols?.includes('rol')">Actualizado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('Administrador')">Creado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('Administrador')">Actualizado</th>
 
           <th>Acciones</th>
         </tr>
@@ -38,13 +38,13 @@
             </ul>
           </td>
           <td>
-            <button *ngIf="authService.hasRole('admin') || authService.hasRole('tecnico')"
+            <button *ngIf="authService.hasRole('Administrador') || authService.hasRole('tecnico')"
               class="btn btn-sm btn-primary me-1" (click)="edit(a)">
               Editar
             </button>
 
 
-            <button *ngIf="authService.hasRole('admin')" class="btn btn-sm btn-danger" (click)="deleteAnormality(a.id)">
+            <button *ngIf="authService.hasRole('Administrador')" class="btn btn-sm btn-danger" (click)="deleteAnormality(a.id)">
               Eliminar
             </button>
           </td>

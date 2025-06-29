@@ -69,7 +69,7 @@
       <select [(ngModel)]="user.role" class="form-select" name="role" id="role" #role="ngModel" required
         [class.is-invalid]="role.invalid && role.touched">
         <option value="">Selecciona un rol</option>
-        <option value="Admin">Administrador</option>
+        <option value="Administrador">Administrador</option>
         <option value="Recepcionista">Recepcionista</option>
         <option value="Mecanico">Mecánico</option> <!-- Cambiado a 'Mecanico' para consistencia con el *ngIf -->
       </select>

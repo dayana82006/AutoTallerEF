@@ -38,8 +38,8 @@
           <th>Cliente</th>
           <th>Combustible</th>
           <th>Tipo</th>
-          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Creado</th>
-          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Actualizado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('Administrador')">Creado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('Administrador')">Actualizado</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -52,8 +52,8 @@
           <td>{{ getClientName(vehicle.clientId) }}</td>
           <td>{{ getFuelTypeName(vehicle.fuelTypeId) }}</td>
           <td>{{ getVehicleTypeName(vehicle.vehicleTypeId) }}</td>
-          <td *ngIf="authService.currentUser?.role?.includes('Admin')">{{ vehicle.createdAt | date: 'short' }}</td>
-          <td *ngIf="authService.currentUser?.role?.includes('Admin')">{{ vehicle.updatedAt ? (vehicle.updatedAt | date: 'short') : '—' }}</td>
+          <td *ngIf="authService.currentUser?.rols?.includes('Administrador')">{{ vehicle.createdAt | date: 'short' }}</td>
+          <td *ngIf="authService.currentUser?.rols?.includes('Administrador')">{{ vehicle.updatedAt ? (vehicle.updatedAt | date: 'short') : '—' }}</td>
           <td>
             <button
               class="btn btn-sm btn-outline-light me-2"
@@ -64,14 +64,14 @@
             <button
               class="btn btn-sm btn-outline-danger"
               (click)="delete(vehicle.serialNumber)"
-              *ngIf="authService.currentUser?.role?.includes('Admin')"
+              *ngIf="authService.currentUser?.rols?.includes('Administrador')"
             >
               Eliminar
             </button>
           </td>
         </tr>
         <tr *ngIf="vehicles.length === 0">
-          <td [attr.colspan]="authService.currentUser?.role?.includes('Admin') ? 11 : 9"
+          <td [attr.colspan]="authService.currentUser?.rols?.includes('Administrador') ? 11 : 9"
             class="text-center text-secondary">
             No se encontraron vehículos.
           </td>

@@ -7,7 +7,6 @@ import { ServiceOrder } from '../../../models/service-order';
 import { ServiceType } from '../../../models/service-type';
 import { Vehicle } from '../../../models/vehicle';
 import { UserMember } from '../../../models/user-member';
-import { OrderDetail } from '../../../models/order-detail';
 
 import { MockServiceOrderService } from '../../../services/mock-service-order';
 import { MockServiceTypeService } from '../../../services/mock-service-type';
@@ -55,7 +54,7 @@ export class ServiceOrderListComponent implements OnInit {
     private swalService: SwalService,
     public authService: AuthService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -80,7 +79,6 @@ export class ServiceOrderListComponent implements OnInit {
           Array.isArray(user.role) &&
           user.role.map(r => r.toLowerCase()).includes('mecánico')
         );
-
       },
       error: () => this.swalService.error('Error al cargar usuarios')
     });
@@ -134,15 +132,6 @@ export class ServiceOrderListComponent implements OnInit {
     } else {
       this.serviceOrderService.createServiceOrder(order).subscribe((createdOrder) => {
         this.swalService.success('Orden creada');
-  onFormSubmit(order: ServiceOrder): void {
-    if (this.selectedServiceOrder) {
-      this.serviceOrderService.updateServiceOrder(order.id, order).subscribe(() => {
-        this.swalService.success('Orden actualizada');
-        this.refreshOrders();
-      });
-    } else {
-      this.serviceOrderService.createServiceOrder(order).subscribe((createdOrder) => {
-        this.swalService.success('Orden creada');
 
         if (order.invoiceId) {
           this.serviceOrderService.linkInvoice(createdOrder.id, order.invoiceId).subscribe({
@@ -151,9 +140,6 @@ export class ServiceOrderListComponent implements OnInit {
           });
         }
 
-        this.refreshOrders();
-      });
-    }
         this.refreshOrders();
       });
     }
@@ -193,29 +179,24 @@ export class ServiceOrderListComponent implements OnInit {
   getVehicleDescription(serial: string | null | undefined): string {
     return serial?.trim() || '—';
   }
-  getVehicleDescription(serial: string | null | undefined): string {
-    return serial?.trim() || '—';
+
+  mostrarRepuestos(orderId: number): void {
+    const orden = this.allServiceOrders.find(o => o.id === orderId);
+
+    if (!orden || !orden.orderDetails || orden.orderDetails.length === 0) {
+      this.swalService.info('Esta orden no tiene repuestos asociados.');
+      return;
+    }
+
+    const lista = orden.orderDetails.map((detalle) => {
+      return `<li>Repuesto ID: <strong>${detalle.spareCode}</strong> – Cantidad: <strong>${detalle.spareQuantity}</strong></li>`;
+    }).join('');
+
+    this.swalService.custom({
+      icon: 'info',
+      title: 'Repuestos de la Orden',
+      html: `<ul style="text-align: left; padding-left: 1rem;">${lista}</ul>`,
+      confirmButtonText: 'Cerrar'
+    });
   }
-
-mostrarRepuestos(orderId: number): void {
-  const orden = this.allServiceOrders.find(o => o.id === orderId);
-
-  if (!orden || !orden.orderDetails || orden.orderDetails.length === 0) {
-    this.swalService.info('Esta orden no tiene repuestos asociados.');
-    return;
-  }
-
-  const lista = orden.orderDetails.map((detalle, index) => {
-    return `<li>Repuesto ID: <strong>${detalle.spareCode}</strong> – Cantidad: <strong>${detalle.spareQuantity}</strong></li>`;
-  }).join('');
-
-  this.swalService.custom({
-    icon: 'info',
-    title: 'Repuestos de la Orden',
-    html: `<ul style="text-align: left; padding-left: 1rem;">${lista}</ul>`,
-    confirmButtonText: 'Cerrar'
-  });
-}
-
-
 }
