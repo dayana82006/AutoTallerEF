@@ -5,7 +5,7 @@ import { Client } from '../models/client';
 
 @Injectable({ providedIn: 'root' })
 export class MockClientService {
-  private apiUrl = 'http://localhost:5005/api/Clients'; // Ajusta al nombre real del endpoint
+  private apiUrl = 'http://localhost:5005/api/Clients'; 
 
   constructor(private http: HttpClient) {}
 

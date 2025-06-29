@@ -128,3 +128,14 @@ INSERT INTO service_order (
 (5, 'Revisión de suspensión y dirección', '2025-06-24', '2025-06-25', false, 'GHI654', 105000, 7, 5, 2, '2025-06-24', NULL),
 (6, 'Cambio de pastillas de freno', '2025-06-25', '2025-06-26', true, 'JKL987', 130000, 2, 6, 1, '2025-06-25', NULL),
 (7, 'Revisión general y alineación', '2025-06-26', '2025-06-27', true, 'QWE741', 100000, 5, 7, 1, '2025-06-26', NULL);
+
+INSERT INTO order_details (
+  spare_quantity, id_service_order, code_spare, "CreatedAt", "UpdatedAt"
+) VALUES
+(1, 1, 'SP001', '2025-06-20 00:00:00', '2025-06-20 00:00:00'), -- Filtro de aceite
+(4, 2, 'SP003', '2025-06-21 00:00:00', '2025-06-21 00:00:00'), -- Pastillas de freno
+(1, 3, 'SP002', '2025-06-22 00:00:00', '2025-06-22 00:00:00'), -- Bujías
+(2, 4, 'SP004', '2025-06-23 00:00:00', '2025-06-23 00:00:00'), -- Filtro de aire
+(2, 5, 'SP007', '2025-06-24 00:00:00', '2025-06-24 00:00:00'), -- Amortiguador
+(1, 6, 'SP003', '2025-06-25 00:00:00', '2025-06-25 00:00:00'), -- Pastillas de freno
+(1, 7, 'SP005', '2025-06-26 00:00:00', '2025-06-26 00:00:00'); -- Correa de distribución

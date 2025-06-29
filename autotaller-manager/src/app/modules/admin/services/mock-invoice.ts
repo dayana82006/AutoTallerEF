@@ -7,7 +7,7 @@ import { Invoice } from '../models/invoice';
   providedIn: 'root'
 })
 export class MockInvoiceService {
-  private readonly API_URL = 'http://localhost:5005/api/Invoice'; // Asegúrate que esta ruta coincida con tu backend
+  private readonly API_URL = 'http://localhost:5005/api/Invoice'; 
 
   constructor(private http: HttpClient) {}
 
@@ -21,7 +21,7 @@ export class MockInvoiceService {
 
   getInvoiceByServiceOrderId(serviceOrderId: number): Observable<Invoice> {
     return this.http.get<Invoice>(`${this.API_URL}/ByServiceOrder/${serviceOrderId}`);
-    // Cambia la URL si tu backend usa una ruta diferente
+  
   }
 
   createInvoice(invoice: Omit<Invoice, 'id' | 'createdAt'>): Observable<Invoice> {

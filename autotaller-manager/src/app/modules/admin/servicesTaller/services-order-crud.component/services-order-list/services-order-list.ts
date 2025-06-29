@@ -7,6 +7,7 @@ import { ServiceOrder } from '../../../models/service-order';
 import { ServiceType } from '../../../models/service-type';
 import { Vehicle } from '../../../models/vehicle';
 import { UserMember } from '../../../models/user-member';
+import { OrderDetail } from '../../../models/order-detail';
 
 import { MockServiceOrderService } from '../../../services/mock-service-order';
 import { MockServiceTypeService } from '../../../services/mock-service-type';
@@ -120,32 +121,30 @@ export class ServiceOrderListComponent implements OnInit {
     this.router.navigate(['/admin/invoices', orderId]);
   }
 
-onFormSubmit(order: ServiceOrder): void {
-  if (this.selectedServiceOrder) {
-    this.serviceOrderService.updateServiceOrder(order.id, order).subscribe(() => {
-      this.swalService.success('Orden actualizada');
-      this.refreshOrders();
-    });
-  } else {
-    this.serviceOrderService.createServiceOrder(order).subscribe((createdOrder) => {
-      this.swalService.success('Orden creada');
+  onFormSubmit(order: ServiceOrder): void {
+    if (this.selectedServiceOrder) {
+      this.serviceOrderService.updateServiceOrder(order.id, order).subscribe(() => {
+        this.swalService.success('Orden actualizada');
+        this.refreshOrders();
+      });
+    } else {
+      this.serviceOrderService.createServiceOrder(order).subscribe((createdOrder) => {
+        this.swalService.success('Orden creada');
 
-      // 🔗 Relación con factura
-      if (order.invoiceId) {
-        this.serviceOrderService.linkInvoice(createdOrder.id, order.invoiceId).subscribe({
-          next: () => this.swalService.success('Factura vinculada'),
-          error: () => this.swalService.error('Error al vincular la factura')
-        });
-      }
+        if (order.invoiceId) {
+          this.serviceOrderService.linkInvoice(createdOrder.id, order.invoiceId).subscribe({
+            next: () => this.swalService.success('Factura vinculada'),
+            error: () => this.swalService.error('Error al vincular la factura')
+          });
+        }
 
-      this.refreshOrders();
-    });
+        this.refreshOrders();
+      });
+    }
+
+    this.selectedServiceOrder = null;
+    this.showForm = false;
   }
-
-  this.selectedServiceOrder = null;
-  this.showForm = false;
-}
-
 
   cancelForm(): void {
     this.selectedServiceOrder = null;
@@ -175,11 +174,29 @@ onFormSubmit(order: ServiceOrder): void {
     return this.statuses.find(s => s.id === statusId)?.description ?? 'Desconocido';
   }
 
-getVehicleDescription(serial: string | null | undefined): string {
-  return serial?.trim() || '—';
+  getVehicleDescription(serial: string | null | undefined): string {
+    return serial?.trim() || '—';
+  }
+
+mostrarRepuestos(orderId: number): void {
+  const orden = this.allServiceOrders.find(o => o.id === orderId);
+
+  if (!orden || !orden.orderDetails || orden.orderDetails.length === 0) {
+    this.swalService.info('Esta orden no tiene repuestos asociados.');
+    return;
+  }
+
+  const lista = orden.orderDetails.map((detalle, index) => {
+    return `<li>Repuesto ID: <strong>${detalle.spareCode}</strong> – Cantidad: <strong>${detalle.spareQuantity}</strong></li>`;
+  }).join('');
+
+  this.swalService.custom({
+    icon: 'info',
+    title: 'Repuestos de la Orden',
+    html: `<ul style="text-align: left; padding-left: 1rem;">${lista}</ul>`,
+    confirmButtonText: 'Cerrar'
+  });
 }
-
-
 
 
 }

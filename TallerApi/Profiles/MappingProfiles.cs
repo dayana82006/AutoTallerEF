@@ -28,9 +28,12 @@ namespace TallerApi.Profiles
             CreateMap<OrderDetail, OrderDetailDto>().ReverseMap();
 
             CreateMap<ServiceOrder, ServiceOrderDto>()
-                .ForMember(dest => dest.SerialNumber, opt => opt.MapFrom(src => src.VehicleSerialNumber));
+                .ForMember(dest => dest.SerialNumber, opt => opt.MapFrom(src => src.VehicleSerialNumber))
+                .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails)); // ✅ Agregado
+
             CreateMap<ServiceOrderDto, ServiceOrder>()
-                .ForMember(dest => dest.VehicleSerialNumber, opt => opt.MapFrom(src => src.SerialNumber));
+                .ForMember(dest => dest.VehicleSerialNumber, opt => opt.MapFrom(src => src.SerialNumber))
+                .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails)); // ✅ Agregado
 
             CreateMap<ServiceStatus, ServiceStatusDto>().ReverseMap();
             CreateMap<ServiceType, ServiceTypeDto>().ReverseMap();

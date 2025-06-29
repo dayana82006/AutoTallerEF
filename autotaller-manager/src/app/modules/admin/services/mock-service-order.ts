@@ -33,7 +33,7 @@ export class MockServiceOrderService {
 
   linkInvoice(orderId: number, invoiceId: number): Observable<void> {
   return this.http.post<void>(
-    `http://localhost:5005/api/invoicedetail`, // o el endpoint que expongas
+    `http://localhost:5005/api/invoicedetail`, 
     { serviceOrderId: orderId, invoiceId }
   );
 }

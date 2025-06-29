@@ -2,14 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { forkJoin, of, switchMap } from 'rxjs';
+
 import { Invoice } from '../models/invoice';
 import { ServiceOrder } from '../models/service-order';
 import { Vehicle } from '../models/vehicle';
 import { Client } from '../models/client';
+import { OrderDetail } from '../models/order-detail';
+import { Spare } from '../models/spare';
+
 import { MockInvoiceService } from '../services/mock-invoice';
 import { MockServiceOrderService } from '../services/mock-service-order';
 import { MockVehicleService } from '../services/mock-vehicle';
 import { MockClientService } from '../services/mock-client';
+import { MockSpareService } from '../services/mock-spares';
 import { AuthService } from '../../auth/services/auth';
 
 @Component({
@@ -30,6 +35,7 @@ export class InvoicePageComponent implements OnInit {
     private serviceOrderService: MockServiceOrderService,
     private vehicleService: MockVehicleService,
     private clientService: MockClientService,
+    private spareService: MockSpareService,
     public authService: AuthService
   ) {}
 
@@ -39,7 +45,6 @@ export class InvoicePageComponent implements OnInit {
 
   ngOnInit(): void {
     const orderId = Number(this.route.snapshot.paramMap.get('id'));
-    console.log('📦 ID de la orden desde la URL:', orderId);
 
     this.invoiceService.getInvoices().pipe(
       switchMap(invoices => {
@@ -48,30 +53,38 @@ export class InvoicePageComponent implements OnInit {
         );
 
         if (!invoice) {
-          console.log('⚠️ No se encontró factura, intentando crear una nueva...');
-
           return this.serviceOrderService.getServiceOrderById(orderId).pipe(
             switchMap(order => {
-              if (!order) {
-                console.log('❌ No se encontró la orden');
-                return of(null);
-              }
-
+              if (!order) return of(null);
               this.serviceOrder = order;
 
-              return this.vehicleService.getVehicleBySerialNumber(order.serialNumber).pipe(
-                switchMap(vehicle => {
-                  if (!vehicle) {
-                    console.log('❌ No se encontró el vehículo');
-                    return of(null);
+              return forkJoin({
+                vehicle: this.vehicleService.getVehicleBySerialNumber(order.serialNumber),
+                clients: this.clientService.getAll(),
+                spares: this.spareService.getAll()
+              }).pipe(
+                switchMap(({ vehicle, clients, spares }) => {
+                  if (!vehicle) return of(null);
+                  this.vehicle = vehicle;
+                  this.client = clients.find(c => c.id === vehicle.clientId);
+
+                  const repuestos: OrderDetail[] = order.orderDetails ?? [];
+
+                  let totalSpares = 0;
+                  for (const r of repuestos) {
+                    const repuestoCompleto = spares.find(s => s.code === r.spareCode);
+                    if (repuestoCompleto) {
+                      totalSpares += (repuestoCompleto.unitPrice || 0) * (r.spareQuantity || 0);
+                    }
                   }
 
-                  this.vehicle = vehicle;
+                  const totalServices = order.unitPrice;
+                  const finalAmount = totalServices + totalSpares;
 
                   const newInvoice: Omit<Invoice, 'id' | 'createdAt'> = {
-                    totalSpares: 70000,
-                    totalServices: order.unitPrice,
-                    finalAmount: order.unitPrice + 70000,
+                    totalSpares,
+                    totalServices,
+                    finalAmount,
                     clientId: vehicle.clientId,
                     invoiceDetails: [
                       {
@@ -83,25 +96,18 @@ export class InvoicePageComponent implements OnInit {
                     ]
                   };
 
-                  console.log('✅ Creando factura con:', newInvoice);
                   return this.invoiceService.createInvoice(newInvoice);
                 })
               );
             })
           );
         } else {
-          console.log('✅ Factura encontrada:', invoice);
           this.invoice = invoice;
-
           const serviceOrderId = invoice.invoiceDetails[0].serviceOrderId;
 
           return this.serviceOrderService.getServiceOrderById(serviceOrderId).pipe(
             switchMap(order => {
-              if (!order) {
-                console.log('❌ No se encontró la orden asociada a la factura');
-                return of(null);
-              }
-
+              if (!order) return of(null);
               this.serviceOrder = order;
 
               return forkJoin({
@@ -115,7 +121,6 @@ export class InvoicePageComponent implements OnInit {
     ).subscribe(result => {
       if (result && 'id' in result) {
         this.invoice = result as Invoice;
-
         const serviceOrderId = this.invoice.invoiceDetails[0].serviceOrderId;
 
         this.serviceOrderService.getServiceOrderById(serviceOrderId).pipe(
@@ -136,8 +141,6 @@ export class InvoicePageComponent implements OnInit {
       } else if (result?.vehicle && result?.clients) {
         this.vehicle = result.vehicle;
         this.client = result.clients.find(c => c.id === result.vehicle!.clientId);
-      } else {
-        console.log('⚠️ No se pudo cargar toda la información');
       }
     });
   }

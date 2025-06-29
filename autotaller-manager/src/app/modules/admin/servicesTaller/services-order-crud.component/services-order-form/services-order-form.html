@@ -90,6 +90,28 @@
       </div>
     </div>
 
+    <!-- Repuestos -->
+<div class="mb-3">
+  <label class="form-label text-white">Repuestos</label>
+  <div *ngFor="let repuesto of repuestosSeleccionados; let i = index" class="mb-2 d-flex align-items-center gap-2">
+    <select class="form-select" style="flex: 1"
+      [(ngModel)]="repuesto.codeSpare"
+      name="repuesto_{{ i }}_spare"
+      required>
+      <option [ngValue]="null" disabled>Seleccione un repuesto</option>
+      <option *ngFor="let s of spares" [value]="s.code">{{ s.description }}</option>
+    </select>
+    <input type="number" class="form-control" style="width: 120px"
+      [(ngModel)]="repuesto.spareQuantity"
+      name="repuesto_{{ i }}_cantidad"
+      min="1" required placeholder="Cantidad"/>
+    <button type="button" class="btn btn-danger btn-sm" (click)="eliminarRepuesto(i)">✕</button>
+  </div>
+
+  <button type="button" class="btn btn-outline-light mt-2" (click)="agregarRepuesto()">+ Añadir Repuesto</button>
+</div>
+
+
     <!-- Aprobado -->
     <div class="form-check mb-4">
       <input class="form-check-input" type="checkbox" [(ngModel)]="serviceOrder.approvedByClient"
