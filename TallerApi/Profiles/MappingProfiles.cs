@@ -17,14 +17,23 @@ namespace TallerApi.Profiles
             CreateMap<Brand, BrandDto>().ReverseMap();
             CreateMap<Client, ClientDto>().ReverseMap();
             CreateMap<FuelType, FuelTypeDto>().ReverseMap();
-            CreateMap<Invoice, InvoiceDto>().ReverseMap();
+
+            CreateMap<Invoice, InvoiceDto>()
+                .ForMember(dest => dest.InvoiceDetails, opt => opt.MapFrom(src => src.InvoiceDetails));
+            CreateMap<InvoiceDto, Invoice>()
+                .ForMember(dest => dest.InvoiceDetails, opt => opt.MapFrom(src => src.InvoiceDetails));
+
             CreateMap<InvoiceDetail, InvoiceDetailDto>().ReverseMap();
+
             CreateMap<OrderDetail, OrderDetailDto>().ReverseMap();
 
             CreateMap<ServiceOrder, ServiceOrderDto>()
-                .ForMember(dest => dest.SerialNumber, opt => opt.MapFrom(src => src.VehicleSerialNumber));
+                .ForMember(dest => dest.SerialNumber, opt => opt.MapFrom(src => src.VehicleSerialNumber))
+                .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails)); // ✅ Agregado
+
             CreateMap<ServiceOrderDto, ServiceOrder>()
-                .ForMember(dest => dest.VehicleSerialNumber, opt => opt.MapFrom(src => src.SerialNumber));
+                .ForMember(dest => dest.VehicleSerialNumber, opt => opt.MapFrom(src => src.SerialNumber))
+                .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails)); // ✅ Agregado
 
             CreateMap<ServiceStatus, ServiceStatusDto>().ReverseMap();
             CreateMap<ServiceType, ServiceTypeDto>().ReverseMap();

@@ -62,7 +62,7 @@ export class VehicleFormComponent implements OnInit {
       this.clients = data;
     });
 
-    const serial = this.route.snapshot.paramMap.get('id'); // Aquí sigue viniendo como "id" en la URL
+    const serial = this.route.snapshot.paramMap.get('id');  
     if (serial && serial !== '0') {
       this.editingSerialNumber = serial;
       this.editMode = true;
@@ -120,13 +120,11 @@ save(): void {
       error: () => this.swalService.error('Error al actualizar el vehículo')
     });
   } else {
-    // ✅ Validación previa: verificar si ya existe un vehículo con ese serial
     this.vehicleService.getVehicleBySerialNumber(serial).subscribe({
       next: (existingVehicle) => {
         if (existingVehicle) {
           this.swalService.error(`Ya existe un vehículo con el número de serie "${serial}".`);
         } else {
-          // Si no existe, entonces crearlo
           const newVehicle: Omit<Vehicle, 'id'> = {
             serialNumber: serial,
             releaseYear: this.vehicle.releaseYear,

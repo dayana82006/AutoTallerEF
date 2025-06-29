@@ -73,7 +73,7 @@ export class UserListComponent implements OnInit {
       if (confirmed) {
         this.userService.deleteUser(id).subscribe({
           next: () => {
-            this.loadUsers(); // recargar usuarios luego de eliminar
+            this.loadUsers(); 
           },
           error: err => {
             console.error('❌ Error al eliminar usuario:', err);

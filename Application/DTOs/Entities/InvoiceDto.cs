@@ -14,5 +14,6 @@ namespace Application.DTOs.Entities
         public int ClientId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
+        public List<InvoiceDetailDto> InvoiceDetails { get; set; } = new();
     }
 }

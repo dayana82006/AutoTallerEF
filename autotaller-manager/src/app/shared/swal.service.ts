@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import Swal from 'sweetalert2';
+import Swal, { SweetAlertOptions } from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
@@ -51,6 +51,15 @@ export class SwalService {
       confirmButtonColor: '#3085d6',
       background: '#212529',
       color: '#fff'
+    });
+  }
+
+    custom(options: SweetAlertOptions): void {
+    Swal.fire({
+      background: '#212529',
+      color: '#fff',
+      confirmButtonColor: '#3085d6',
+      ...options
     });
   }
 }

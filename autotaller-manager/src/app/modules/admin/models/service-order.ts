@@ -1,3 +1,4 @@
+import { OrderDetail } from "./order-detail";
 import { ServiceType } from "./service-type";
 import { User } from "./user";
 import { UserMember } from "./user-member";
@@ -14,4 +15,6 @@ export interface ServiceOrder {
   createdAt?: Date;
   updatedAt?: Date;
   invoiceId: number;
+  
+  orderDetails?: OrderDetail[];
 }

@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class MockAnormalityService {
-  private baseUrl = 'http://localhost:5005/api/VehicleAnormality'; // cambia si usas otro puerto/ruta
+  private baseUrl = 'http://localhost:5005/api/VehicleAnormality'; 
 
   constructor(private http: HttpClient) {}
 
