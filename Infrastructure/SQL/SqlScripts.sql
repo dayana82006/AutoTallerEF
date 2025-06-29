@@ -4,20 +4,26 @@ DECLARE
     v_total_services NUMERIC := 0;
     v_total_spares NUMERIC := 0;
 BEGIN
-    -- Calcular el total de servicios desde service_order
-    SELECT COALESCE(SUM(so.unit_price), 0)
-    INTO v_total_services
+    -- Calcular el total de servicios sin duplicar órdenes de servicio
+SELECT COALESCE(SUM(unit_price), 0)
+INTO v_total_services
+FROM (
+    SELECT DISTINCT so.id, so.unit_price
     FROM invoice_details idet
     JOIN service_order so ON so.id = idet.id_service_order
-    WHERE idet.id_invoice = p_invoice_id;
+    WHERE idet.id_invoice = p_invoice_id
+) AS unique_services;
 
-    -- Calcular el total de repuestos desde order_details + spares
+    -- Calcular el total de repuestos sin duplicar repuestos
     SELECT COALESCE(SUM(od.spare_quantity * sp.unit_price), 0)
     INTO v_total_spares
-    FROM order_details od
-    JOIN spares sp ON sp.code = od.code_spare
-    JOIN invoice_details idet ON idet.id_service_order = od.id_service_order
-    WHERE idet.id_invoice = p_invoice_id;
+    FROM (
+        SELECT DISTINCT od.id, od.spare_quantity, od.code_spare
+        FROM order_details od
+        JOIN invoice_details idet ON idet.id_service_order = od.id_service_order
+        WHERE idet.id_invoice = p_invoice_id
+    ) AS od
+    JOIN spares sp ON sp.code = od.code_spare;
 
     -- Actualizar los campos de la factura
     UPDATE invoices
