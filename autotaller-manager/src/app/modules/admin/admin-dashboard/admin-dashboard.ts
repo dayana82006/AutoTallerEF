@@ -49,7 +49,8 @@ export class AdminDashboardComponent implements AfterViewInit {
 
       const register = (items: any[], entity: string) => {
         items.forEach(item => {
-          if (item.createdAt) actions.push({ date: this.formatDate(item.createdAt), action: 'create', entity });
+          if (item.createdAt)
+            actions.push({ date: this.formatDate(item.createdAt), action: 'create', entity });
           if (item.updatedAt && item.updatedAt !== item.createdAt)
             actions.push({ date: this.formatDate(item.updatedAt), action: 'update', entity });
         });
@@ -105,10 +106,12 @@ export class AdminDashboardComponent implements AfterViewInit {
       }
     });
 
-    const entityGroup = this.audits.reduce((acc, a) => {
-      acc[a.entity] = (acc[a.entity] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const entityGroup = this.audits
+      .filter(a => a.action === 'create')
+      .reduce((acc, a) => {
+        acc[a.entity] = (acc[a.entity] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
 
     new Chart('entityDistributionChart', {
       type: 'doughnut',
@@ -137,14 +140,30 @@ export class AdminDashboardComponent implements AfterViewInit {
       }
     });
 
+    const statusMap: Record<number, string> = {
+      1: 'Pendiente',
+      2: 'En Proceso',
+      3: 'Finalizado',
+      4: 'Cancelado'
+    };
+
     const orderStatus = orders.reduce((acc, o) => {
-      acc[o.status.description] = (acc[o.status.description] || 0) + 1;
+      let statusId: number | undefined;
+
+      if (typeof o.status === 'number') {
+        statusId = o.status;
+      } else if (typeof o.status === 'object' && o.status?.id) {
+        statusId = o.status.id;
+      } else if (typeof o.statusId === 'number') {
+        statusId = o.statusId;
+      } else if (typeof o.id_status === 'number') {
+        statusId = o.id_status;
+      }
+
+      const status = statusMap[statusId!] || 'Desconocido';
+      acc[status] = (acc[status] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
-
-    const orderStatusColors = Object.keys(orderStatus).map(status =>
-      status.toLowerCase().includes('pendiente') ? '#ef4444' : '#10b981'
-    );
 
     new Chart('orderStatusChart', {
       type: 'bar',
@@ -153,27 +172,45 @@ export class AdminDashboardComponent implements AfterViewInit {
         datasets: [{
           label: 'Órdenes por Estado',
           data: Object.values(orderStatus),
-          backgroundColor: orderStatusColors
+          backgroundColor: Object.keys(orderStatus).map(status =>
+            status.toLowerCase().includes('pendiente') ? '#ef4444' : '#10b981'
+          )
         }]
       }
     });
 
-    const vehiclesByClient = clients.map(c => ({
-      label: `${c.name} ${c.lastname}`,
-      count: vehicles.filter(v => v.clientId === c.id).length
-    })).filter(v => v.count > 0);
+    const vehiclesByClient = clients.map(c => {
+      const count = vehicles.filter(v => v.clientId === c.id).length;
+      return {
+        label: `${c.name} ${c.lastname}`,
+        count
+      };
+    }).filter(v => v.count > 0);
 
-    new Chart('vehiclesByClientChart', {
-      type: 'bar',
-      data: {
-        labels: vehiclesByClient.map(v => v.label),
-        datasets: [{
-          label: 'Vehículos por Cliente',
-          data: vehiclesByClient.map(v => v.count),
-          backgroundColor: '#3b82f6'
-        }]
+    if (vehiclesByClient.length > 0) {
+      new Chart('vehiclesByClientChart', {
+        type: 'bar',
+        data: {
+          labels: vehiclesByClient.map(v => v.label),
+          datasets: [{
+            label: 'Vehículos por Cliente',
+            data: vehiclesByClient.map(v => v.count),
+            backgroundColor: '#3b82f6'
+          }]
+        }
+      });
+    } else {
+      const canvas = document.getElementById('vehiclesByClientChart') as HTMLCanvasElement;
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.font = '16px sans-serif';
+          ctx.fillStyle = '#ffffff';
+          ctx.textAlign = 'center';
+          ctx.fillText('Sin datos para mostrar', canvas.width / 2, canvas.height / 2);
+        }
       }
-    });
+    }
   }
 
   getAuditStats(type: 'create' | 'update') {

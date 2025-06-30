@@ -4,7 +4,7 @@ import { User } from "./user";
 import { UserMember } from "./user-member";
 import { Vehicle } from "./vehicle";
 export interface ServiceOrder {
-  id: number;
+  id?: number;
   description: string;
   approvedByClient: boolean;
   serialNumber: string; 
@@ -14,7 +14,7 @@ export interface ServiceOrder {
   serviceStatusId: number; 
   createdAt?: Date;
   updatedAt?: Date;
-  invoiceId: number;
+  invoiceId?: number;
   
   orderDetails?: OrderDetail[];
 }

@@ -67,9 +67,9 @@
           </td>
           <td>
             <button class="btn btn-sm btn-outline-light me-2" (click)="edit(order)">Editar</button>
-            <button class="btn btn-sm btn-outline-success me-2" (click)="viewInvoice(order.id)">Ver Factura</button>
-            <button class="btn btn-sm btn-info me-2" (click)="mostrarRepuestos(order.id)">Ver Repuestos</button>
-            <button class="btn btn-sm btn-outline-danger" (click)="delete(order.id)">Eliminar</button>
+<button class="btn btn-success me-2" (click)="order.id && viewInvoice(order.id)">Ver Factura</button>
+<button class="btn btn-info me-2" (click)="order.id && mostrarRepuestos(order.id)">Ver Repuestos</button>
+<button class="btn btn-outline-danger" (click)="order.id && delete(order.id)">Eliminar</button>
           </td>
         </tr>
 

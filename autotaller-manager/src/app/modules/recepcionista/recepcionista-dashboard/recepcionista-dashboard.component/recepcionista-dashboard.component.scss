@@ -1,10 +1,56 @@
 .dashboard-container {
-  padding: 2rem;
+  padding: 1.5rem 1rem;
   background-color: #1f2937;
   border-radius: 1rem;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  margin-top: 80px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
+  margin: 40px auto;
+  max-width: 1200px;
 }
+
+.charts-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.chart-box {
+  background: #111827;
+  border: 1px solid #374151;
+  padding: 1rem;
+  border-radius: 1rem;
+  flex: 1 1 100%;
+  max-width: 500px;
+  min-width: 280px;
+  height: 320px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.chart-title {
+  color: #d1d5db;
+  text-align: center;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+canvas {
+  flex: 1;
+  width: 100% !important;
+  height: auto !important;
+}
+
+@media (min-width: 768px) {
+  .chart-box {
+    flex: 1 1 calc(50% - 1rem);
+    max-width: calc(50% - 1rem);
+  }
+}
+
 
 .charts-row {
   display: flex;

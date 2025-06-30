@@ -1,7 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core';
 import Chart from 'chart.js/auto';
 import { MockServiceOrderService } from '../../../admin/services/mock-service-order';
-import { AuthService } from '../../../auth/services/auth';
 
 @Component({
   selector: 'app-mecanico-dashboard',
@@ -9,10 +8,7 @@ import { AuthService } from '../../../auth/services/auth';
   styleUrls: ['./mecanico-dashboard.component.scss']
 })
 export class MecanicoDashboardComponent implements AfterViewInit {
-  constructor(
-    private orderService: MockServiceOrderService,
-    private authService: AuthService
-  ) {}
+  constructor(private orderService: MockServiceOrderService) {}
 
   ngAfterViewInit(): void {
     this.loadData();
@@ -21,43 +17,41 @@ export class MecanicoDashboardComponent implements AfterViewInit {
   loadData() {
     this.orderService.getServiceOrders().subscribe(orders => {
       if (!orders) return;
-
-      const myOrders = orders;
-
-      this.renderStatusChart(myOrders);
-      this.renderDailyWorkChart(myOrders);
-      this.renderProgressChart(myOrders);
+      this.renderTotalOrdersChart(orders);
+      this.renderDailyWorkChart(orders);
     });
   }
 
-  renderStatusChart(orders: any[]) {
-    const grouped = orders.reduce((acc, o) => {
-      acc[o.status.description] = (acc[o.status.description] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-    new Chart('statusChart', {
+  renderTotalOrdersChart(orders: any[]) {
+    new Chart('totalOrdersChart', {
       type: 'bar',
       data: {
-        labels: Object.keys(grouped),
+        labels: ['Órdenes Totales'],
         datasets: [{
-          label: 'Órdenes por estado',
-          data: Object.values(grouped),
-          backgroundColor: ['#3b82f6', '#facc15', '#10b981']
+          label: 'Cantidad',
+          data: [orders.length],
+          backgroundColor: '#3b82f6',
+          borderRadius: 10
         }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
       }
     });
   }
 
   renderDailyWorkChart(orders: any[]) {
+    const today = new Date();
     const days = [...Array(7)].map((_, i) => {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      return d.toDateString();
-    }).reverse();
+      const d = new Date(today);
+      d.setDate(d.getDate() - (6 - i));
+      return d.toISOString().split('T')[0];
+    });
 
-    const count = days.map(day =>
-      orders.filter(o => new Date(o.entryDate).toDateString() === day).length
+    const counts = days.map(date =>
+      orders.filter(o => new Date(o.createdAt).toISOString().split('T')[0] === date).length
     );
 
     new Chart('dailyWorkChart', {
@@ -65,27 +59,17 @@ export class MecanicoDashboardComponent implements AfterViewInit {
       data: {
         labels: days,
         datasets: [{
-          label: 'Órdenes por día',
-          data: count,
+          label: 'Órdenes por Día',
+          data: counts,
           borderColor: '#4ade80',
+          backgroundColor: '#4ade80',
           tension: 0.3
         }]
-      }
-    });
-  }
-
-  renderProgressChart(orders: any[]) {
-    const estados = ['Pendiente', 'En proceso', 'Completada'];
-    const data = estados.map(e => orders.filter(o => o.status.description === e).length);
-
-    new Chart('progressChart', {
-      type: 'pie',
-      data: {
-        labels: estados,
-        datasets: [{
-          data,
-          backgroundColor: ['#f87171', '#facc15', '#10b981']
-        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
       }
     });
   }

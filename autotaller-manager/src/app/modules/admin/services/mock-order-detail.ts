@@ -7,7 +7,7 @@ import { OrderDetail } from '../models/order-detail';
   providedIn: 'root'
 })
 export class MockOrderDetailService {
-  private readonly API_URL = 'http://localhost:5005/api/OrderDetails';
+  private readonly API_URL = 'http://localhost:5005/api/OrderDetail';
 
   constructor(private http: HttpClient) {}
 

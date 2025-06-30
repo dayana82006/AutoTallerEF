@@ -32,10 +32,16 @@ export class MockServiceOrderService {
   }
 
   linkInvoice(orderId: number, invoiceId: number): Observable<void> {
-  return this.http.post<void>(
-    `http://localhost:5005/api/invoicedetail`, 
-    { serviceOrderId: orderId, invoiceId }
-  );
-}
+    return this.http.post<void>(
+      'http://localhost:5005/api/invoicedetail', 
+      { serviceOrderId: orderId, invoiceId }
+    );
+  }
 
+  createInvoiceForOrder(orderId: number): Observable<any> {
+    return this.http.post<any>(
+      'http://localhost:5005/api/invoice', 
+      { serviceOrderId: orderId }
+    );
+  }
 }
