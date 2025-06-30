@@ -54,7 +54,7 @@ export class ServiceOrderListComponent implements OnInit {
     private swalService: SwalService,
     public authService: AuthService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -77,9 +77,8 @@ export class ServiceOrderListComponent implements OnInit {
       next: (data) => {
         this.users = data.filter(user =>
           Array.isArray(user.role) &&
-          user.role.map(r => r.toLowerCase()).includes('mecánico')
+          user.role.map(r => r.toLowerCase()).includes('Mecanico')
         );
-
       },
       error: () => this.swalService.error('Error al cargar usuarios')
     });
@@ -134,7 +133,6 @@ export class ServiceOrderListComponent implements OnInit {
       this.serviceOrderService.createServiceOrder(order).subscribe((createdOrder) => {
         this.swalService.success('Orden creada');
 
-        // 🔗 Relación con factura
         if (order.invoiceId) {
           this.serviceOrderService.linkInvoice(createdOrder.id, order.invoiceId).subscribe({
             next: () => this.swalService.success('Factura vinculada'),
@@ -149,7 +147,6 @@ export class ServiceOrderListComponent implements OnInit {
     this.selectedServiceOrder = null;
     this.showForm = false;
   }
-
 
   cancelForm(): void {
     this.selectedServiceOrder = null;
@@ -183,7 +180,23 @@ export class ServiceOrderListComponent implements OnInit {
     return serial?.trim() || '—';
   }
 
+  mostrarRepuestos(orderId: number): void {
+    const orden = this.allServiceOrders.find(o => o.id === orderId);
 
+    if (!orden || !orden.orderDetails || orden.orderDetails.length === 0) {
+      this.swalService.info('Esta orden no tiene repuestos asociados.');
+      return;
+    }
 
+    const lista = orden.orderDetails.map((detalle) => {
+      return `<li>Repuesto ID: <strong>${detalle.spareCode}</strong> – Cantidad: <strong>${detalle.spareQuantity}</strong></li>`;
+    }).join('');
 
+    this.swalService.custom({
+      icon: 'info',
+      title: 'Repuestos de la Orden',
+      html: `<ul style="text-align: left; padding-left: 1rem;">${lista}</ul>`,
+      confirmButtonText: 'Cerrar'
+    });
+  }
 }

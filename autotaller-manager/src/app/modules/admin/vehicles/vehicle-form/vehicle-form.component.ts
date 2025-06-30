@@ -9,7 +9,6 @@ import { FuelType } from '../../models/fuel-type';
 import { Client } from '../../models/client';
 import { VehicleType } from '../../models/vehicle-type';
 
-
 import { MockFuelTypes } from '../../services/mock-fuel-types';
 import { MockVehicleModel } from '../../services/mock-vehicle-models';
 import { MockClientService } from '../../services/mock-client';
@@ -42,7 +41,7 @@ export class VehicleFormComponent implements OnInit {
   fuelTypes: FuelType[] = [];
   clients: Client[] = [];
   vehicleTypes: VehicleType[] = [];
-  editingSerialNumber: string | null = null;  // CAMBIO
+  editingSerialNumber: string | null = null;
   editMode = false;
 
   constructor(
@@ -62,7 +61,7 @@ export class VehicleFormComponent implements OnInit {
       this.clients = data;
     });
 
-    const serial = this.route.snapshot.paramMap.get('id'); // Aquí sigue viniendo como "id" en la URL
+    const serial = this.route.snapshot.paramMap.get('id');
     if (serial && serial !== '0') {
       this.editingSerialNumber = serial;
       this.editMode = true;
@@ -94,62 +93,67 @@ export class VehicleFormComponent implements OnInit {
     });
   }
 
-save(): void {
-  this.vehicle.vehicleModelId = Number(this.vehicle.vehicleModelId);
-  this.vehicle.clientId = Number(this.vehicle.clientId);
-  this.vehicle.fuelTypeId = Number(this.vehicle.fuelTypeId);
-  this.vehicle.vehicleTypeId = Number(this.vehicle.vehicleTypeId);
+  save(): void {
+    this.vehicle.vehicleModelId = Number(this.vehicle.vehicleModelId);
+    this.vehicle.clientId = Number(this.vehicle.clientId);
+    this.vehicle.fuelTypeId = Number(this.vehicle.fuelTypeId);
+    this.vehicle.vehicleTypeId = Number(this.vehicle.vehicleTypeId);
 
-  const serial = this.vehicle.serialNumber.trim();
+    const serial = this.vehicle.serialNumber.trim();
 
-  if (
-    !serial ||
-    !this.vehicle.releaseYear ||
-    !this.vehicle.km ||
-    !this.vehicle.vehicleModelId ||
-    !this.vehicle.clientId ||
-    !this.vehicle.fuelTypeId
-  ) {
-    this.swalService.error('Por favor completa todos los campos obligatorios');
-    return;
-  }
+    if (
+      !serial ||
+      !this.vehicle.releaseYear ||
+      !this.vehicle.km ||
+      !this.vehicle.vehicleModelId ||
+      !this.vehicle.clientId ||
+      !this.vehicle.fuelTypeId
+    ) {
+      this.swalService.error('Por favor completa todos los campos obligatorios');
+      return;
+    }
 
-  if (this.editMode && this.editingSerialNumber) {
-    this.vehicleService.updateVehicle(this.editingSerialNumber, this.vehicle).subscribe({
-      next: () => this.formSubmitted.emit(),
-      error: () => this.swalService.error('Error al actualizar el vehículo')
-    });
-  } else {
-    // ✅ Validación previa: verificar si ya existe un vehículo con ese serial
-    this.vehicleService.getVehicleBySerialNumber(serial).subscribe({
-      next: (existingVehicle) => {
-        if (existingVehicle) {
-          this.swalService.error(`Ya existe un vehículo con el número de serie "${serial}".`);
-        } else {
-          // Si no existe, entonces crearlo
-          const newVehicle: Omit<Vehicle, 'id'> = {
-            serialNumber: serial,
-            releaseYear: this.vehicle.releaseYear,
-            km: this.vehicle.km,
-            vehicleModelId: this.vehicle.vehicleModelId,
-            clientId: this.vehicle.clientId,
-            fuelTypeId: this.vehicle.fuelTypeId,
-            vehicleTypeId: this.vehicle.vehicleTypeId
-          };
-
-          this.vehicleService.createVehicle(newVehicle).subscribe({
-            next: () => this.formSubmitted.emit(),
-            error: () => this.swalService.error('Error al crear el vehículo')
-          });
+    if (this.editMode && this.editingSerialNumber) {
+      this.vehicleService.updateVehicle(this.editingSerialNumber, this.vehicle).subscribe({
+        next: () => this.formSubmitted.emit(),
+        error: () => this.swalService.error('Error al actualizar el vehículo')
+      });
+    } else {
+      this.vehicleService.getVehicleBySerialNumber(serial).subscribe({
+        next: (existingVehicle) => {
+          if (existingVehicle) {
+            this.swalService.error(`Ya existe un vehículo con el número de serie "${serial}".`);
+          } else {
+            this.createNewVehicle(serial);
+          }
+        },
+        error: (err) => {
+          if (err.status === 404) {
+            this.createNewVehicle(serial);
+          } else {
+            this.swalService.error('Error al validar el número de serie');
+          }
         }
-      },
-      error: () => {
-        this.swalService.error('Error al validar el número de serie');
-      }
+      });
+    }
+  }
+
+  private createNewVehicle(serial: string): void {
+    const newVehicle: Omit<Vehicle, 'id'> = {
+      serialNumber: serial,
+      releaseYear: this.vehicle.releaseYear,
+      km: this.vehicle.km,
+      vehicleModelId: this.vehicle.vehicleModelId,
+      clientId: this.vehicle.clientId,
+      fuelTypeId: this.vehicle.fuelTypeId,
+      vehicleTypeId: this.vehicle.vehicleTypeId
+    };
+
+    this.vehicleService.createVehicle(newVehicle).subscribe({
+      next: () => this.formSubmitted.emit(),
+      error: () => this.swalService.error('Error al crear el vehículo')
     });
   }
-}
-
 
   cancel(): void {
     this.cancelForm.emit();

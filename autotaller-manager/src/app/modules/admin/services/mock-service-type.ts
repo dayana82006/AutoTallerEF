@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class MockServiceTypeService {
-  private baseUrl = 'http://localhost:5005/api/ServiceType'; // Ajusta el puerto y ruta si es necesario
+  private baseUrl = 'http://localhost:5005/api/ServiceType';  
 
   constructor(private http: HttpClient) {}
 

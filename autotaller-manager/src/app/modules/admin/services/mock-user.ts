@@ -21,7 +21,7 @@ export class MockUserService {
     const roleAliasMap: Record<string, string> = {
       'Admin': 'Administrador',
       'Receptionist': 'Recepcionista',
-      'Mechanic': 'Mecánico'
+      'Mechanic': 'Mecanico'
     };
 
     const normalizedRole = roleAliasMap[user.role[0]] ?? user.role;
@@ -39,7 +39,7 @@ export class MockUserService {
     const roleAliasMap: Record<string, string> = {
       'Admin': 'Administrador',
       'Receptionist': 'Recepcionista',
-      'Mechanic': 'Mecánico'
+      'Mechanic': 'Mecanico'
     };
 
     const normalizedRole = roleAliasMap[user.role[0]] ?? user.role;

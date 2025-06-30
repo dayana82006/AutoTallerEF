@@ -38,8 +38,8 @@
           <th>Aprobado</th>
           <th>Estado</th>
           <th>Precio</th>
-          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Creado</th>
-          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Actualizado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('Administrador')">Creado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('Administrador')">Actualizado</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -59,40 +59,23 @@
           </td>
           <td>{{ getStatusDescription(order.serviceStatusId) }}</td>
           <td>{{ order.unitPrice | currency:'COP':'symbol':'1.0-0' }}</td>
-          <td *ngIf="authService.currentUser?.role?.includes('Admin')">
+          <td *ngIf="authService.currentUser?.rols?.includes('Administrador')">
             {{ order.createdAt | date: 'short' }}
           </td>
-          <td *ngIf="authService.currentUser?.role?.includes('Admin')">
+          <td *ngIf="authService.currentUser?.rols?.includes('Administrador')">
             {{ order.updatedAt | date: 'short' }}
           </td>
           <td>
-            <button
-              class="btn btn-sm btn-outline-light me-2"
-              (click)="edit(order)"
-            >
-              Editar
-            </button>
-            
-            <button
-              class="btn btn-sm btn-outline-success"
-             *ngIf="authService.currentUser?.role?.includes('Admin') || authService.currentUser?.role?.includes('Mecanico')"
-
-              (click)="viewInvoice(order.id)"
-            >
-              Ver Factura
-            </button>
-            <button
-              class="btn btn-sm btn-outline-danger"
-              (click)="delete(order.id)"
-            >
-              Eliminar
-            </button>
+            <button class="btn btn-sm btn-outline-light me-2" (click)="edit(order)">Editar</button>
+            <button class="btn btn-sm btn-outline-success me-2" (click)="viewInvoice(order.id)">Ver Factura</button>
+            <button class="btn btn-sm btn-info me-2" (click)="mostrarRepuestos(order.id)">Ver Repuestos</button>
+            <button class="btn btn-sm btn-outline-danger" (click)="delete(order.id)">Eliminar</button>
           </td>
         </tr>
 
         <tr *ngIf="serviceOrders.length === 0">
           <td
-           [attr.colspan]="authService.currentUser?.role?.includes('Admin') ? 11 : 9"
+           [attr.colspan]="authService.currentUser?.rols?.includes('Administrador') ? 11 : 9"
             class="text-center text-secondary"
           >
             No se encontraron órdenes.

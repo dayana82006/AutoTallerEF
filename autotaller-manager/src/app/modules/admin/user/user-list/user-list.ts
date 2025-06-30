@@ -48,7 +48,7 @@ export class UserListComponent implements OnInit {
       user.name.toLowerCase().includes(searchLower) ||
       user.lastname.toLowerCase().includes(searchLower) ||
       user.email.toLowerCase().includes(searchLower) ||
-     (user.role[0] || '').toLowerCase()
+      user.role.toLowerCase().includes(searchLower)
     );
 
     this.total = this.filteredUsers.length;
@@ -73,7 +73,7 @@ export class UserListComponent implements OnInit {
       if (confirmed) {
         this.userService.deleteUser(id).subscribe({
           next: () => {
-            this.loadUsers(); // recargar usuarios luego de eliminar
+            this.loadUsers(); 
           },
           error: err => {
             console.error('❌ Error al eliminar usuario:', err);

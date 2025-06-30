@@ -47,8 +47,8 @@
           <th>Descripción</th>
           <th>Stock</th>
           <th>Precio Unitario</th>
-          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Creado</th>
-          <th *ngIf="authService.currentUser?.role?.includes('Admin')">Actualizado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('Administrador')">Creado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('Administrador')">Actualizado</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -58,10 +58,10 @@
           <td>{{ s.description || "-" }}</td>
           <td>{{ s.stockQuantity }}</td>
           <td>${{ s.unitPrice | number : "1.0-0" }}</td>
-          <td *ngIf="authService.currentUser?.role?.includes('Admin')">
+          <td *ngIf="authService.currentUser?.rols?.includes('Administrador')">
             {{ s.createdAt | date: 'short' }}
           </td>
-          <td *ngIf="authService.currentUser?.role?.includes('Admin')">
+          <td *ngIf="authService.currentUser?.rols?.includes('Administrador')">
             {{ s.updatedAt | date: 'short' }}
           </td>
           <td>
@@ -75,7 +75,7 @@
         </tr>
         <tr *ngIf="spares.length === 0">
           <td
-            [attr.colspan]="authService.currentUser?.role?.includes('Admin') ? 8 : 5"
+            [attr.colspan]="authService.currentUser?.rols?.includes('Administrador') ? 8 : 5"
             class="text-center text-secondary"
           >
             No hay repuestos

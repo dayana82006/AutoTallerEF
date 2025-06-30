@@ -32,7 +32,7 @@ export class AdminService {
         name: 'Pedro',
         email: 'pedro@example.com',
         userRoles: [
-          { roleId: 3, role: { id: 3, name: 'Mecánico' } }
+          { roleId: 3, role: { id: 3, name: 'Mecanico' } }
         ]
       }
     ]);

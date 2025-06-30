@@ -19,8 +19,8 @@
           <th>Nombre</th>
           <th>Fecha de Ingreso</th>
           <th>Vehículos</th>
-          <th *ngIf="authService.currentUser?.rols?.includes('rol')">Creado</th>
-          <th *ngIf="authService.currentUser?.rols?.includes('rol')">Actualizado</th>
+          <th *ngIf="hasRole('Administrador')">Creado</th>
+          <th *ngIf="hasRole('Administrador')">Actualizado</th>
 
           <th>Acciones</th>
         </tr>
@@ -38,13 +38,13 @@
             </ul>
           </td>
           <td>
-            <button *ngIf="authService.hasRole('admin') || authService.hasRole('tecnico')"
+            <button *ngIf="hasRole('Administrador') || hasRole('tecnico')"
               class="btn btn-sm btn-primary me-1" (click)="edit(a)">
               Editar
             </button>
 
 
-            <button *ngIf="authService.hasRole('admin')" class="btn btn-sm btn-danger" (click)="deleteAnormality(a.id)">
+            <button *ngIf="hasRole('Administrador')" class="btn btn-sm btn-danger"(click)="delete(a.id)">
               Eliminar
             </button>
           </td>
@@ -71,11 +71,12 @@
 
         <div class="mb-3">
           <label class="form-label">Vehículos asociados</label>
-          <select class="form-control" multiple [(ngModel)]="selectedSerials" name="serials">
-            <option *ngFor="let v of vehicles" [value]="v.serialNumber">
-              {{ v.serialNumber }}
-            </option>
-          </select>
+<select class="form-control" multiple [(ngModel)]="selectedSerials" name="serials">
+  <option *ngFor="let v of vehicles" [value]="v.serialNumber">
+    {{ v.serialNumber || 'ERROR: Vehículo sin serial' }}
+  </option>
+</select>
+
         </div>
 
         <div class="d-flex justify-content-between">

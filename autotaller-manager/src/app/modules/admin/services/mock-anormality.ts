@@ -3,11 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { VehicleAnormality } from '../models/vehicle-anormality';
 import { Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class MockAnormalityService {
-  private baseUrl = 'http://localhost:5005/api/VehicleAnormality'; // cambia si usas otro puerto/ruta
+  private baseUrl = 'http://localhost:5005/api/VehicleAnormality';
 
   constructor(private http: HttpClient) {}
 
