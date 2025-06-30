@@ -86,7 +86,7 @@ export class ServiceOrderListComponent implements OnInit {
 
         this.allServiceOrders = orders.map(order => ({
           ...order,
-          orderDetails: details.filter(d => d.idServiceOrder === order.id)
+          orderDetails: details.filter(d => d.serviceOrderId === order.id)
         }));
 
         this.applyFilters();
@@ -133,45 +133,37 @@ export class ServiceOrderListComponent implements OnInit {
     }
   }
 
-  onFormSubmit(order: ServiceOrder): void {
-    if (this.selectedServiceOrder) {
-      if (order.id !== undefined) {
-        this.serviceOrderService.updateServiceOrder(order.id, order).subscribe(() => {
-          this.swalService.success('Orden actualizada');
-          this.loadData();
-        });
-      } else {
-        this.swalService.error('No se pudo actualizar la orden: ID indefinido');
-      }
-    } else {
-      this.serviceOrderService.createServiceOrder(order).subscribe({
-        next: (createdOrder) => {
-          this.swalService.success('Orden creada');
+onFormSubmit(data: { order: ServiceOrder, repuestos: OrderDetail[] }): void {
+  const { order, repuestos } = data;
 
-          if (createdOrder.id !== undefined) {
-            // Guardar repuestos
-            if (this.formComponent) {
-              this.formComponent.guardarRepuestosParaOrden(createdOrder.id);
-            }
-
-            // Crear factura
-            this.serviceOrderService.createInvoiceForOrder(createdOrder.id).subscribe({
-              next: () => {
-                this.swalService.success('Factura creada automáticamente');
-                this.loadData();
-              },
-                        });
-          } else {
-            this.swalService.error('No se pudo crear la factura: ID de orden inválido');
-          }
-        },
-        error: () => this.swalService.error('Error al crear la orden')
-      });
-    }
-
-    this.selectedServiceOrder = null;
-    this.showForm = false;
+  if (!order || order.id === undefined) {
+    this.swalService.error('Orden creada, pero no se recibió un ID válido');
+    return;
   }
+
+  const repuestosValidos = repuestos.filter(r =>
+    r.serviceOrderId && r.spareCode && r.spareQuantity > 0
+  );
+
+  const creaciones$ = repuestosValidos.map(r => this.orderDetailService.create(r));
+
+  forkJoin(creaciones$).subscribe({
+    next: () => {
+      this.serviceOrderService.createInvoiceForOrder(order.id!).subscribe({
+        next: () => {
+          this.swalService.success('Factura y repuestos creados correctamente');
+          this.loadData();
+        },
+        error: () => this.swalService.error('No se pudo crear la factura')
+      });
+    },
+    error: () => this.swalService.error('Fallo al guardar repuestos')
+  });
+
+  this.selectedServiceOrder = null;
+  this.showForm = false;
+}
+
 
   cancelForm(): void {
     this.selectedServiceOrder = null;

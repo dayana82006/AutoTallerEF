@@ -1,7 +1,7 @@
 export interface OrderDetail {
   id: number;
   spareQuantity: number;
-  idServiceOrder: number;
+  serviceOrderId: number;
   spareCode: string;
   createdAt: Date;
   updatedAt?: Date;

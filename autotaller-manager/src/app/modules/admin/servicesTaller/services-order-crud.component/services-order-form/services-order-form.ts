@@ -17,7 +17,7 @@ import { MockServiceTypeService } from '../../../services/mock-service-type';
 import { MockUserService } from '../../../services/mock-user';
 import { MockInvoiceService } from '../../../services/mock-invoice';
 import { MockSpareService } from '../../../services/mock-spares';
-import { MockOrderDetailService } from '../../../services/mock-order-detail';
+import { MockServiceOrderService } from '../../../services/mock-service-order';
 
 @Component({
   selector: 'app-service-order-form',
@@ -27,7 +27,7 @@ import { MockOrderDetailService } from '../../../services/mock-order-detail';
 })
 export class ServiceOrderFormComponent implements OnInit {
   @Input() serviceOrderToEdit?: ServiceOrder | null;
-  @Output() formSubmitted = new EventEmitter<ServiceOrder>();
+  @Output() formSubmitted = new EventEmitter<{ order: ServiceOrder, repuestos: OrderDetail[] }>();
   @Output() cancelForm = new EventEmitter<void>();
 
   serviceOrder: ServiceOrder = {
@@ -63,7 +63,7 @@ export class ServiceOrderFormComponent implements OnInit {
     private userService: MockUserService,
     private invoiceService: MockInvoiceService,
     private spareService: MockSpareService,
-    private orderDetailService: MockOrderDetailService,
+    private serviceOrderService: MockServiceOrderService,
     private swalService: SwalService
   ) {}
 
@@ -122,39 +122,32 @@ export class ServiceOrderFormComponent implements OnInit {
       delete s.invoiceId;
     }
 
-    if (!this.editMode || s.id === 0) {
-      delete s.id;
-    }
+    const { id, createdAt, updatedAt, ...orderToSend } = s;
 
-    // Emitir la orden sin repuestos, el padre la guarda y luego llama guardarRepuestosParaOrden()
-    this.formSubmitted.emit(s);
+    this.serviceOrderService.createServiceOrder(orderToSend).subscribe({
+      next: (createdOrder: ServiceOrder) => {
+        if (createdOrder.id !== undefined) {
+          const detalles = this.generarDetallesRepuestos(createdOrder.id);
+          this.formSubmitted.emit({ order: createdOrder, repuestos: detalles });
+        } else {
+          this.swalService.error('Orden creada, pero no se recibió un ID válido');
+        }
+      },
+      error: () => this.swalService.error('Error al guardar la orden de servicio')
+    });
   }
 
-  /**
-   * Este método debe ser invocado por el padre después de crear la orden.
-   */
-  guardarRepuestosParaOrden(orderId: number): void {
-    const detalles: OrderDetail[] = this.repuestosSeleccionados
+  generarDetallesRepuestos(orderId: number): OrderDetail[] {
+    return this.repuestosSeleccionados
       .filter(r => r.codeSpare !== null && r.spareQuantity > 0)
-      .map((r) => ({
+      .map(r => ({
         id: 0,
-        idServiceOrder: orderId,
+        serviceOrderId: orderId,
         spareCode: String(r.codeSpare!),
         spareQuantity: r.spareQuantity,
         createdAt: new Date(),
         updatedAt: new Date(),
       }));
-
-    if (detalles.length === 0) return;
-
-    const creaciones$ = detalles.map(detalle =>
-      this.orderDetailService.create(detalle)
-    );
-
-    forkJoin(creaciones$).subscribe({
-      next: () => this.swalService.success('Repuestos guardados correctamente'),
-      error: () => this.swalService.error('Error al guardar los repuestos')
-    });
   }
 
   cancel(): void {
