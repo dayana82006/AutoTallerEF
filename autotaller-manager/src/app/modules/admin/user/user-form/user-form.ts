@@ -24,13 +24,13 @@ export class UserFormComponent implements OnInit {
     username: '',
     lastname: '',
     email: '',
-    role: 'Administrador',  // ✅ String, no array
+    role: 'Administrador',  
     specialties: []
   };
 
   editingId: number | null = null;
   isEditMode = false;
-  availableRoles = ['Administrador', 'Mecánico', 'Recepcionista'];
+  availableRoles = ['Administrador', 'Mecanico', 'Recepcionista'];
   availableSpecialties: Specialty[] = [];
   allUsers: UserMember[] = [];
 
@@ -109,95 +109,98 @@ export class UserFormComponent implements OnInit {
               this.user.role);
   }
 
-  saveUser(): void {
-    this.formSubmitted = true;
+saveUser(): void {
+  this.formSubmitted = true;
 
-    if (!this.isFormValid()) {
-      this.swalService.error('Por favor completa todos los campos requeridos');
-      return;
-    }
+  if (!this.isFormValid()) {
+    this.swalService.error('Por favor completa todos los campos requeridos');
+    return;
+  }
 
-    const trimmedName = this.user.name.trim();
-    const trimmedLastName = this.user.lastname.trim();
-    const trimmedEmail = this.user.email.trim();
-    const trimmedUsername = this.user.username.trim();
-    const trimmedRole = this.user.role.trim();
-    const trimmedPassword = this.user.password?.trim();
+  const trimmedName = this.user.name.trim();
+  const trimmedLastName = this.user.lastname.trim();
+  const trimmedEmail = this.user.email.trim();
+  const trimmedUsername = this.user.username.trim();
+  const trimmedRole = this.user.role.trim();
+  const trimmedPassword = this.user.password?.trim();
 
-    const duplicateEmail = this.allUsers.some(u =>
-      u.email.trim().toLowerCase() === trimmedEmail &&
-      (!this.isEditMode || u.id !== this.user.id)
-    );
+  const duplicateEmail = this.allUsers.some(u =>
+    u.email.trim().toLowerCase() === trimmedEmail &&
+    (!this.isEditMode || u.id !== this.user.id)
+  );
 
-    if (duplicateEmail) {
-      this.swalService.error('El correo ya está en uso por otro usuario');
-      return;
-    }
+  if (duplicateEmail) {
+    this.swalService.error('El correo ya está en uso por otro usuario');
+    return;
+  }
 
-    const duplicateUsername = this.allUsers.some(u =>
-      u.username.trim().toLowerCase() === trimmedUsername &&
-      (!this.isEditMode || u.id !== this.user.id)
-    );
+  const duplicateUsername = this.allUsers.some(u =>
+    u.username.trim().toLowerCase() === trimmedUsername &&
+    (!this.isEditMode || u.id !== this.user.id)
+  );
 
-    if (duplicateUsername) {
-      this.swalService.error('El nombre de usuario ya existe');
-      return;
-    }
+  if (duplicateUsername) {
+    this.swalService.error('El nombre de usuario ya existe');
+    return;
+  }
 
-    if (!this.isEditMode && (!trimmedPassword || trimmedPassword.length < 6)) {
-      this.swalService.error('La contraseña es obligatoria y debe tener al menos 6 caracteres.');
-      return;
-    }
+  if (!this.isEditMode && (!trimmedPassword || trimmedPassword.length < 6)) {
+    this.swalService.error('La contraseña es obligatoria y debe tener al menos 6 caracteres.');
+    return;
+  }
 
-    const userPayload: UserMember = {
-      id: this.isEditMode ? this.user.id : 0,
-      name: trimmedName,
-      lastname: trimmedLastName,
-      email: trimmedEmail,
-      username: trimmedUsername,
-      role: trimmedRole,
-      specialties: this.user.specialties || []
+  const userPayload: UserMember = {
+    id: this.isEditMode ? this.user.id : 0,
+    name: trimmedName,
+    lastname: trimmedLastName,
+    email: trimmedEmail,
+    username: trimmedUsername,
+    role: trimmedRole,
+    specialties: this.user.specialties || []
+  };
+
+  console.log('Payload enviado al guardar:', userPayload); // 👈 Agregado aquí
+
+  if (this.isEditMode) {
+    this.userService.updateUser(this.user.id, userPayload).subscribe({
+      next: () => {
+        this.swalService.success('Usuario actualizado correctamente');
+        this.router.navigate(['/admin/usuarios']);
+      },
+      error: (err) => {
+        console.error(err);
+        const errMsg = (err?.error || '').toString().toLowerCase();
+
+        if (errMsg.includes('email')) {
+          this.swalService.error('Ya existe un usuario con ese correo');
+        } else if (errMsg.includes('username')) {
+          this.swalService.error('Ya existe un usuario con ese nombre de usuario');
+        } else {
+          this.swalService.error('Error al actualizar el usuario');
+        }
+      }
+    });
+  } else {
+    const newUser: Omit<UserMember, 'id'> = {
+      ...userPayload,
+      password: trimmedPassword!
     };
 
-    if (this.isEditMode) {
-      this.userService.updateUser(this.user.id, userPayload).subscribe({
-        next: () => {
-          this.swalService.success('Usuario actualizado correctamente');
-          this.router.navigate(['/admin/usuarios']);
-        },
-        error: (err) => {
-          console.error(err);
-          const errMsg = (err?.error || '').toString().toLowerCase();
-
-          if (errMsg.includes('email')) {
-            this.swalService.error('Ya existe un usuario con ese correo');
-          } else if (errMsg.includes('username')) {
-            this.swalService.error('Ya existe un usuario con ese nombre de usuario');
-          } else {
-            this.swalService.error('Error al actualizar el usuario');
-          }
-        }
-      });
-    } else {
-      const newUser: Omit<UserMember, 'id'> = {
-        ...userPayload,
-        password: trimmedPassword!
-      };
-
-      this.userService.createUser(newUser).subscribe({
-        next: (createdUser) => {
-          console.log('Usuario creado con ID:', createdUser.id);
-          this.swalService.success('Usuario creado correctamente');
-          this.router.navigate(['/admin/usuarios']);
-          this.resetForm();
-        },
-        error: (error) => {
-          console.error('Error al crear usuario:', error);
-          this.swalService.error('Error al crear el usuario');
-        }
-      });
-    }
+    this.userService.createUser(newUser).subscribe({
+      next: (createdUser) => {
+        console.log('Usuario creado con ID:', createdUser.id);
+        this.swalService.success('Usuario creado correctamente');
+        this.router.navigate(['/admin/usuarios']);
+        this.resetForm();
+      },
+      error: (error) => {
+        console.error('Error al crear usuario:', error);
+        this.swalService.error('Error al crear el usuario');
+      }
+    });
   }
+}
+
 
   resetForm(): void {
     this.user = {

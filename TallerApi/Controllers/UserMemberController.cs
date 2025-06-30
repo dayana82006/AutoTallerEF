@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.DTOs;
-using Application.DTOs.Entities;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Data;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +20,7 @@ namespace TallerApi.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly PublicDbContext _context; 
+        private readonly PublicDbContext _context;
 
         public UserMemberController(IUnitOfWork unitOfWork, IMapper mapper, PublicDbContext context)
         {
@@ -34,7 +32,11 @@ namespace TallerApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserMemberDto>>> Get()
         {
-            var userMembers = await _unitOfWork.UserMember.GetAllAsync();
+            var userMembers = await _context.UserMembers
+                .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
+                .Include(u => u.UserSpecialties).ThenInclude(us => us.Specialty)
+                .ToListAsync();
+
             return Ok(_mapper.Map<List<UserMemberDto>>(userMembers));
         }
 
@@ -80,25 +82,27 @@ namespace TallerApi.Controllers
                     };
                 }
 
-                // Especialidades solo si es mecánico
-                if (role != null && role.Name == "Mecánico" && usermemberDto.Specialties != null)
+                await _context.UserMembers.AddAsync(user);
+                await _context.SaveChangesAsync(); // 🚨 Necesario para tener el Id del usuario
+
+                // Especialidades si es mecánico
+                if (role != null && role.Name == "Mecanico" && usermemberDto.Specialties != null)
                 {
-                    user.UserSpecialties = new List<UserSpecialty>();
                     foreach (var specName in usermemberDto.Specialties)
                     {
                         var spec = await _context.Specialties.FirstOrDefaultAsync(s => s.Name == specName);
                         if (spec != null)
                         {
-                            user.UserSpecialties.Add(new UserSpecialty
+                            var userSpec = new UserSpecialty
                             {
+                                IdUser = user.Id,
                                 IdSpecialty = spec.Id
-                            });
+                            };
+                            await _context.UserSpecialties.AddAsync(userSpec);
                         }
                     }
+                    await _context.SaveChangesAsync();
                 }
-
-                await _context.UserMembers.AddAsync(user);
-                await _context.SaveChangesAsync();
 
                 return CreatedAtAction(nameof(Get), new { id = user.Id }, _mapper.Map<UserMemberDto>(user));
             }
@@ -134,7 +138,7 @@ namespace TallerApi.Controllers
                 existingUser.Password = hasher.HashPassword(existingUser, usermemberDto.Password);
             }
 
-            // Obtener nuevo rol
+            // Rol
             var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == usermemberDto.Role);
             if (role != null)
             {
@@ -144,10 +148,11 @@ namespace TallerApi.Controllers
                 };
             }
 
-            // Si es mecánico, asignar especialidades
-            if (role != null && role.Name == "Mecánico" && usermemberDto.Specialties != null)
+            // Especialidades
+            _context.UserSpecialties.RemoveRange(existingUser.UserSpecialties); // Limpiar actuales
+
+            if (role != null && role.Name == "Mecanico" && usermemberDto.Specialties != null)
             {
-                existingUser.UserSpecialties = new List<UserSpecialty>();
                 foreach (var specName in usermemberDto.Specialties)
                 {
                     var spec = await _context.Specialties.FirstOrDefaultAsync(s => s.Name == specName);
@@ -160,10 +165,6 @@ namespace TallerApi.Controllers
                         });
                     }
                 }
-            }
-            else
-            {
-                existingUser.UserSpecialties.Clear();
             }
 
             _context.UserMembers.Update(existingUser);

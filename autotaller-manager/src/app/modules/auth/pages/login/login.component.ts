@@ -39,7 +39,7 @@ switch (res.rols[0]) {
   case 'Administrador':
     this.router.navigate(['/admin']);
     break;
-  case 'Mecánico':
+  case 'Mecanico':
     this.router.navigate(['/mecanico']);
     break;
   case 'Recepcionista':

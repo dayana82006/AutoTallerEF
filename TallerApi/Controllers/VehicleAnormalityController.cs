@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.DTOs.Entities;
@@ -51,36 +52,51 @@ namespace TallerApi.Controllers
                 return BadRequest(new ApiResponse(400, "Datos inválidos."));
 
             var anormality = _mapper.Map<VehicleAnormality>(dto);
+
+            // Asignar fechas a la entidad principal
+            anormality.CreatedAt = DateTime.UtcNow;
+            anormality.UpdatedAt = DateTime.UtcNow;
+
+            // Asignar fechas a los detalles
+            if (anormality.VehicleAnormalityDetails != null)
+            {
+                foreach (var detail in anormality.VehicleAnormalityDetails)
+                {
+                    detail.CreatedAt = DateTime.UtcNow;
+                    detail.UpdatedAt = DateTime.UtcNow;
+                }
+            }
+
             _unitOfWork.VehicleAnormality.Add(anormality);
             await _unitOfWork.SaveAsync();
 
-            return CreatedAtAction(nameof(Post), new { anormality.Id }, dto);
+            var resultDto = _mapper.Map<VehicleAnormalityDto>(anormality);
+            return CreatedAtAction(nameof(Get), new { id = anormality.Id }, resultDto);
         }
 
-[HttpPut("{id}")]
-[ProducesResponseType(StatusCodes.Status200OK)]
-[ProducesResponseType(StatusCodes.Status404NotFound)]
-[ProducesResponseType(StatusCodes.Status400BadRequest)]
-public async Task<IActionResult> Put(int id, [FromBody] VehicleAnormalityDto dto)
-{
-    if (dto == null)
-        return BadRequest(new ApiResponse(400, "Datos inválidos."));
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Put(int id, [FromBody] VehicleAnormalityDto dto)
+        {
+            if (dto == null)
+                return BadRequest(new ApiResponse(400, "Datos inválidos."));
 
-    var existingAnormality = await _unitOfWork.VehicleAnormality.GetByIdAsync(id);
-    if (existingAnormality == null)
-        return NotFound(new ApiResponse(404, "La anormalidad no existe."));
+            var existingAnormality = await _unitOfWork.VehicleAnormality.GetByIdAsync(id);
+            if (existingAnormality == null)
+                return NotFound(new ApiResponse(404, "La anormalidad no existe."));
 
-    // ✅ Asignación manual de propiedades
-    existingAnormality.Name = dto.Name;
-    existingAnormality.EntryDate = dto.CreatedAt;
+            // ✅ Asignación manual de propiedades
+            existingAnormality.Name = dto.Name;
+            existingAnormality.EntryDate = dto.CreatedAt;
+            existingAnormality.UpdatedAt = DateTime.UtcNow;
 
+            _unitOfWork.VehicleAnormality.Update(existingAnormality);
+            await _unitOfWork.SaveAsync();
 
-    _unitOfWork.VehicleAnormality.Update(existingAnormality);
-    await _unitOfWork.SaveAsync();
-
-    return Ok(dto);
-}
-
+            return Ok(dto);
+        }
 
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

@@ -45,4 +45,4 @@ INSERT INTO roles (id, name, description, "CreatedAt", "UpdatedAt")
 VALUES
   (1, 'Administrador', 'Usuario con acceso total al sistema', NOW(), NOW()),
   (2, 'Recepcionista', 'Encargado de recibir vehículos y coordinar órdenes', NOW(), NOW()),
-  (3, 'Mecánico', 'Responsable de realizar servicios técnicos', NOW(), NOW());
+  (3, 'Mecanico', 'Responsable de realizar servicios técnicos', NOW(), NOW());

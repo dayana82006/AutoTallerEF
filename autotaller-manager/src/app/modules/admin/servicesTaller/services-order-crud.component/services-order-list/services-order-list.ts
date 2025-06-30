@@ -77,7 +77,7 @@ export class ServiceOrderListComponent implements OnInit {
       next: (data) => {
         this.users = data.filter(user =>
           Array.isArray(user.role) &&
-          user.role.map(r => r.toLowerCase()).includes('mecánico')
+          user.role.map(r => r.toLowerCase()).includes('Mecanico')
         );
       },
       error: () => this.swalService.error('Error al cargar usuarios')
