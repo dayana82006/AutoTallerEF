@@ -17,7 +17,7 @@ import { MockServiceTypeService } from '../../../services/mock-service-type';
 import { MockUserService } from '../../../services/mock-user';
 import { MockInvoiceService } from '../../../services/mock-invoice';
 import { MockSpareService } from '../../../services/mock-spares';
-import { MockOrderDetailService } from '../../../services/mock-order-detail';
+import { MockServiceOrderService } from '../../../services/mock-service-order';
 
 @Component({
   selector: 'app-service-order-form',
@@ -27,11 +27,10 @@ import { MockOrderDetailService } from '../../../services/mock-order-detail';
 })
 export class ServiceOrderFormComponent implements OnInit {
   @Input() serviceOrderToEdit?: ServiceOrder | null;
-  @Output() formSubmitted = new EventEmitter<ServiceOrder>();
+  @Output() formSubmitted = new EventEmitter<{ order: ServiceOrder, repuestos: OrderDetail[] }>();
   @Output() cancelForm = new EventEmitter<void>();
 
   serviceOrder: ServiceOrder = {
-    id: 0,
     description: '',
     approvedByClient: false,
     serialNumber: '',
@@ -64,39 +63,30 @@ export class ServiceOrderFormComponent implements OnInit {
     private userService: MockUserService,
     private invoiceService: MockInvoiceService,
     private spareService: MockSpareService,
-    private orderDetailService: MockOrderDetailService,
+    private serviceOrderService: MockServiceOrderService,
     private swalService: SwalService
   ) {}
 
   ngOnInit(): void {
-    this.vehicleService.getVehicles().subscribe({
-      next: (data) => (this.vehicles = data),
-      error: () => this.swalService.error('Error al cargar los vehículos'),
-    });
-
-    this.serviceTypeService.getAll().subscribe({
-      next: (data) => (this.serviceTypes = data),
-      error: () => this.swalService.error('Error al cargar tipos de servicio'),
-    });
-
-   this.userService.getAll().subscribe({
-  next: data =>
-    this.users = data.filter(user =>
-      Array.isArray(user.role) &&
-      user.role.some(r => r.toLowerCase() === 'Mecanico')
-    ),
-  error: () => this.swalService.error('Error al cargar técnicos')
-});
-
-
-    this.invoiceService.getInvoices().subscribe({
-      next: (data) => (this.invoices = data),
-      error: () => this.swalService.error('Error al cargar facturas'),
-    });
-
-    this.spareService.getAll().subscribe({
-      next: (data) => (this.spares = data),
-      error: () => this.swalService.error('Error al cargar repuestos'),
+    forkJoin({
+      vehicles: this.vehicleService.getVehicles(),
+      serviceTypes: this.serviceTypeService.getAll(),
+      users: this.userService.getAll(),
+      invoices: this.invoiceService.getInvoices(),
+      spares: this.spareService.getAll()
+    }).subscribe({
+      next: ({ vehicles, serviceTypes, users, invoices, spares }) => {
+        this.vehicles = vehicles;
+        this.serviceTypes = serviceTypes;
+        this.users = users.filter(u =>
+          Array.isArray(u.role)
+            ? u.role.includes('Mecanico') || u.role.includes('mecanico')
+            : u.role === 'Mecanico' || u.role === 'mecanico'
+        );
+        this.invoices = invoices;
+        this.spares = spares;
+      },
+      error: () => this.swalService.error('Error al cargar datos del formulario')
     });
 
     if (this.serviceOrderToEdit) {
@@ -114,39 +104,49 @@ export class ServiceOrderFormComponent implements OnInit {
   }
 
   save(): void {
-    const s = this.serviceOrder;
+    const s = { ...this.serviceOrder };
 
     if (
       !s.description?.trim() ||
-      !s.serialNumber ||
-      !s.serviceStatusId ||
-      !s.serviceTypeId ||
-      !s.userMemberId ||
-      !s.invoiceId ||
+      !s.serialNumber?.trim() ||
+      !s.serviceStatusId || s.serviceStatusId <= 0 ||
+      !s.serviceTypeId || s.serviceTypeId <= 0 ||
+      !s.userMemberId || s.userMemberId <= 0 ||
       s.unitPrice < 0
     ) {
-      this.swalService.error('Por favor completa todos los campos obligatorios');
+      this.swalService.error('Por favor completa todos los campos obligatorios correctamente');
       return;
     }
 
-    this.formSubmitted.emit(s);
-
-    if (this.repuestosSeleccionados.length > 0 && s.id) {
-    const detalles: OrderDetail[] = this.repuestosSeleccionados.map((r, i) => ({
-      id: 0,
-      idServiceOrder: this.serviceOrder.id,
-      spareCode: String(r.codeSpare), 
-      spareQuantity: r.spareQuantity,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }));
-
-
-      forkJoin(detalles.map((d) => this.orderDetailService.create(d))).subscribe({
-        next: () => this.swalService.success('Orden guardada con repuestos'),
-        error: () => this.swalService.error('Error al guardar repuestos'),
-      });
+    if (!s.invoiceId || s.invoiceId <= 0) {
+      delete s.invoiceId;
     }
+
+    const { id, createdAt, updatedAt, ...orderToSend } = s;
+
+    this.serviceOrderService.createServiceOrder(orderToSend).subscribe({
+      next: (createdOrder: ServiceOrder) => {
+        if (createdOrder.id !== undefined) {
+          const detalles = this.generarDetallesRepuestos(createdOrder.id);
+          this.formSubmitted.emit({ order: createdOrder, repuestos: detalles });
+        } else {
+          this.swalService.error('Orden creada, pero no se recibió un ID válido');
+        }
+      },
+    });
+  }
+
+  generarDetallesRepuestos(orderId: number): OrderDetail[] {
+    return this.repuestosSeleccionados
+      .filter(r => r.codeSpare !== null && r.spareQuantity > 0)
+      .map(r => ({
+        id: 0,
+        serviceOrderId: orderId,
+        spareCode: String(r.codeSpare!),
+        spareQuantity: r.spareQuantity,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }));
   }
 
   cancel(): void {

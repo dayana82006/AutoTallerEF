@@ -38,8 +38,12 @@
           <th>Aprobado</th>
           <th>Estado</th>
           <th>Precio</th>
-          <th *ngIf="authService.currentUser?.rols?.includes('Administrador')">Creado</th>
-          <th *ngIf="authService.currentUser?.rols?.includes('Administrador')">Actualizado</th>
+          <th *ngIf="authService.currentUser?.rols?.includes('Administrador')">
+            Creado
+          </th>
+          <th *ngIf="authService.currentUser?.rols?.includes('Administrador')">
+            Actualizado
+          </th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -66,16 +70,41 @@
             {{ order.updatedAt | date: 'short' }}
           </td>
           <td>
-            <button class="btn btn-sm btn-outline-light me-2" (click)="edit(order)">Editar</button>
-            <button class="btn btn-sm btn-outline-success me-2" (click)="viewInvoice(order.id)">Ver Factura</button>
-            <button class="btn btn-sm btn-info me-2" (click)="mostrarRepuestos(order.id)">Ver Repuestos</button>
-            <button class="btn btn-sm btn-outline-danger" (click)="delete(order.id)">Eliminar</button>
+            <button
+              class="btn btn-sm btn-outline-light me-2"
+              (click)="edit(order)"
+            >
+              Editar
+            </button>
+            <button
+              *ngIf="authService.currentUser?.rols?.includes('Administrador') || authService.currentUser?.rols?.includes('Mecanico')"
+              class="btn btn-success me-2"
+              (click)="order.id && viewInvoice(order.id)"
+            >
+              Ver Factura
+            </button>
+
+            <div>
+              <button
+                class="btn btn-outline-secondary me-2"
+                (click)="order.id && mostrarRepuestos(order.id)"
+              >
+                Ver Repuestos
+              </button>
+              <button
+                *ngIf="authService.currentUser?.rols?.includes('Administrador')"
+                class="btn btn-outline-danger"
+                (click)="order.id && delete(order.id)"
+              >
+                Eliminar
+              </button>
+            </div>
           </td>
         </tr>
 
         <tr *ngIf="serviceOrders.length === 0">
           <td
-           [attr.colspan]="authService.currentUser?.rols?.includes('Administrador') ? 11 : 9"
+            [attr.colspan]="authService.currentUser?.rols?.includes('Administrador') ? 11 : 9"
             class="text-center text-secondary"
           >
             No se encontraron órdenes.

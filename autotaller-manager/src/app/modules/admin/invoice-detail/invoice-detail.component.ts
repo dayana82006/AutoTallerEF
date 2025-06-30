@@ -38,10 +38,10 @@ export class InvoicePageComponent implements OnInit {
     private spareService: MockSpareService,
     public authService: AuthService
   ) {}
-   get userRole(): string {
-  return this.authService.currentUser?.rols?.[0] ?? '';
-}
 
+  get userRole(): string {
+    return this.authService.currentUser?.rols?.[0] ?? '';
+  }
 
   ngOnInit(): void {
     const orderId = Number(this.route.snapshot.paramMap.get('id'));
@@ -66,7 +66,13 @@ export class InvoicePageComponent implements OnInit {
                 switchMap(({ vehicle, clients, spares }) => {
                   if (!vehicle) return of(null);
                   this.vehicle = vehicle;
-                  this.client = clients.find(c => c.id === vehicle.clientId);
+
+                  const client = clients.find(c => c.id === vehicle.clientId);
+                  if (!client) {
+                    console.error('❌ Cliente no encontrado, no se puede generar la factura.');
+                    return of(null);
+                  }
+                  this.client = client;
 
                   const repuestos: OrderDetail[] = order.orderDetails ?? [];
 

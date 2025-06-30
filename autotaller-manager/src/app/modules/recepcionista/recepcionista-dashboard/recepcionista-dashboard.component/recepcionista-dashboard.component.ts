@@ -3,7 +3,6 @@ import Chart from 'chart.js/auto';
 import { CommonModule } from '@angular/common';
 import { MockClientService } from '../../../admin/services/mock-client';
 import { MockVehicleService } from '../../../admin/services/mock-vehicle';
-import { MockServiceOrderService } from '../../../admin/services/mock-service-order';
 
 @Component({
   standalone: true,
@@ -13,148 +12,79 @@ import { MockServiceOrderService } from '../../../admin/services/mock-service-or
   styleUrls: ['./recepcionista-dashboard.component.scss']
 })
 export class ReceptionistDashboardComponent implements AfterViewInit {
-
   constructor(
     private clientService: MockClientService,
-    private vehicleService: MockVehicleService,
-    private orderService: MockServiceOrderService
+    private vehicleService: MockVehicleService
   ) {}
 
-  ngAfterViewInit(): void {
-    this.loadData();
-  }
+  async ngAfterViewInit() {
+    try {
+      const [clients, vehicles] = await Promise.all([
+        this.clientService.getAll().toPromise(),
+        this.vehicleService.getVehicles().toPromise()
+      ]);
 
-  loadData() {
-    Promise.all([
-      this.clientService.getAll().toPromise(),
-      this.vehicleService.getVehicles().toPromise(),
-      this.orderService.getServiceOrders().toPromise()
-    ]).then(([clients, vehicles, orders]) => {
-      if (clients && vehicles && orders) {
-        this.renderCharts(clients, vehicles, orders); 
+      if (clients && vehicles) {
+        this.renderCharts(clients, vehicles);
       }
-    });
+    } catch (error) {
+      console.error('Error cargando datos para el dashboard:', error);
+    }
   }
 
-  renderCharts(clients: any[], vehicles: any[], orders: any[]) {
-    const orderStates = orders.reduce((acc, o) => {
-      const estado = o.status?.description ?? 'Desconocido';
-      acc[estado] = (acc[estado] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+  renderCharts(clients: any[], vehicles: any[]) {
+    Chart.defaults.color = '#fff';
 
-    new Chart('orderStateChart', {
-      type: 'bar',
+    // Clientes registrados esta semana
+    const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const counts: number[] = new Array(7).fill(0);
+
+    clients.forEach(c => {
+      const date = new Date(c.createdAt);
+      const day = date.getDay();
+      counts[day]++;
+    });
+
+    new Chart('clientsThisWeekChart', {
+      type: 'line',
       data: {
-        labels: Object.keys(orderStates),
+        labels: dias,
         datasets: [{
-          label: 'Órdenes por estado',
-          data: Object.values(orderStates),
-          backgroundColor: Object.keys(orderStates).map(status =>
-            status.toLowerCase().includes('pendiente') ? '#ef4444' : '#10b981'
-          ),
-          borderRadius: 10
+          label: 'Clientes',
+          data: counts,
+          borderColor: '#3b82f6',
+          backgroundColor: '#3b82f6',
+          tension: 0.4,
+          fill: true
         }]
       },
       options: {
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: { legend: { display: false } },
-        scales: { y: { ticks: { stepSize: 1 } } }
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
       }
     });
 
+    // Vehículos por Cliente
     const vehiclesByClient = clients.map(c => ({
       label: `${c.name} ${c.lastname}`,
       count: vehicles.filter(v => v.clientId === c.id).length
-    })).filter(v => v.count > 0);
+    })).filter(x => x.count > 0);
 
     new Chart('vehiclesByClientChart', {
       type: 'doughnut',
       data: {
-        labels: vehiclesByClient.map(v => v.label),
+        labels: vehiclesByClient.map(x => x.label),
         datasets: [{
-          data: vehiclesByClient.map(v => v.count),
+          data: vehiclesByClient.map(x => x.count),
           backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899']
         }]
       },
       options: {
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: { legend: { position: 'bottom' } }
-      }
-    });
-
-    const ordersPerClient = clients.map(c => ({
-      label: `${c.name} ${c.lastname}`,
-      count: orders.filter(o => o.clientId === c.id).length
-    })).filter(c => c.count > 0).sort((a, b) => b.count - a.count).slice(0, 5);
-
-    new Chart('topClientsChart', {
-      type: 'bar',
-      data: {
-        labels: ordersPerClient.map(c => c.label),
-        datasets: [{
-          label: 'Órdenes registradas',
-          data: ordersPerClient.map(c => c.count),
-          backgroundColor: '#6366f1',
-          borderRadius: 10
-        }]
-      },
-      options: {
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true } }
-      }
-    });
-
-    const services = orders.reduce((acc, o) => {
-      const tipo = o.serviceType?.description ?? 'Sin especificar';
-      acc[tipo] = (acc[tipo] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-    new Chart('serviceTypeChart', {
-      type: 'pie',
-      data: {
-        labels: Object.keys(services),
-        datasets: [{
-          data: Object.values(services),
-          backgroundColor: ['#f87171', '#34d399', '#60a5fa', '#eab308', '#a78bfa']
-        }]
-      },
-      options: {
-        plugins: { legend: { position: 'bottom' } }
-      }
-    });
-
-    const today = new Date();
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay());
-
-    const weekData: Record<string, number> = {};
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(startOfWeek);
-      d.setDate(d.getDate() + i);
-      const key = d.toISOString().split('T')[0];
-      weekData[key] = 0;
-    }
-
-    orders.forEach(o => {
-      const date = new Date(o.createdAt).toISOString().split('T')[0];
-      if (date in weekData) weekData[date]++;
-    });
-
-    new Chart('ordersThisWeekChart', {
-      type: 'line',
-      data: {
-        labels: Object.keys(weekData),
-        datasets: [{
-          label: 'Órdenes por Día',
-          data: Object.values(weekData),
-          borderColor: '#3b82f6',
-          backgroundColor: '#3b82f6',
-          tension: 0.3
-        }]
-      },
-      options: {
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true } }
       }
     });
   }

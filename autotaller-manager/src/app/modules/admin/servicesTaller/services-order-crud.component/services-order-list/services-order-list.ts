@@ -1,17 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { ServiceOrder } from '../../../models/service-order';
 import { ServiceType } from '../../../models/service-type';
 import { Vehicle } from '../../../models/vehicle';
 import { UserMember } from '../../../models/user-member';
+import { OrderDetail } from '../../../models/order-detail';
 
 import { MockServiceOrderService } from '../../../services/mock-service-order';
 import { MockServiceTypeService } from '../../../services/mock-service-type';
 import { MockVehicleService } from '../../../services/mock-vehicle';
 import { MockUserService } from '../../../services/mock-user';
+import { MockOrderDetailService } from '../../../services/mock-order-detail';
 
 import { SwalService } from '../../../../../shared/swal.service';
 import { ServiceOrderFormComponent } from '../services-order-form/services-order-form';
@@ -39,6 +44,7 @@ export class ServiceOrderListComponent implements OnInit {
   serviceTypes: ServiceType[] = [];
   users: UserMember[] = [];
   vehicles: Vehicle[] = [];
+  orderDetails: OrderDetail[] = [];
 
   statuses = [
     { id: 1, description: 'Pendiente' },
@@ -46,11 +52,15 @@ export class ServiceOrderListComponent implements OnInit {
     { id: 3, description: 'Finalizado' }
   ];
 
+  @ViewChild(ServiceOrderFormComponent)
+  formComponent!: ServiceOrderFormComponent;
+
   constructor(
     private serviceOrderService: MockServiceOrderService,
     private vehicleService: MockVehicleService,
     private serviceTypeService: MockServiceTypeService,
     private userService: MockUserService,
+    private orderDetailService: MockOrderDetailService,
     private swalService: SwalService,
     public authService: AuthService,
     private router: Router
@@ -61,38 +71,34 @@ export class ServiceOrderListComponent implements OnInit {
   }
 
   private loadData(): void {
-    this.refreshOrders();
+    forkJoin({
+      orders: this.serviceOrderService.getServiceOrders().pipe(catchError(() => of([]))),
+      serviceTypes: this.serviceTypeService.getAll().pipe(catchError(() => of([]))),
+      users: this.userService.getAll().pipe(catchError(() => of([]))),
+      vehicles: this.vehicleService.getVehicles().pipe(catchError(() => of([]))),
+      details: this.orderDetailService.getAll().pipe(catchError(() => of([])))
+    }).subscribe({
+      next: ({ orders, serviceTypes, users, vehicles, details }) => {
+        this.serviceTypes = serviceTypes;
+        this.users = users;
+        this.vehicles = vehicles;
+        this.orderDetails = details;
 
-    this.serviceTypeService.getAll().subscribe({
-      next: (data) => this.serviceTypes = data,
-      error: () => this.swalService.error('Error al cargar tipos de servicio')
-    });
+        this.allServiceOrders = orders.map(order => ({
+          ...order,
+          orderDetails: details.filter(d => d.serviceOrderId === order.id)
+        }));
 
-    this.vehicleService.getVehicles().subscribe({
-      next: (data) => this.vehicles = data,
-      error: () => this.swalService.error('Error al cargar vehículos')
-    });
-
-    this.userService.getAll().subscribe({
-      next: (data) => {
-        this.users = data.filter(user =>
-          Array.isArray(user.role) &&
-          user.role.map(r => r.toLowerCase()).includes('Mecanico')
-        );
+        this.applyFilters();
       },
-      error: () => this.swalService.error('Error al cargar usuarios')
-    });
-  }
-
-  private refreshOrders(): void {
-    this.serviceOrderService.getServiceOrders().subscribe((orders) => {
-      this.allServiceOrders = orders;
-      this.applyFilters();
+      error: () => {
+        this.swalService.error('Error al cargar datos de órdenes de servicio');
+      }
     });
   }
 
   applyFilters(): void {
-    const filtered = this.allServiceOrders.filter((o) =>
+    const filtered = this.allServiceOrders.filter(o =>
       (o.serialNumber ?? '').toLowerCase().includes(this.search.toLowerCase())
     );
     this.total = filtered.length;
@@ -114,39 +120,49 @@ export class ServiceOrderListComponent implements OnInit {
   delete(id: number): void {
     this.swalService.confirm('¿Eliminar orden?', 'Esta acción no se puede deshacer.').then(confirmed => {
       if (confirmed) {
-        this.serviceOrderService.deleteServiceOrder(id).subscribe(() => this.refreshOrders());
+        this.serviceOrderService.deleteServiceOrder(id).subscribe(() => this.loadData());
       }
     });
   }
 
-  viewInvoice(orderId: number): void {
-    this.router.navigate(['/admin/invoices', orderId]);
-  }
-
-  onFormSubmit(order: ServiceOrder): void {
-    if (this.selectedServiceOrder) {
-      this.serviceOrderService.updateServiceOrder(order.id, order).subscribe(() => {
-        this.swalService.success('Orden actualizada');
-        this.refreshOrders();
-      });
+  viewInvoice(orderId: number | undefined): void {
+    if (orderId !== undefined) {
+      this.router.navigate(['/admin/invoices', orderId]);
     } else {
-      this.serviceOrderService.createServiceOrder(order).subscribe((createdOrder) => {
-        this.swalService.success('Orden creada');
-
-        if (order.invoiceId) {
-          this.serviceOrderService.linkInvoice(createdOrder.id, order.invoiceId).subscribe({
-            next: () => this.swalService.success('Factura vinculada'),
-            error: () => this.swalService.error('Error al vincular la factura')
-          });
-        }
-
-        this.refreshOrders();
-      });
+      this.swalService.error('ID de orden inválido');
     }
-
-    this.selectedServiceOrder = null;
-    this.showForm = false;
   }
+
+onFormSubmit(data: { order: ServiceOrder, repuestos: OrderDetail[] }): void {
+  const { order, repuestos } = data;
+
+  if (!order || order.id === undefined) {
+    this.swalService.error('Orden creada, pero no se recibió un ID válido');
+    return;
+  }
+
+  const repuestosValidos = repuestos.filter(r =>
+    r.serviceOrderId && r.spareCode && r.spareQuantity > 0
+  );
+
+  const creaciones$ = repuestosValidos.map(r => this.orderDetailService.create(r));
+
+  forkJoin(creaciones$).subscribe({
+    next: () => {
+      this.serviceOrderService.createInvoiceForOrder(order.id!).subscribe({
+        next: () => {
+          this.swalService.success('Factura y repuestos creados correctamente');
+          this.loadData();
+        },
+      });
+    },
+    error: () => this.swalService.error('Fallo al guardar repuestos')
+  });
+
+  this.selectedServiceOrder = null;
+  this.showForm = false;
+}
+
 
   cancelForm(): void {
     this.selectedServiceOrder = null;
@@ -180,7 +196,12 @@ export class ServiceOrderListComponent implements OnInit {
     return serial?.trim() || '—';
   }
 
-  mostrarRepuestos(orderId: number): void {
+  mostrarRepuestos(orderId: number | undefined): void {
+    if (orderId === undefined) {
+      this.swalService.error('ID de orden inválido');
+      return;
+    }
+
     const orden = this.allServiceOrders.find(o => o.id === orderId);
 
     if (!orden || !orden.orderDetails || orden.orderDetails.length === 0) {
@@ -188,9 +209,9 @@ export class ServiceOrderListComponent implements OnInit {
       return;
     }
 
-    const lista = orden.orderDetails.map((detalle) => {
-      return `<li>Repuesto ID: <strong>${detalle.spareCode}</strong> – Cantidad: <strong>${detalle.spareQuantity}</strong></li>`;
-    }).join('');
+    const lista = orden.orderDetails.map((detalle) =>
+      `<li>Repuesto ID: <strong>${detalle.spareCode}</strong> – Cantidad: <strong>${detalle.spareQuantity}</strong></li>`
+    ).join('');
 
     this.swalService.custom({
       icon: 'info',

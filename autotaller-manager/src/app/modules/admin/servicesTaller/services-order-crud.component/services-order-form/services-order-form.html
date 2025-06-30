@@ -21,8 +21,8 @@
       <select class="form-select" [(ngModel)]="serviceOrder.serialNumber" name="serialNumber"
         required #serialNumber="ngModel"
         [class.is-invalid]="serialNumber.invalid && serialNumber.touched">
-        <option [ngValue]="null" disabled>Seleccione un vehículo</option>
-        <option *ngFor="let vehicle of vehicles" [value]="vehicle.serialNumber">
+        <option [ngValue]="null" disabled selected>Seleccione un vehículo</option>
+        <option *ngFor="let vehicle of vehicles" [ngValue]="vehicle.serialNumber">
           {{ vehicle.serialNumber }} - Año {{ vehicle.releaseYear }}
         </option>
       </select>
@@ -37,8 +37,8 @@
       <select class="form-select" [(ngModel)]="serviceOrder.serviceTypeId" name="serviceTypeId"
         required #serviceTypeId="ngModel"
         [class.is-invalid]="serviceTypeId.invalid && serviceTypeId.touched">
-        <option [ngValue]="null" disabled>Seleccione un tipo</option>
-        <option *ngFor="let type of serviceTypes" [value]="type.id">
+        <option [ngValue]="null" disabled selected>Seleccione un tipo</option>
+        <option *ngFor="let type of serviceTypes" [ngValue]="type.id">
           {{ type.description }}
         </option>
       </select>
@@ -53,8 +53,8 @@
       <select class="form-select" [(ngModel)]="serviceOrder.userMemberId" name="userMemberId"
         required #userId="ngModel"
         [class.is-invalid]="userId.invalid && userId.touched">
-        <option [ngValue]="null" disabled>Seleccione un técnico</option>
-        <option *ngFor="let user of users" [value]="user.id">
+        <option [ngValue]="null" disabled selected>Seleccione un técnico</option>
+        <option *ngFor="let user of users" [ngValue]="user.id">
           {{ user.name }} {{ user.lastname }}
         </option>
       </select>
@@ -66,10 +66,10 @@
     <!-- Estado -->
     <div class="mb-3">
       <label class="form-label text-white">Estado *</label>
-      <select class="form-select" [(ngModel)]="serviceOrder.serviceStatusId" name="id_status"
+      <select class="form-select" [(ngModel)]="serviceOrder.serviceStatusId" name="serviceStatusId"
         required #status="ngModel"
         [class.is-invalid]="status.invalid && status.touched">
-        <option [ngValue]="null" disabled>Seleccione un estado</option>
+        <option [ngValue]="null" disabled selected>Seleccione un estado</option>
         <option *ngFor="let st of statuses" [ngValue]="st.id">
           {{ st.description }}
         </option>
@@ -91,26 +91,25 @@
     </div>
 
     <!-- Repuestos -->
-<div class="mb-3">
-  <label class="form-label text-white">Repuestos</label>
-  <div *ngFor="let repuesto of repuestosSeleccionados; let i = index" class="mb-2 d-flex align-items-center gap-2">
-    <select class="form-select" style="flex: 1"
-      [(ngModel)]="repuesto.codeSpare"
-      name="repuesto_{{ i }}_spare"
-      required>
-      <option [ngValue]="null" disabled>Seleccione un repuesto</option>
-      <option *ngFor="let s of spares" [value]="s.code">{{ s.description }}</option>
-    </select>
-    <input type="number" class="form-control" style="width: 120px"
-      [(ngModel)]="repuesto.spareQuantity"
-      name="repuesto_{{ i }}_cantidad"
-      min="1" required placeholder="Cantidad"/>
-    <button type="button" class="btn btn-danger btn-sm" (click)="eliminarRepuesto(i)">✕</button>
-  </div>
+    <div class="mb-3">
+      <label class="form-label text-white">Repuestos</label>
+      <div *ngFor="let repuesto of repuestosSeleccionados; let i = index" class="mb-2 d-flex align-items-center gap-2">
+        <select class="form-select" style="flex: 1"
+          [(ngModel)]="repuesto.codeSpare"
+          name="repuesto_{{ i }}_spare"
+          required>
+          <option [ngValue]="null" disabled selected>Seleccione un repuesto</option>
+          <option *ngFor="let s of spares" [ngValue]="s.code">{{ s.description }}</option>
+        </select>
+        <input type="number" class="form-control" style="width: 120px"
+          [(ngModel)]="repuesto.spareQuantity"
+          name="repuesto_{{ i }}_cantidad"
+          min="1" required placeholder="Cantidad"/>
+        <button type="button" class="btn btn-danger btn-sm" (click)="eliminarRepuesto(i)">✕</button>
+      </div>
 
-  <button type="button" class="btn btn-outline-light mt-2" (click)="agregarRepuesto()">+ Añadir Repuesto</button>
-</div>
-
+      <button type="button" class="btn btn-outline-light mt-2" (click)="agregarRepuesto()">+ Añadir Repuesto</button>
+    </div>
 
     <!-- Aprobado -->
     <div class="form-check mb-4">

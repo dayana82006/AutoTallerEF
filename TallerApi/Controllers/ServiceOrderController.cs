@@ -58,9 +58,13 @@ namespace TallerApi.Controllers
             if (vehicle == null)
                 return BadRequest(new ApiResponse(400, "El vehículo especificado no existe."));
 
-            var invoice = await _unitOfWork.Invoice.GetByIdAsync(orderDto.InvoiceId);
-            if (invoice == null)
-                return BadRequest(new ApiResponse(400, "La factura especificada no existe."));
+            Invoice? invoice = null;
+            if (orderDto.InvoiceId > 0)
+            {
+                invoice = await _unitOfWork.Invoice.GetByIdAsync(orderDto.InvoiceId);
+                if (invoice == null)
+                    return BadRequest(new ApiResponse(400, "La factura especificada no existe."));
+            }
 
             var order = _mapper.Map<ServiceOrder>(orderDto);
             order.VehicleSerialNumber = vehicle.SerialNumber;
@@ -68,16 +72,19 @@ namespace TallerApi.Controllers
             _unitOfWork.ServiceOrder.Add(order);
             await _unitOfWork.SaveAsync();
 
-            var invoiceDetail = new InvoiceDetail
+            if (invoice != null)
             {
-                InvoiceId = invoice.Id,
-                ServiceOrderId = order.Id,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
-            };
+                var invoiceDetail = new InvoiceDetail
+                {
+                    InvoiceId = invoice.Id,
+                    ServiceOrderId = order.Id,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
 
-            _unitOfWork.InvoiceDetail.Add(invoiceDetail);
-            await _unitOfWork.SaveAsync();
+                _unitOfWork.InvoiceDetail.Add(invoiceDetail);
+                await _unitOfWork.SaveAsync();
+            }
 
             var resultDto = _mapper.Map<ServiceOrderDto>(order);
             return CreatedAtAction(nameof(Get), new { id = order.Id }, resultDto);

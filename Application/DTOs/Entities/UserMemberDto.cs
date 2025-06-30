@@ -9,8 +9,8 @@ namespace Application.DTOs
         public string? Email { get; set; }
         public string? Password { get; set; }
 
-        public string? Role { get; set; } // ✅ Un solo rol
-        public List<string>? Specialties { get; set; } = new(); // ✅ Lista segura
+        public string? Role { get; set; } 
+        public List<string>? Specialties { get; set; } = new(); 
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
