@@ -77,7 +77,7 @@
         <div *ngIf="role.errors?.['required']">Debes seleccionar un rol</div>
       </div>
     </div>
-<div class="mb-3" *ngIf="user.role?.includes('Mecanico')">
+<div class="mb-3" *ngIf="user.role === 'Mecanico'">
       <label class="form-label text-white">Especialidades</label>
       <div *ngFor="let spec of availableSpecialties" class="form-check">
         <input type="checkbox" class="form-check-input" [id]="'spec-' + spec.id"

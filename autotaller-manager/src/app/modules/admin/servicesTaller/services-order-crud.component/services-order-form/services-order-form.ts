@@ -83,7 +83,7 @@ export class ServiceOrderFormComponent implements OnInit {
   next: data =>
     this.users = data.filter(user =>
       Array.isArray(user.role) &&
-      user.role.some(r => r.toLowerCase() === 'mecánico')
+      user.role.some(r => r.toLowerCase() === 'Mecanico')
     ),
   error: () => this.swalService.error('Error al cargar técnicos')
 });
