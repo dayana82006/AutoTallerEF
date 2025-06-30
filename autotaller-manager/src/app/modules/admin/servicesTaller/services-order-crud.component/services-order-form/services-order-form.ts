@@ -133,7 +133,6 @@ export class ServiceOrderFormComponent implements OnInit {
           this.swalService.error('Orden creada, pero no se recibió un ID válido');
         }
       },
-      error: () => this.swalService.error('Error al guardar la orden de servicio')
     });
   }
 

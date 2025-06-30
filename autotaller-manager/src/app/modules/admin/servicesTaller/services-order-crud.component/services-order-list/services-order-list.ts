@@ -154,7 +154,6 @@ onFormSubmit(data: { order: ServiceOrder, repuestos: OrderDetail[] }): void {
           this.swalService.success('Factura y repuestos creados correctamente');
           this.loadData();
         },
-        error: () => this.swalService.error('No se pudo crear la factura')
       });
     },
     error: () => this.swalService.error('Fallo al guardar repuestos')
