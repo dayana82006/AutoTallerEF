@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,6 +8,7 @@ namespace Domain.Entities
 {
     public class Spare: BaseEntity
     {
+        [Key]
         public string Code { get; set; } = null!;
         public string? Description { get; set; }
         public int StockQuantity { get; set; }

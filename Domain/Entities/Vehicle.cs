@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,6 +8,7 @@ namespace Domain.Entities
 {
     public class Vehicle: BaseEntity
     {
+        [Key]
         public string? SerialNumber { get; set; }
         public int ReleaseYear { get; set; }
         public long Km { get; set; }
