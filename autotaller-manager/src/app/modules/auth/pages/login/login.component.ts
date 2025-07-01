@@ -11,7 +11,7 @@ import { SwalService } from '../../../../shared/swal.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
   email: string = '';
@@ -26,32 +26,33 @@ export class LoginComponent {
   onSubmit(): void {
     const credentials: AuthRequest = {
       Email: this.email,
-      Password: this.password
+      Password: this.password,
     };
 
     this.authService.login(credentials).subscribe({
       next: (res) => {
         console.log('Rol autenticado:', res.rols[0]);
 
-        sessionStorage.setItem('currentUser', JSON.stringify(res));
+      sessionStorage.setItem('currentUser', JSON.stringify(res));  
+      localStorage.setItem('token', res.token);
 
-switch (res.rols[0]) {
-  case 'Administrador':
-    this.router.navigate(['/admin']);
-    break;
-  case 'Mecanico':
-    this.router.navigate(['/mecanico']);
-    break;
-  case 'Recepcionista':
-    this.router.navigate(['/recepcionista']);
-    break;
-  default:
-    this.swalService.error('Error', 'Rol no reconocido');
-}
+        switch (res.rols[0]) {
+          case 'Administrador':
+            this.router.navigate(['/admin']);
+            break;
+          case 'Mecanico':
+            this.router.navigate(['/mecanico']);
+            break;
+          case 'Recepcionista':
+            this.router.navigate(['/recepcionista']);
+            break;
+          default:
+            this.swalService.error('Error', 'Rol no reconocido');
+        }
       },
       error: () => {
         this.swalService.error('Error', 'Credenciales inválidas');
-      }
+      },
     });
   }
 }

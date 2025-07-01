@@ -82,14 +82,17 @@ namespace WebAPI.Controllers
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Email ?? "")
+                   new Claim("id", user.Id.ToString()),
+                    new Claim("email", user.Email ?? "")
             };
 
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
+
+        // Si tiene varios roles y los necesitas todos:
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim("roles", role)); // Ojo: usarás "roles" múltiples veces (array)
+        }
+
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

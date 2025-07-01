@@ -1,68 +1,68 @@
 using System.Reflection;
+using System.Text;
 using Application.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using TallerApi.Extensions;
 using TallerApi.Helpers.Errors;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 🧩 Servicios
 builder.Services.ConfigureCors();
 builder.Services.AddAutoMapper(Assembly.GetEntryAssembly());
 builder.Services.AddAplicacionServices();
 builder.Services.AddCustomRateLimiter();
 builder.Services.AddJwt(builder.Configuration);
-builder.Services.AddControllers();
 builder.Services.AddValidationErrors();
+builder.Services.AddOpenApi();
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
+// Conexión a base de datos
 builder.Services.AddDbContext<PublicDbContext>(options =>
 {
     string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
     options.UseNpgsql(connectionString);
 });
 
+
+// Repositorios
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+//CORS para Angular
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:4200") 
+        policy.WithOrigins("http://localhost:4200") // Frontend Angular
               .AllowAnyHeader()
               .AllowAnyMethod();
-              // .AllowCredentials(); 
     });
 });
 
-
 var app = builder.Build();
+
+//Swagger solo en desarrollo
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
-
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
 
-
 app.UseCors("CorsPolicy");
+
 app.UseRateLimiter();
-app.UseAuthentication();
-app.UseAuthorization();
+
+app.UseAuthentication(); 
+app.UseAuthorization();  
+
 app.MapControllers();
+
 app.Run();
