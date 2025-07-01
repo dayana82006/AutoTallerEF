@@ -24,7 +24,7 @@ public class SpareConfiguration : BaseEntityConfiguration<Spare>
         builder.Property(s => s.Description)
             .HasColumnName("description")
             .HasMaxLength(200)
-            .IsRequired();
+            .IsRequired(false);
 
         builder.Property(s => s.StockQuantity)
             .HasColumnName("stock_quantity")

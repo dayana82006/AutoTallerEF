@@ -1,6 +1,5 @@
 import { OrderDetail } from "./order-detail";
 import { ServiceType } from "./service-type";
-import { User } from "./user";
 import { UserMember } from "./user-member";
 import { Vehicle } from "./vehicle";
 export interface ServiceOrder {

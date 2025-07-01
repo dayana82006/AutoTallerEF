@@ -5,11 +5,11 @@ import { UserService } from '../services/user.service';
 import { UserMember } from '../../models/user-member';
 import { SwalService } from '../../../../shared/swal.service';
 import { HttpClientModule } from '@angular/common/http';
-
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './user-list.html',
   styleUrls: ['./user-list.scss']
 })

@@ -9,11 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Infrastructure.Data.Migrations
+namespace Infrastructure.Migrations
 {
     [DbContext(typeof(PublicDbContext))]
-    [Migration("20250629191449_FinaltryCreation")]
-    partial class FinaltryCreation
+    [Migration("20250630054039_InitialCreation")]
+    partial class InitialCreation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,8 +29,7 @@ namespace Infrastructure.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -38,28 +37,21 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("name");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("Domain.Entities.Client", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -67,49 +59,30 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("email");
+                        .HasColumnType("text");
 
                     b.Property<string>("Lastname")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("lastname");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("name");
+                        .HasColumnType("text");
 
                     b.Property<string>("Telephone")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("telephone");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("Telephone")
-                        .IsUnique();
-
-                    b.ToTable("clients", (string)null);
+                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("Domain.Entities.FuelType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -117,49 +90,38 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)")
-                        .HasColumnName("name");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("fuel_type", (string)null);
+                    b.ToTable("FuelTypes");
                 });
 
             modelBuilder.Entity("Domain.Entities.Invoice", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ClientId")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_client");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal>("FinalAmount")
-                        .HasColumnType("decimal(12,2)")
-                        .HasColumnName("final_amount");
+                        .HasColumnType("numeric");
 
                     b.Property<decimal>("TotalServices")
-                        .HasColumnType("decimal(12,2)")
-                        .HasColumnName("total_services");
+                        .HasColumnType("numeric");
 
                     b.Property<decimal>("TotalSpares")
-                        .HasColumnType("decimal(12,2)")
-                        .HasColumnName("total_spares");
+                        .HasColumnType("numeric");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -168,15 +130,14 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("invoices", (string)null);
+                    b.ToTable("Invoices");
                 });
 
             modelBuilder.Entity("Domain.Entities.InvoiceDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -184,12 +145,10 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("InvoiceId")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_invoice");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ServiceOrderId")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_service_order");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -200,15 +159,14 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("ServiceOrderId");
 
-                    b.ToTable("invoice_details", (string)null);
+                    b.ToTable("InvoiceDetails");
                 });
 
             modelBuilder.Entity("Domain.Entities.OrderDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -216,18 +174,13 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("ServiceOrderId")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_service_order");
+                        .HasColumnType("integer");
 
                     b.Property<string>("SpareCode")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("code_spare");
+                        .HasColumnType("text");
 
                     b.Property<int>("SpareQuantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("spare_quantity");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -238,7 +191,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("SpareCode");
 
-                    b.ToTable("order_details", (string)null);
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
@@ -285,8 +238,7 @@ namespace Infrastructure.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -294,80 +246,59 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("name");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("Domain.Entities.ServiceOrder", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("ApprovedByClient")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("client_approved");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DateEntry")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("date_entry");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DeliveryDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("delivery_date");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description");
+                        .HasColumnType("text");
 
                     b.Property<int>("ServiceStatusId")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_status");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ServiceTypeId")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_service_type");
+                        .HasColumnType("integer");
 
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(10,2)")
-                        .HasColumnName("unit_price");
+                    b.Property<int>("UnitPrice")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserMemberId")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_user_member");
+                        .HasColumnType("integer");
 
                     b.Property<string>("VehicleSerialNumber")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("serial_number");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -379,15 +310,14 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("VehicleSerialNumber");
 
-                    b.ToTable("service_order", (string)null);
+                    b.ToTable("ServiceOrders");
                 });
 
             modelBuilder.Entity("Domain.Entities.ServiceStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -395,28 +325,21 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("name");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("service_status", (string)null);
+                    b.ToTable("ServiceStatuses");
                 });
 
             modelBuilder.Entity("Domain.Entities.ServiceType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -424,60 +347,46 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("description");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Description")
-                        .IsUnique();
-
-                    b.ToTable("service_type", (string)null);
+                    b.ToTable("ServiceTypes");
                 });
 
             modelBuilder.Entity("Domain.Entities.Spare", b =>
                 {
                     b.Property<string>("Code")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("code");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("description");
+                        .HasColumnType("text");
 
                     b.Property<int>("StockQuantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("stock_quantity");
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(10,2)")
-                        .HasColumnName("unit_price");
+                        .HasColumnType("numeric");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Code");
 
-                    b.ToTable("spares", (string)null);
+                    b.ToTable("Spares");
                 });
 
             modelBuilder.Entity("Domain.Entities.Specialty", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -485,28 +394,21 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("name");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("specialties", (string)null);
+                    b.ToTable("Specialties");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserMember", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -514,52 +416,33 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("email");
+                        .HasColumnType("text");
 
                     b.Property<string>("Lastname")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("lastname");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("name");
+                        .HasColumnType("text");
 
                     b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("password");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)")
-                        .HasColumnName("username");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.ToTable("user_member", (string)null);
+                    b.ToTable("UserMembers");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -567,15 +450,13 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_role");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserMemberId")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_user_member");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -583,15 +464,14 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("UserMemberId");
 
-                    b.ToTable("user_role", (string)null);
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserSpecialty", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -599,61 +479,57 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("IdSpecialty")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_specialty");
+                        .HasColumnType("integer");
 
                     b.Property<int>("IdUser")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_user");
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("SpecialtyId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("IdSpecialty");
+                    b.HasIndex("SpecialtyId");
 
-                    b.HasIndex("IdUser");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("user_specialties", (string)null);
+                    b.ToTable("UserSpecialties");
                 });
 
             modelBuilder.Entity("Domain.Entities.Vehicle", b =>
                 {
                     b.Property<string>("SerialNumber")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("text")
-                        .HasColumnName("serial_number");
+                        .HasColumnType("text");
 
                     b.Property<int>("ClientId")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_client");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("FuelTypeId")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_fuel_type");
+                        .HasColumnType("integer");
 
                     b.Property<long>("Km")
-                        .HasColumnType("bigint")
-                        .HasColumnName("km");
+                        .HasColumnType("bigint");
 
                     b.Property<int>("ReleaseYear")
-                        .HasColumnType("integer")
-                        .HasColumnName("release_year");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("VehicleModelId")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_model");
+                        .HasColumnType("integer");
 
                     b.Property<int>("VehicleTypeId")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_vehicle_type");
+                        .HasColumnType("integer");
 
                     b.HasKey("SerialNumber");
 
@@ -665,15 +541,14 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("VehicleTypeId");
 
-                    b.ToTable("vehicles", (string)null);
+                    b.ToTable("Vehicles");
                 });
 
             modelBuilder.Entity("Domain.Entities.VehicleAnormality", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -681,34 +556,25 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("EntryDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("entry_date")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("name");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("vehicle_anormalities", (string)null);
+                    b.ToTable("VehicleAnormalities");
                 });
 
             modelBuilder.Entity("Domain.Entities.VehicleAnormalityDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -716,47 +582,45 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("IdAnormality")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_anormality");
+                        .HasColumnType("integer");
 
                     b.Property<string>("SerialNumber")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("serial_number");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int?>("VehicleAnormalityId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("VehicleSerialNumber")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("IdAnormality");
+                    b.HasIndex("VehicleAnormalityId");
 
-                    b.HasIndex("SerialNumber");
+                    b.HasIndex("VehicleSerialNumber");
 
-                    b.ToTable("vehicle_anormalities_details", (string)null);
+                    b.ToTable("VehicleAnormalityDetails");
                 });
 
             modelBuilder.Entity("Domain.Entities.VehicleModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BrandId")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_brand");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("name");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -765,18 +629,14 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("BrandId");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("vehicle_models", (string)null);
+                    b.ToTable("VehicleModels");
                 });
 
             modelBuilder.Entity("Domain.Entities.VehicleType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -784,20 +644,14 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)")
-                        .HasColumnName("name");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("vehicle_type", (string)null);
+                    b.ToTable("VehicleTypes");
                 });
 
             modelBuilder.Entity("Domain.Entities.Invoice", b =>
@@ -840,9 +694,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasOne("Domain.Entities.Spare", "Spare")
                         .WithMany("OrderDetails")
-                        .HasForeignKey("SpareCode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SpareCode");
 
                     b.Navigation("ServiceOrder");
 
@@ -882,9 +734,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasOne("Domain.Entities.Vehicle", "Vehicle")
                         .WithMany("ServiceOrders")
-                        .HasForeignKey("VehicleSerialNumber")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VehicleSerialNumber");
 
                     b.Navigation("ServiceStatus");
 
@@ -918,15 +768,11 @@ namespace Infrastructure.Data.Migrations
                 {
                     b.HasOne("Domain.Entities.Specialty", "Specialty")
                         .WithMany("UserSpecialties")
-                        .HasForeignKey("IdSpecialty")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SpecialtyId");
 
                     b.HasOne("Domain.Entities.UserMember", "User")
                         .WithMany("UserSpecialties")
-                        .HasForeignKey("IdUser")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Specialty");
 
@@ -972,15 +818,11 @@ namespace Infrastructure.Data.Migrations
                 {
                     b.HasOne("Domain.Entities.VehicleAnormality", "VehicleAnormality")
                         .WithMany("VehicleAnormalityDetails")
-                        .HasForeignKey("IdAnormality")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VehicleAnormalityId");
 
                     b.HasOne("Domain.Entities.Vehicle", "Vehicle")
                         .WithMany("VehicleAnormalityDetails")
-                        .HasForeignKey("SerialNumber")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VehicleSerialNumber");
 
                     b.Navigation("Vehicle");
 

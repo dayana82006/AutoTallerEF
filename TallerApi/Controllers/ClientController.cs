@@ -75,10 +75,9 @@ public async Task<IActionResult> Put(int id, [FromBody] ClientDto clientDto)
     if (existingClient == null)
         return NotFound(new ApiResponse(404, "El cliente solicitado no existe."));
 
-    // 🚨 Actualiza la entidad rastreada directamente
     _mapper.Map(clientDto, existingClient);
 
-    _unitOfWork.Client.Update(existingClient); // Ya está trackeado
+    _unitOfWork.Client.Update(existingClient); 
     await _unitOfWork.SaveAsync();
 
     return Ok(_mapper.Map<ClientDto>(existingClient));

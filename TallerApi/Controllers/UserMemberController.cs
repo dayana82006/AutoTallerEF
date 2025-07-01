@@ -68,8 +68,7 @@ namespace TallerApi.Controllers
 
                 if (!string.IsNullOrWhiteSpace(usermemberDto.Password))
                 {
-                    var hasher = new PasswordHasher<UserMember>();
-                    user.Password = hasher.HashPassword(user, usermemberDto.Password);
+                   user.Password = BCrypt.Net.BCrypt.HashPassword(usermemberDto.Password);
                 }
 
                 // Rol
