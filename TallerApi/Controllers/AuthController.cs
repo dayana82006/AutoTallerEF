@@ -29,7 +29,6 @@ namespace WebAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Buscar usuario por email
             var user = await _context.UserMembers
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
@@ -45,8 +44,7 @@ namespace WebAPI.Controllers
                 });
             }
 
-            // Comparar contraseñas directamente (sin hash)
-            if (user.Password != request.Password)
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
                 return Unauthorized(new DataUserDto
                 {
