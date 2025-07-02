@@ -109,26 +109,44 @@ ngOnInit(): void {
     this.repuestosSeleccionados.splice(index, 1);
   }
 
-  save(): void {
-    const s = { ...this.serviceOrder };
+save(): void {
+  const s = { ...this.serviceOrder };
 
-    if (
-      !s.description?.trim() ||
-      !s.serialNumber?.trim() ||
-      !s.serviceStatusId || s.serviceStatusId <= 0 ||
-      !s.serviceTypeId || s.serviceTypeId <= 0 ||
-      !s.userMemberId || s.userMemberId <= 0 ||
-      s.unitPrice < 0
-    ) {
-      this.swalService.error('Por favor completa todos los campos obligatorios correctamente');
-      return;
-    }
+  if (
+    !s.description?.trim() ||
+    !s.serialNumber?.trim() ||
+    !s.serviceStatusId || s.serviceStatusId <= 0 ||
+    !s.serviceTypeId || s.serviceTypeId <= 0 ||
+    !s.userMemberId || s.userMemberId <= 0 ||
+    s.unitPrice < 0
+  ) {
+    this.swalService.error('Por favor completa todos los campos obligatorios correctamente');
+    return;
+  }
 
-    if (!s.invoiceId || s.invoiceId <= 0) {
-      delete s.invoiceId;
-    }
+  if (!s.invoiceId || s.invoiceId <= 0) {
+    delete s.invoiceId;
+  }
 
-    const { id, createdAt, updatedAt, ...orderToSend } = s;
+  const detalles = this.generarDetallesRepuestos(s.id ?? 0);
+
+  const payload: ServiceOrder = {
+    ...s,
+    orderDetails: detalles
+  };
+
+  if (this.editMode && s.id) {
+    // 🛠️ UPDATE
+    this.serviceOrderService.updateServiceOrder(s.id, payload).subscribe({
+      next: () => {
+        this.swalService.success('Orden actualizada correctamente');
+        this.formSubmitted.emit({ order: payload, repuestos: detalles });
+      },
+      error: () => this.swalService.error('Error actualizando la orden'),
+    });
+  } else {
+    // 🛠️ CREATE
+    const { id, createdAt, updatedAt, ...orderToSend } = payload;
 
     this.serviceOrderService.createServiceOrder(orderToSend).subscribe({
       next: (createdOrder: ServiceOrder) => {
@@ -141,19 +159,21 @@ ngOnInit(): void {
       },
     });
   }
+}
 
-  generarDetallesRepuestos(orderId: number): OrderDetail[] {
-    return this.repuestosSeleccionados
-      .filter(r => r.codeSpare !== null && r.spareQuantity > 0)
-      .map(r => ({
-        id: 0,
-        serviceOrderId: orderId,
-        spareCode: String(r.codeSpare!),
-        spareQuantity: r.spareQuantity,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }));
-  }
+
+generarDetallesRepuestos(orderId: number): OrderDetail[] {
+  return this.repuestosSeleccionados
+    .filter(r => r.codeSpare !== null && r.spareQuantity > 0)
+    .map(r => ({
+      id: 0,
+      serviceOrderId: orderId,
+      spareCode: String(r.codeSpare),   // <- como lo espera el frontend
+      spareQuantity: r.spareQuantity,   // <- como lo espera el frontend
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+}
 
   cancel(): void {
     this.cancelForm.emit();
