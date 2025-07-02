@@ -67,33 +67,39 @@ export class ServiceOrderFormComponent implements OnInit {
     private swalService: SwalService
   ) {}
 
-  ngOnInit(): void {
-    forkJoin({
-      vehicles: this.vehicleService.getVehicles(),
-      serviceTypes: this.serviceTypeService.getAll(),
-      users: this.userService.getAll(),
-      invoices: this.invoiceService.getInvoices(),
-      spares: this.spareService.getAll()
-    }).subscribe({
-      next: ({ vehicles, serviceTypes, users, invoices, spares }) => {
-        this.vehicles = vehicles;
-        this.serviceTypes = serviceTypes;
-        this.users = users.filter(u =>
-          Array.isArray(u.role)
-            ? u.role.includes('Mecanico') || u.role.includes('mecanico')
-            : u.role === 'Mecanico' || u.role === 'mecanico'
-        );
-        this.invoices = invoices;
-        this.spares = spares;
-      },
-      error: () => this.swalService.error('Error al cargar datos del formulario')
-    });
+ngOnInit(): void {
+  forkJoin({
+    vehicles: this.vehicleService.getVehicles(),
+    serviceTypes: this.serviceTypeService.getAll(),
+    users: this.userService.getAll(),
+    invoices: this.invoiceService.getInvoices(),
+    spares: this.spareService.getAll()
+  }).subscribe({
+    next: ({ vehicles, serviceTypes, users, invoices, spares }) => {
+      this.vehicles = vehicles;
+      this.serviceTypes = serviceTypes;
+      this.users = users.filter(u =>
+        Array.isArray(u.role)
+          ? u.role.includes('Mecanico') || u.role.includes('mecanico')
+          : u.role === 'Mecanico' || u.role === 'mecanico'
+      );
+      this.invoices = invoices;
+      this.spares = spares;
 
-    if (this.serviceOrderToEdit) {
-      this.serviceOrder = { ...this.serviceOrderToEdit };
-      this.editMode = true;
-    }
+      // 🟢 Si NO estamos editando, asignamos estado "Pendiente"
+      if (!this.editMode) {
+        this.serviceOrder.serviceStatusId = 1; // ← ID del estado "Pendiente"
+      }
+    },
+    error: () => this.swalService.error('Error al cargar datos del formulario')
+  });
+
+  if (this.serviceOrderToEdit) {
+    this.serviceOrder = { ...this.serviceOrderToEdit };
+    this.editMode = true;
   }
+}
+
 
   agregarRepuesto(): void {
     this.repuestosSeleccionados.push({ codeSpare: null, spareQuantity: 1 });
