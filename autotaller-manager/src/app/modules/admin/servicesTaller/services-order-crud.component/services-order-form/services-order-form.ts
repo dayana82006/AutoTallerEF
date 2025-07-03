@@ -86,9 +86,8 @@ ngOnInit(): void {
       this.invoices = invoices;
       this.spares = spares;
 
-      // 🟢 Si NO estamos editando, asignamos estado "Pendiente"
       if (!this.editMode) {
-        this.serviceOrder.serviceStatusId = 1; // ← ID del estado "Pendiente"
+        this.serviceOrder.serviceStatusId = 1; 
       }
     },
     error: () => this.swalService.error('Error al cargar datos del formulario')
@@ -136,7 +135,7 @@ save(): void {
   };
 
   if (this.editMode && s.id) {
-    // 🛠️ UPDATE
+   
     this.serviceOrderService.updateServiceOrder(s.id, payload).subscribe({
       next: () => {
         this.swalService.success('Orden actualizada correctamente');
@@ -145,7 +144,7 @@ save(): void {
       error: () => this.swalService.error('Error actualizando la orden'),
     });
   } else {
-    // 🛠️ CREATE
+    
     const { id, createdAt, updatedAt, ...orderToSend } = payload;
 
     this.serviceOrderService.createServiceOrder(orderToSend).subscribe({
