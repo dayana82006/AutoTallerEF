@@ -22,14 +22,15 @@ namespace TallerApi.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IEnumerable<VehicleDto>>> Get()
-        {
-            var vehicles = await _unitOfWork.Vehicle.GetAllAsync();
-            return Ok(_mapper.Map<List<VehicleDto>>(vehicles));
-        }
+[HttpGet]
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
+public async Task<ActionResult<IEnumerable<VehicleDto>>> Get()
+{
+    var vehicles = await _unitOfWork.Vehicle.GetAllWithClientAsync();
+    var vehicleDtos = _mapper.Map<List<VehicleDto>>(vehicles);
+    return Ok(vehicleDtos);
+}
 
         [HttpGet("{SerialNumber}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

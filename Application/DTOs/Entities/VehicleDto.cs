@@ -12,6 +12,7 @@ namespace Application.DTOs.Entities
          public int ReleaseYear { get; set; }
         public int VehicleModelId { get; set; }
         public int ClientId { get; set; }
+        public ClientDto? Client { get; set; }
         public int FuelTypeId { get; set; }
         public int VehicleTypeId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

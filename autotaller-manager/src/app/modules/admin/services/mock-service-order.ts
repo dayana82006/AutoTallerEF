@@ -7,7 +7,7 @@ import { ServiceOrder } from '../models/service-order';
   providedIn: 'root'
 })
 export class MockServiceOrderService {
-  private readonly API_URL = 'http://localhost:5005/api/ServiceOrder'; 
+  private readonly API_URL = 'http://localhost:5005/api/ServiceOrder';
 
   constructor(private http: HttpClient) {}
 
@@ -33,14 +33,14 @@ export class MockServiceOrderService {
 
   linkInvoice(orderId: number, invoiceId: number): Observable<void> {
     return this.http.post<void>(
-      'http://localhost:5005/api/invoicedetail', 
+      'http://localhost:5005/api/invoicedetail',
       { serviceOrderId: orderId, invoiceId }
     );
   }
 
   createInvoiceForOrder(orderId: number): Observable<any> {
     return this.http.post<any>(
-      'http://localhost:5005/api/invoice', 
+      'http://localhost:5005/api/invoice',
       { serviceOrderId: orderId }
     );
   }

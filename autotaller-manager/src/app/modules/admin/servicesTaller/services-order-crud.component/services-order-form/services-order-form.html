@@ -23,7 +23,7 @@
         [class.is-invalid]="serialNumber.invalid && serialNumber.touched">
         <option [ngValue]="null" disabled selected>Seleccione un vehículo</option>
         <option *ngFor="let vehicle of vehicles" [ngValue]="vehicle.serialNumber">
-          {{ vehicle.serialNumber }} - Año {{ vehicle.releaseYear }}
+          {{ vehicle.serialNumber }} - {{ vehicle.client?.name }} {{ vehicle.client?.lastname }} - Año {{ vehicle.releaseYear }}
         </option>
       </select>
       <div class="invalid-feedback" *ngIf="serialNumber.invalid && serialNumber.touched">
@@ -63,21 +63,8 @@
       </div>
     </div>
 
-    <!-- Estado -->
-    <div class="mb-3">
-      <label class="form-label text-white">Estado *</label>
-      <select class="form-select" [(ngModel)]="serviceOrder.serviceStatusId" name="serviceStatusId"
-        required #status="ngModel"
-        [class.is-invalid]="status.invalid && status.touched">
-        <option [ngValue]="null" disabled selected>Seleccione un estado</option>
-        <option *ngFor="let st of statuses" [ngValue]="st.id">
-          {{ st.description }}
-        </option>
-      </select>
-      <div class="invalid-feedback" *ngIf="status.invalid && status.touched">
-        El estado es requerido
-      </div>
-    </div>
+<input type="hidden" [(ngModel)]="serviceOrder.serviceStatusId" name="serviceStatusId" />
+
 
     <!-- Precio -->
     <div class="mb-3">

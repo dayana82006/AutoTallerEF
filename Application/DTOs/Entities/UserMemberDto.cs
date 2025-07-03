@@ -12,8 +12,8 @@ namespace Application.DTOs
         public string? Role { get; set; } 
         public List<string>? Specialties { get; set; } = new(); 
 
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         public static implicit operator string(UserMemberDto v)
         {

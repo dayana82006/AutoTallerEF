@@ -6,8 +6,10 @@ using Domain.Entities;
 
 namespace Application.Interfaces
 {
-    public interface IVehicleRepository:IGenericRepository<Vehicle>
+    public interface IVehicleRepository : IGenericRepository<Vehicle>
     {
         Task<Vehicle> GetByIdAsync(string SerialNumber);
+        Task<IEnumerable<Vehicle>> GetAllWithClientAsync();
+
     }
 }

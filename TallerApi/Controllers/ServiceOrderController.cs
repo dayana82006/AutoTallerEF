@@ -90,25 +90,44 @@ namespace TallerApi.Controllers
             return CreatedAtAction(nameof(Get), new { id = order.Id }, resultDto);
         }
 
-        // PUT: api/serviceorder/5
-        [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Put(int id, [FromBody] ServiceOrderDto orderDto)
-        {
-            if (orderDto == null || id != orderDto.Id)
-                return BadRequest(new ApiResponse(400, "Datos inválidos o ID inconsistente."));
 
-            var existingOrder = await _unitOfWork.ServiceOrder.GetByIdAsync(id);
-            if (existingOrder == null)
-                return NotFound(new ApiResponse(404, "La orden de servicio solicitada no existe."));
+[HttpPut("{id}")]
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
+public async Task<IActionResult> Put(int id, [FromBody] ServiceOrderDto orderDto)
+{
+    if (orderDto == null || id != orderDto.Id)
+        return BadRequest(new ApiResponse(400, "Datos inválidos o ID inconsistente."));
 
-            _mapper.Map(orderDto, existingOrder);
+    var existingOrder = await _unitOfWork.ServiceOrder.GetByIdAsync(id);
+    if (existingOrder == null)
+        return NotFound(new ApiResponse(404, "La orden de servicio solicitada no existe."));
 
-            await _unitOfWork.SaveAsync();
-            return Ok(orderDto);
-        }
+    // 🧼 Actualiza la orden
+    _mapper.Map(orderDto, existingOrder);
+
+    // 🧹 Elimina repuestos anteriores
+    var oldDetails = await _unitOfWork.OrderDetail.GetByServiceOrderIdAsync(id);
+    foreach (var old in oldDetails)
+        _unitOfWork.OrderDetail.Remove(old);
+
+    // ✅ Agrega nuevos repuestos
+    foreach (var detailDto in orderDto.OrderDetails)
+    {
+        var newDetail = _mapper.Map<OrderDetail>(detailDto);
+        newDetail.Id = 0;
+        newDetail.ServiceOrderId = id;
+
+        _unitOfWork.OrderDetail.Add(newDetail);
+    }
+
+    // ✅ Guarda todo junto
+    await _unitOfWork.SaveAsync();
+
+    return Ok(orderDto);
+}
+
 
         // DELETE: api/serviceorder/5
         [HttpDelete("{id}")]

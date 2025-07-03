@@ -16,9 +16,16 @@ namespace Infrastructure.Repositories
         }
 
         public virtual async Task<Vehicle> GetByIdAsync(string id)
+        {
+            return await _context.Set<Vehicle>().FirstOrDefaultAsync(e => EF.Property<string>(e, "SerialNumber") == id);
+        }
+public async Task<IEnumerable<Vehicle>> GetAllWithClientAsync()
 {
-    return await _context.Set<Vehicle>().FirstOrDefaultAsync(e => EF.Property<string>(e, "SerialNumber") == id);
+    return await _context.Vehicles
+        .Include(v => v.Client)
+        .ToListAsync();
 }
+
 
     }
 }
