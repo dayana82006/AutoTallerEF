@@ -20,12 +20,14 @@ export const routes: Routes = [
   {
     path: 'mecanico',
     canActivate: [authGuard],
+    data: { roles: ['Mecanico'] },
     loadChildren: () =>
       import('./modules/mecanico/mecanico-module').then(m => m.MecanicoModule)
   },
   {
     path: 'recepcionista',
     canActivate: [authGuard],
+    data: { roles: ['Recepcionista'] },
     loadChildren: () =>
       import('./modules/recepcionista/recepcionista-module').then(m => m.RecepcionistaModule)
   },
