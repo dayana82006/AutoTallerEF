@@ -1,11 +1,14 @@
 import { Component, OnInit } from "@angular/core";
-import { Client } from "../../models/client";
-import { MockClientService } from "../../services/mock-client";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+
+import { Client } from "../../models/client";
+import { MockClientService } from "../../services/mock-client";
+import { MockVehicleService } from "../../services/mock-vehicle";
 import { ClientFormComponent } from "../client-form/client-form.component";
 import { SwalService } from "../../../../shared/swal.service";
 import { AuthService } from '../../../auth/services/auth';
+
 @Component({
   selector: 'app-client-list',
   standalone: true,
@@ -17,7 +20,7 @@ export class ClientListComponent implements OnInit {
   clients: Client[] = [];
 
   selectedClient?: Client | null;
-  showForm = false; 
+  showForm = false;
   total = 0;
   page = 1;
   pageSize = 5;
@@ -25,11 +28,16 @@ export class ClientListComponent implements OnInit {
 
   constructor(
     private clientService: MockClientService,
-     private swalService: SwalService,
-     public authService: AuthService
+    private vehicleService: MockVehicleService,
+    private swalService: SwalService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.loadClients();
+  }
+
+  loadClients(): void {
     this.clientService.getAll().subscribe((data) => {
       this.allClients = data;
       this.applyFilters();
@@ -54,17 +62,28 @@ export class ClientListComponent implements OnInit {
     this.showForm = true;
   }
 
-delete(id: number): void {
-  this.swalService.confirm('¿Eliminar cliente?', 'Esta acción no se puede deshacer.').then(confirmed => {
-    if (confirmed) {
-      this.clientService.delete(id).subscribe(() => {
-        this.loadClients();
-        this.swalService.success('Cliente eliminado', 'El cliente fue eliminado correctamente.');
-      });
-    }
-  });
-}
+  delete(id: number): void {
+    this.vehicleService.getAll().subscribe(vehicles => {
+      const hasVehicle = vehicles.some(v => v.clientId === id);
 
+      if (hasVehicle) {
+        this.swalService.error(
+          'No se puede eliminar el cliente',
+          'Este cliente tiene vehículos asignados.'
+        );
+        return;
+      }
+
+      this.swalService.confirm('¿Eliminar cliente?', 'Esta acción no se puede deshacer.').then(confirmed => {
+        if (confirmed) {
+          this.clientService.delete(id).subscribe(() => {
+            this.loadClients();
+            this.swalService.success('Cliente eliminado', 'El cliente fue eliminado correctamente.');
+          });
+        }
+      });
+    });
+  }
 
   onFormSubmit(): void {
     this.selectedClient = null;
@@ -80,13 +99,6 @@ delete(id: number): void {
   cancelForm(): void {
     this.selectedClient = null;
     this.showForm = false;
-  }
-
-  loadClients(): void {
-    this.clientService.getAll().subscribe((data) => {
-      this.allClients = data;
-      this.applyFilters();
-    });
   }
 
   onSearchChange(): void {

@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, ActivatedRoute, NavigationEnd, RouterModule } from '@angular/router';
-import { filter } from 'rxjs/operators';
-
+import { RouterModule } from '@angular/router';
 import { UserMember } from '../../models/user-member';
 import { SwalService } from '../../../../shared/swal.service';
 import { MockUserService } from '../../services/mock-user';
@@ -24,23 +22,11 @@ export class UserListComponent implements OnInit {
 
   constructor(
     private userService: MockUserService,
-    private swalService: SwalService,
-    private router: Router,
-    private route: ActivatedRoute
+    private swalService: SwalService
   ) {}
 
   ngOnInit(): void {
     this.loadUsers();
-
-    // 🔄 Forzar recarga de datos cuando se regresa a esta ruta
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        // Si estamos en la ruta de usuarios, recargar
-        if (this.router.url.includes('/admin/usuarios')) {
-          this.loadUsers();
-        }
-      });
   }
 
   loadUsers(): void {

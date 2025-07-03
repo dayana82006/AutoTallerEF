@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Vehicle } from '../models/vehicle';
 import { Observable } from 'rxjs';
+import { Vehicle } from '../models/vehicle';
 
 @Injectable({
   providedIn: 'root'
@@ -10,13 +10,15 @@ export class MockVehicleService {
   private baseUrl = 'http://localhost:5005/api/Vehicle';
 
   constructor(private http: HttpClient) {}
-
-  // Obtener todos los vehículos
   getVehicles(): Observable<Vehicle[]> {
     return this.http.get<Vehicle[]>(this.baseUrl);
   }
+  
+  getAll(): Observable<Vehicle[]> {
+    return this.http.get<Vehicle[]>(this.baseUrl);
+  }
 
-  // Obtener un vehículo por su serial number 
+  // Obtener un vehículo por su número de serie
   getVehicleBySerialNumber(serialNumber: string): Observable<Vehicle> {
     return this.http.get<Vehicle>(`${this.baseUrl}/${serialNumber}`);
   }
@@ -26,12 +28,12 @@ export class MockVehicleService {
     return this.http.post<Vehicle>(this.baseUrl, vehicle);
   }
 
-  // Actualizar un vehículo existente usando serialNumber
+  // Actualizar un vehículo existente usando el número de serie
   updateVehicle(serialNumber: string, updatedVehicle: Vehicle): Observable<Vehicle> {
     return this.http.put<Vehicle>(`${this.baseUrl}/${serialNumber}`, updatedVehicle);
   }
 
-  // Eliminar un vehículo por serialNumber
+  // Eliminar un vehículo por número de serie
   deleteVehicle(serialNumber: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${serialNumber}`);
   }
