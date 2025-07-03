@@ -12,6 +12,10 @@
 
 ---
 
+## ER model
+
+![alt text](ERmodel.png)
+
 ## 🚀 Getting Started
 
 ### 1. Clone the repository
@@ -41,52 +45,54 @@ Connect to your PostgreSQL database and run the following SQL:
 
 ```sql
 -- BRANDS
-INSERT INTO brands (name, "CreatedAt", "UpdatedAt") VALUES 
+INSERT INTO "Brands" ("Name", "CreatedAt", "UpdatedAt") VALUES 
 ('Toyota',    now(), now()),
 ('Ford',      now(), now()),
 ('Chevrolet', now(), now()),
 ('Honda',     now(), now()),
 ('Nissan',    now(), now());
 
--- VEHICLE MODELS
-INSERT INTO vehicle_models (name, id_brand, "CreatedAt", "UpdatedAt") VALUES
-('Corolla', 1, now(), now()),     
-('Hilux',   1, now(), now()),
-('Fiesta',  2, now(), now()),     
+INSERT INTO "VehicleModels" ("Name", "BrandId", "CreatedAt", "UpdatedAt") VALUES
+('Corolla', 1, now(), now()),
+('Hilux', 1, now(), now()),
+('Fiesta', 2, now(), now()),
 ('Mustang', 2, now(), now()),
-('Spark',   3, now(), now()),     
-('Cruze',   3, now(), now()),
-('Civic',   4, now(), now()),    
-('Accord',  4, now(), now()),
-('Sentra',  5, now(), now()),     
+('Spark', 3, now(), now()),
+('Cruze', 3, now(), now()),
+('Civic', 4, now(), now()),
+('Accord', 4, now(), now()),
+('Sentra', 5, now(), now()),
 ('X-Trail', 5, now(), now());
 
+
 -- FUEL TYPES
-INSERT INTO fuel_type (name, "CreatedAt", "UpdatedAt") VALUES 
+INSERT INTO "FuelTypes" ("Name", "CreatedAt", "UpdatedAt") VALUES 
 ('Gasoline', now(), now()),
 ('Diesel',   now(), now()),
 ('Electric', now(), now()),
 ('Hybrid',   now(), now());
 
 -- VEHICLE TYPES
-INSERT INTO vehicle_type (name, "CreatedAt", "UpdatedAt") VALUES 
+INSERT INTO "VehicleTypes" ("Name", "CreatedAt", "UpdatedAt") VALUES 
 ('Sedan',     now(), now()),
 ('SUV',       now(), now()),
 ('Pickup',    now(), now()),
 ('Hatchback', now(), now()),
 ('Van',       now(), now());
 
--- SERVICE STATUS
-INSERT INTO service_status ("name", "CreatedAt", "UpdatedAt") VALUES
-('Pendiente', now(), now()),
-('En proceso', now(), now()),
-('Finalizado', now(), now());
+-- SERVICE STATUSES
+INSERT INTO "ServiceStatuses" ("Name", "CreatedAt", "UpdatedAt")
+VALUES
+  ('Pendiente', now(), now()),
+  ('En proceso', now(), now()),
+  ('Finalizado', now(), now());
 
 -- ROLES
-INSERT INTO roles (id, name, description, "CreatedAt", "UpdatedAt") VALUES
-(1, 'Administrador', 'Usuario con acceso total al sistema', now(), now()),
-(2, 'Recepcionista', 'Encargado de recibir vehículos y coordinar órdenes', now(), now()),
-(3, 'Mecanico', 'Responsable de realizar servicios técnicos', now(), now());
+INSERT INTO "Roles" ("Id", "Name", "Description", "CreatedAt", "UpdatedAt")
+VALUES
+  (1, 'Administrador', 'Usuario con acceso total al sistema', NOW(), NOW()),
+  (2, 'Recepcionista', 'Encargado de recibir vehículos y coordinar órdenes', NOW(), NOW()),
+  (3, 'Mecanico', 'Responsable de realizar servicios técnicos', NOW(), NOW());
 ```
 
 4. Run the backend:

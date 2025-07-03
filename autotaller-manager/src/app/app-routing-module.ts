@@ -6,12 +6,11 @@ import { OrderSearch } from './modules/landing/pages/order-search/order-search';
 import {authGuard } from '../app/guards/auth-guard';
 
 export const routes: Routes = [
-  // Rutas públicas
+
   { path: '', component: LandingComponent },
   { path: 'consultas', component: OrderSearch },
   { path: 'auth/login', component: LoginComponent },
 
-   //Rutas protegidas por login
   {
   path: 'admin',
   canActivate: [authGuard],
