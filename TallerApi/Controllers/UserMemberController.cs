@@ -53,63 +53,71 @@ namespace TallerApi.Controllers
 
             return Ok(_mapper.Map<UserMemberDto>(user));
         }
+        
+    [HttpPost]
+    public async Task<ActionResult<UserMemberDto>> Post(UserMemberDto usermemberDto)
+    {
+        if (usermemberDto == null)
+            return BadRequest(new ApiResponse(400, "Datos inválidos."));
 
-        [HttpPost]
-        public async Task<ActionResult<UserMemberDto>> Post(UserMemberDto usermemberDto)
+        try
         {
-            if (usermemberDto == null)
-                return BadRequest(new ApiResponse(400, "Datos inválidos."));
+            var user = _mapper.Map<UserMember>(usermemberDto);
+            user.CreatedAt = DateTime.UtcNow;
+            user.UpdatedAt = DateTime.UtcNow;
 
-            try
+            if (!string.IsNullOrWhiteSpace(usermemberDto.Password))
             {
-                var user = _mapper.Map<UserMember>(usermemberDto);
-                user.CreatedAt = DateTime.UtcNow;
-                user.UpdatedAt = DateTime.UtcNow;
+                user.Password = BCrypt.Net.BCrypt.HashPassword(usermemberDto.Password);
+            }
 
-                if (!string.IsNullOrWhiteSpace(usermemberDto.Password))
+            // Asignar rol
+            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == usermemberDto.Role);
+            if (role != null)
+            {
+                user.UserRoles = new List<UserRole>
                 {
-                   user.Password = BCrypt.Net.BCrypt.HashPassword(usermemberDto.Password);
-                }
+                    new UserRole { RoleId = role.Id }
+                };
+            }
 
-                // Rol
-                var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == usermemberDto.Role);
-                if (role != null)
+            // Guardar el usuario
+            await _context.UserMembers.AddAsync(user);
+            await _context.SaveChangesAsync(); // Necesario para tener user.Id
+
+            // Asociar especialidades si es mecánico
+            if (role != null && role.Name == "Mecanico" && usermemberDto.Specialties != null)
+            {
+                foreach (var specName in usermemberDto.Specialties)
                 {
-                    user.UserRoles = new List<UserRole>
+                    var spec = await _context.Specialties.FirstOrDefaultAsync(s => s.Name == specName);
+                    if (spec != null)
                     {
-                        new UserRole { RoleId = role.Id }
-                    };
-                }
-
-                await _context.UserMembers.AddAsync(user);
-                await _context.SaveChangesAsync(); // 🚨 Necesario para tener el Id del usuario
-
-                // Especialidades si es mecánico
-                if (role != null && role.Name == "Mecanico" && usermemberDto.Specialties != null)
-                {
-                    foreach (var specName in usermemberDto.Specialties)
-                    {
-                        var spec = await _context.Specialties.FirstOrDefaultAsync(s => s.Name == specName);
-                        if (spec != null)
+                        await _context.UserSpecialties.AddAsync(new UserSpecialty
                         {
-                            var userSpec = new UserSpecialty
-                            {
-                                IdUser = user.Id,
-                                IdSpecialty = spec.Id
-                            };
-                            await _context.UserSpecialties.AddAsync(userSpec);
-                        }
+                            IdUser = user.Id,
+                            User = user,
+                            IdSpecialty = spec.Id,
+                            Specialty = spec
+                        });
                     }
-                    await _context.SaveChangesAsync();
                 }
+                await _context.SaveChangesAsync();
+            }
 
-                return CreatedAtAction(nameof(Get), new { id = user.Id }, _mapper.Map<UserMemberDto>(user));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ApiResponse(400, $"Error al crear usuario: {ex.Message}"));
-            }
+            // Recargar usuario con relaciones completas
+            var createdUser = await _context.UserMembers
+                .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
+                .Include(u => u.UserSpecialties).ThenInclude(us => us.Specialty)
+                .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+            return CreatedAtAction(nameof(Get), new { id = createdUser!.Id }, _mapper.Map<UserMemberDto>(createdUser));
         }
+        catch (Exception ex)
+        {
+            return BadRequest(new ApiResponse(400, $"Error al crear usuario: {ex.Message}"));
+        }
+    }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] UserMemberDto usermemberDto)
@@ -137,7 +145,6 @@ namespace TallerApi.Controllers
                 existingUser.Password = hasher.HashPassword(existingUser, usermemberDto.Password);
             }
 
-            // Rol
             var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == usermemberDto.Role);
             if (role != null)
             {
@@ -147,8 +154,7 @@ namespace TallerApi.Controllers
                 };
             }
 
-            // Especialidades
-            _context.UserSpecialties.RemoveRange(existingUser.UserSpecialties); // Limpiar actuales
+            _context.UserSpecialties.RemoveRange(existingUser.UserSpecialties);
 
             if (role != null && role.Name == "Mecanico" && usermemberDto.Specialties != null)
             {
@@ -160,7 +166,8 @@ namespace TallerApi.Controllers
                         existingUser.UserSpecialties.Add(new UserSpecialty
                         {
                             IdUser = id,
-                            IdSpecialty = spec.Id
+                            IdSpecialty = spec.Id,
+                            Specialty = spec
                         });
                     }
                 }
@@ -182,6 +189,50 @@ namespace TallerApi.Controllers
             _unitOfWork.UserMember.Remove(user);
             await _unitOfWork.SaveAsync();
             return NoContent();
+        }
+
+        [HttpGet("paged")]
+        public async Task<IActionResult> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string search = "")
+        {
+            var query = _context.UserMembers
+                .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
+                .Include(u => u.UserSpecialties).ThenInclude(us => us.Specialty)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(u =>
+                    u.Name!.ToLower().Contains(search.ToLower()) ||
+                    u.Lastname!.ToLower().Contains(search.ToLower()) ||
+                    u.Email!.ToLower().Contains(search.ToLower()));
+            }
+
+            var total = await query.CountAsync();
+
+            var users = await query
+                .OrderByDescending(u => u.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var userDtos = users.Select(u => new UserMemberDto
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Lastname = u.Lastname,
+                Username = u.Username,
+                Email = u.Email,
+                Role = u.UserRoles.FirstOrDefault()?.Role?.Name ?? "Sin Rol",
+                Specialties = u.UserSpecialties
+                    .Where(us => us.Specialty != null)
+                    .Select(us => us.Specialty!.Name!)
+                    .ToList(),
+                CreatedAt = u.CreatedAt,
+                UpdatedAt = u.UpdatedAt
+
+            }).ToList();
+
+            return Ok(new { users = userDtos, total });
         }
     }
 }
