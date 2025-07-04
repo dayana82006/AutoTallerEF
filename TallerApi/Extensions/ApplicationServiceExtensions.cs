@@ -95,34 +95,34 @@ namespace TallerApi.Extensions
 
             return services;
         }
-        public static void AddJwt(this IServiceCollection services, IConfiguration configuration)
-        {
-            //Configuration from AppSettings
-            services.Configure<JWT>(configuration.GetSection("JWT"));
+public static void AddJwt(this IServiceCollection services, IConfiguration configuration)
+{
+    // 1. Cargar configuración y registrar el objeto JWT como singleton
+    var jwtSettings = new JWT();
+    configuration.Bind("Jwt", jwtSettings);
+    services.Configure<JWT>(configuration.GetSection("JWt"));
 
-            //Adding Athentication - JWT
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(o =>
-                {
-                    o.RequireHttpsMetadata = false;
-                    o.SaveToken = false;
-                    o.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ClockSkew = TimeSpan.Zero,
-                        ValidIssuer = configuration["JWT:Issuer"],
-                        ValidAudience = configuration["JWT:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]))
-                    };
-                });
-        }
+services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero, // No da margen extra al tiempo de expiración
+            ValidIssuer = jwtSettings.Issuer,
+            ValidAudience = jwtSettings.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+        };
+    });
+}
+
+
     
             public static void AddValidationErrors(this IServiceCollection services)
     {

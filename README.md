@@ -16,6 +16,7 @@
 
 ![alt text](ERmodel.png)
 
+
 ## 🚀 Getting Started
 
 ### 1. Clone the repository
@@ -153,4 +154,17 @@ The frontend will be available at:
 * Audit log tracking
 * Pagination, filtering and responsive UI
 
+## Solución problema JWT
+```cs
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+    var durationInMinutes = int.Parse(_config["Jwt:DurationInMinutes"]);
+    var token = new JwtSecurityToken(
+        issuer: _config["Jwt:Issuer"],
+        audience: _config["Jwt:Audience"],
+        claims: claims,
+        expires: DateTime.UtcNow.AddMinutes(durationInMinutes), // La solución está acá. El JWT estaba configurado para durar dos horas automaticamente. Ahora,nuestro token  lee el Json que tenemos en el archivo appsettings.Development.json y toma como parámetro el tiempo que estimemos allí en la key llamada durationInMinutes.
+        signingCredentials: creds
+    );
+```
 ---

@@ -7,6 +7,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ using TallerApi.Helpers.Errors;
 
 namespace TallerApi.Controllers
 {
+    [Authorize(Roles = "Administrador")] // 👈 Requiere autenticación con rol Administrador
     [ApiController]
     [Route("api/[controller]")]
     public class UserMemberController : ControllerBase
@@ -53,71 +55,67 @@ namespace TallerApi.Controllers
 
             return Ok(_mapper.Map<UserMemberDto>(user));
         }
-        
-    [HttpPost]
-    public async Task<ActionResult<UserMemberDto>> Post(UserMemberDto usermemberDto)
-    {
-        if (usermemberDto == null)
-            return BadRequest(new ApiResponse(400, "Datos inválidos."));
 
-        try
+        [HttpPost]
+        public async Task<ActionResult<UserMemberDto>> Post(UserMemberDto usermemberDto)
         {
-            var user = _mapper.Map<UserMember>(usermemberDto);
-            user.CreatedAt = DateTime.UtcNow;
-            user.UpdatedAt = DateTime.UtcNow;
+            if (usermemberDto == null)
+                return BadRequest(new ApiResponse(400, "Datos inválidos."));
 
-            if (!string.IsNullOrWhiteSpace(usermemberDto.Password))
+            try
             {
-                user.Password = BCrypt.Net.BCrypt.HashPassword(usermemberDto.Password);
-            }
+                var user = _mapper.Map<UserMember>(usermemberDto);
+                user.CreatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow;
 
-            // Asignar rol
-            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == usermemberDto.Role);
-            if (role != null)
-            {
-                user.UserRoles = new List<UserRole>
+                if (!string.IsNullOrWhiteSpace(usermemberDto.Password))
                 {
-                    new UserRole { RoleId = role.Id }
-                };
-            }
-
-            // Guardar el usuario
-            await _context.UserMembers.AddAsync(user);
-            await _context.SaveChangesAsync(); // Necesario para tener user.Id
-
-            // Asociar especialidades si es mecánico
-            if (role != null && role.Name == "Mecanico" && usermemberDto.Specialties != null)
-            {
-                foreach (var specName in usermemberDto.Specialties)
-                {
-                    var spec = await _context.Specialties.FirstOrDefaultAsync(s => s.Name == specName);
-                    if (spec != null)
-                    {
-                        await _context.UserSpecialties.AddAsync(new UserSpecialty
-                        {
-                            IdUser = user.Id,
-                            User = user,
-                            IdSpecialty = spec.Id,
-                            Specialty = spec
-                        });
-                    }
+                    user.Password = BCrypt.Net.BCrypt.HashPassword(usermemberDto.Password);
                 }
+
+                var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == usermemberDto.Role);
+                if (role != null)
+                {
+                    user.UserRoles = new List<UserRole>
+                    {
+                        new UserRole { RoleId = role.Id }
+                    };
+                }
+
+                await _context.UserMembers.AddAsync(user);
                 await _context.SaveChangesAsync();
+
+                if (role != null && role.Name == "Mecanico" && usermemberDto.Specialties != null)
+                {
+                    foreach (var specName in usermemberDto.Specialties)
+                    {
+                        var spec = await _context.Specialties.FirstOrDefaultAsync(s => s.Name == specName);
+                        if (spec != null)
+                        {
+                            await _context.UserSpecialties.AddAsync(new UserSpecialty
+                            {
+                                IdUser = user.Id,
+                                User = user,
+                                IdSpecialty = spec.Id,
+                                Specialty = spec
+                            });
+                        }
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
+                var createdUser = await _context.UserMembers
+                    .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
+                    .Include(u => u.UserSpecialties).ThenInclude(us => us.Specialty)
+                    .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+                return CreatedAtAction(nameof(Get), new { id = createdUser!.Id }, _mapper.Map<UserMemberDto>(createdUser));
             }
-
-            // Recargar usuario con relaciones completas
-            var createdUser = await _context.UserMembers
-                .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
-                .Include(u => u.UserSpecialties).ThenInclude(us => us.Specialty)
-                .FirstOrDefaultAsync(u => u.Id == user.Id);
-
-            return CreatedAtAction(nameof(Get), new { id = createdUser!.Id }, _mapper.Map<UserMemberDto>(createdUser));
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse(400, $"Error al crear usuario: {ex.Message}"));
+            }
         }
-        catch (Exception ex)
-        {
-            return BadRequest(new ApiResponse(400, $"Error al crear usuario: {ex.Message}"));
-        }
-    }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] UserMemberDto usermemberDto)
@@ -234,5 +232,13 @@ namespace TallerApi.Controllers
 
             return Ok(new { users = userDtos, total });
         }
+[Authorize]
+[HttpGet("validate-token")]
+public IActionResult ValidateToken()
+{
+    return Ok("Token válido");
+}
+
     }
 }
+

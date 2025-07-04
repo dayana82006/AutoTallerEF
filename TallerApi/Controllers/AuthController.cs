@@ -78,34 +78,33 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        private string GenerateJwtToken(UserMember user, List<string> roles)
-        {
-            var claims = new List<Claim>
-            {
-                   new Claim("id", user.Id.ToString()),
-                    new Claim("email", user.Email ?? "")
-            };
+       private string GenerateJwtToken(UserMember user, List<string> roles)
+{
+    var claims = new List<Claim>
+    {
+        new Claim("id", user.Id.ToString()),
+        new Claim("email", user.Email ?? "")
+    };
 
+    // ✅ Usa ClaimTypes.Role para que funcione el [Authorize(Roles = "Administrador")]
+    foreach (var role in roles)
+    {
+        claims.Add(new Claim(ClaimTypes.Role, role));
+    }
 
-        // Si tiene varios roles y los necesitas todos:
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim("roles", role)); // Ojo: usarás "roles" múltiples veces (array)
-        }
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+    var durationInMinutes = int.Parse(_config["Jwt:DurationInMinutes"]);
+    var token = new JwtSecurityToken(
+        issuer: _config["Jwt:Issuer"],
+        audience: _config["Jwt:Audience"],
+        claims: claims,
+        expires: DateTime.UtcNow.AddMinutes(durationInMinutes), // La solución está acá
+        signingCredentials: creds
+    );
 
+    return new JwtSecurityTokenHandler().WriteToken(token);
+}
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(2),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
     }
 }
